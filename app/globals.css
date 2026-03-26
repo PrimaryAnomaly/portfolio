@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* === Swiss Design System === */
+
+@theme inline {
+  /* Font */
+  --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Colors */
+  --color-swiss-black: #000000;
+  --color-swiss-white: #ffffff;
+  --color-swiss-red: #ff0000;
+  --color-swiss-gray-50: #fafafa;
+  --color-swiss-gray-100: #f5f5f5;
+  --color-swiss-gray-200: #e5e5e5;
+  --color-swiss-gray-300: #d4d4d4;
+  --color-swiss-gray-400: #a3a3a3;
+  --color-swiss-gray-500: #737373;
+  --color-swiss-gray-600: #525252;
+  --color-swiss-gray-700: #404040;
+  --color-swiss-gray-800: #262626;
+  --color-swiss-gray-900: #171717;
+
+  /* Spacing */
+  --spacing-swiss-1: 4px;
+  --spacing-swiss-2: 8px;
+  --spacing-swiss-3: 12px;
+  --spacing-swiss-4: 16px;
+  --spacing-swiss-5: 24px;
+  --spacing-swiss-6: 32px;
+  --spacing-swiss-7: 48px;
+  --spacing-swiss-8: 64px;
+  --spacing-swiss-9: 96px;
+  --spacing-swiss-10: 128px;
+}
+
+/* === CSS Custom Properties === */
+
+:root {
+  --text-primary: #000000;
+  --text-secondary: #525252;
+  --text-muted: #a3a3a3;
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --border-color: #e5e5e5;
+  --accent: #ff0000;
+  --transition-fast: 0.1s ease;
+  --transition-base: 0.2s ease;
+}
+
+/* === Base Reset === */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans, "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+p {
+  max-width: 65ch;
+}
+
+a {
+  text-decoration: none;
+}

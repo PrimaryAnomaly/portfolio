@@ -1,0 +1,18 @@
+---
+title: "Embedded Telemetry System"
+description: "LoRa + ESP32 sensor network for remote field data collection"
+date: "2022-04"
+tags: ["Firmware", "Embedded", "LoRa", "ESP32"]
+---
+
+## Problem
+
+Field-deployed environmental sensors need to transmit data over kilometer-scale distances without cellular infrastructure. Power budget is limited to solar-charged batteries.
+
+## Approach
+
+Designed a sensor node around the ESP32 with LoRa radio module (SX1276). Each node measures temperature, humidity, and soil moisture, transmitting packets to a central gateway at configurable intervals. Firmware manages deep-sleep cycling to achieve months of operation on a single 18650 cell. Gateway aggregates data and pushes to a cloud endpoint via Wi-Fi.
+
+## Result
+
+Deployed a 6-node network across a 2 km agricultural test site. Achieved 98.5% packet delivery rate over a 3-month field trial. Average power consumption of 12 mA including transmission bursts, yielding 4+ months battery life.
