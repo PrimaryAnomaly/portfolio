@@ -38,11 +38,11 @@ export const education: Education[] = [
     location: "Seoul, South Korea",
     dates: "Mar 2017 — Feb 2024",
     details: [
-      "CubeSat embedded systems and sensor integration",
-      "Secured and managed 300M KRW (~$220K) research grant for CubeSat biological payload R&D",
-      "Designed multi-modal electrochemical and optical sensor suite for space applications",
-      "Developed MCU firmware in C/C++ for real-time sensor data acquisition",
-      "Built and validated embedded system prototypes end-to-end: circuit schematic, PCB layout, assembly, firmware, system validation",
+      "CubeSat payload systems engineering: concept of operations through flight-ready hardware",
+      "Secured and managed $220K research grant for CubeSat biological payload development",
+      "Designed and built multi-sensor hardware systems through full cycle: CAD, circuit/PCB design, cleanroom fabrication, mechanical assembly, system-level qualification",
+      "Developed MCU firmware in C/C++ for real-time data acquisition and autonomous operation",
+      "Diagnosed cross-domain failures (mechanical, electrical, firmware) and drove fixes through multiple revision cycles",
       "Published 3 first-author SCI papers (cumulative IF: 17.4)",
     ],
   },
@@ -53,8 +53,8 @@ export const education: Education[] = [
     location: "Seoul, South Korea",
     dates: "Mar 2013 — Feb 2017",
     details: [
-      "Research at Smart Materials Nano Lab focusing on electrochemical sensor development",
-      "CAD modeling, PCB prototyping, microfabrication, mechanical design",
+      "Coursework in mechanics, dynamics, thermodynamics, fluid mechanics, materials science, and machine design",
+      "Hands-on research in sensor fabrication, hardware prototyping, and precision measurement",
     ],
   },
 ];
@@ -66,11 +66,11 @@ export const experience: Experience[] = [
     location: "Lowell, MA",
     dates: "Jul 2025 — Present",
     bullets: [
-      "Developed digital twin framework integrating physics-based modeling with MSPC for pharmaceutical manufacturing",
-      "Led real-time quality monitoring system development for mRNA-LNP vaccine production, analyzing 100+ batches",
-      "Architected Python software suite with GUI replacing commercial platforms for reproducible process development",
-      "Designed end-to-end data pipeline for multi-day batch cycles with automated quality prediction",
-      "Co-authoring high-impact journal manuscripts (IF 10+); leading deliverables for government-funded collaboration",
+      "Developed system-level digital twin framework integrating physics-based modeling with statistical process control",
+      "Designed and executed test plans for pharmaceutical manufacturing systems, validating 100+ production batches",
+      "Built Python-based test automation tools replacing commercial platforms for reproducible process development",
+      "Led root cause analysis on process failures; developed corrective action protocols and revalidation procedures",
+      "Defined system requirements and coordinated deliverables across engineering and research stakeholders",
     ],
   },
   {
@@ -80,10 +80,11 @@ export const experience: Experience[] = [
     dates: "Feb 2024 — May 2025",
     bullets: [
       "Led systems engineering and integration for military SAR satellite programs across EM/QM/FM test campaigns",
-      "Developed and executed Electric Test Bed procedures for embedded hardware performance and interface validation",
-      "Designed EGSE architecture for automated hardware testing and integration test plans",
-      "Developed electrical Integrated Systems Test plans for Flight Model Assembly, Integration, and Testing",
-      "Diagnosed and resolved hardware-software interaction failures in networked subsystems",
+      "Worked across electrical, mechanical, and software interfaces; tracked requirements and interface dependencies",
+      "Designed EGSE architecture and test fixtures for subsystem and system-level hardware validation",
+      "Executed functional, environmental, and performance testing across multiple technical domains",
+      "Led troubleshooting and root cause analysis on system-level anomalies during integration test campaigns",
+      "Contributed to facility architecture planning for a high-throughput satellite production line",
     ],
   },
 ];
@@ -165,10 +166,10 @@ export const publications: Publication[] = [
 export const certifications: Certification[] = [];
 
 export const technicalSkills = [
-  { category: "Programming", items: "Python, C/C++, MATLAB" },
-  { category: "Embedded", items: "MCU Firmware, Real-time Systems, Sensor Integration" },
-  { category: "Electronics", items: "Circuit Design, PCB Layout, System Validation, Soldering" },
-  { category: "CAD/CAM", items: "Fusion360, AutoCAD, KiCad, SolidWorks" },
-  { category: "Fabrication", items: "3D Printing, Laser Cutting, CNC, Microfabrication" },
-  { category: "Tools", items: "Git, Docker, Linux" },
+  { category: "Systems", items: "Requirements Management, V&V, AIT, Interface Management, Test Planning" },
+  { category: "Testing", items: "Functional/Environmental Testing, Root Cause Analysis, SPC, Test Automation" },
+  { category: "Electronics", items: "Circuit Design, PCB Layout, System Integration, Soldering" },
+  { category: "Mechanical", items: "SolidWorks, Fusion360, AutoCAD, 3D Printing, CNC, DFM" },
+  { category: "Software", items: "Python, C/C++, MATLAB, Git, Linux, Docker" },
+  { category: "Instrumentation", items: "Oscilloscopes, DAQ Systems, Power Supplies, DMMs, Sensors" },
 ];
