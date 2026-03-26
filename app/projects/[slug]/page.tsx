@@ -40,6 +40,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
+  if (!getAllProjectSlugs().includes(slug)) {
+    return {};
+  }
   const { meta } = getProjectBySlug(slug);
   return {
     title: meta.title,
@@ -168,7 +171,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <footer className="max-w-[1200px] mx-auto px-swiss-5 mt-swiss-8 pb-swiss-7">
         <div className="border-t border-swiss-gray-200 pt-swiss-5 flex justify-between items-center">
           <Link
-            href="/"
+            href="/projects"
             className="mono text-[0.75rem] text-swiss-gray-400 hover:text-swiss-red transition-colors duration-100"
           >
             &larr; All projects

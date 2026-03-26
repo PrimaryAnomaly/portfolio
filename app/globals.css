@@ -50,6 +50,11 @@ h1, h2, h3, h4, h5, h6 {
 a { text-decoration: none; color: inherit; }
 a:hover { color: #ff0000; }
 
+:where(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid #ff0000;
+  outline-offset: 3px;
+}
+
 /* Section dividers */
 .section-border { border-top: 2px solid #000; }
 

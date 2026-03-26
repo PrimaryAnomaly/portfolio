@@ -64,30 +64,32 @@ export default function ResumePage() {
         </ResumeSection>
 
         <ResumeSection title="Technical Skills">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className="text-left text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-swiss-gray-600 py-swiss-4 border-b border-swiss-gray-200 w-1/4">
-                  Domain
-                </th>
-                <th className="text-left text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-swiss-gray-600 py-swiss-4 border-b border-swiss-gray-200">
-                  Tools &amp; Technologies
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {technicalSkills.map((skill) => (
-                <tr key={skill.category} className="hover:bg-swiss-gray-50">
-                  <td className="py-swiss-4 border-b border-swiss-gray-200 font-semibold text-[0.875rem]">
-                    {skill.category}
-                  </td>
-                  <td className="py-swiss-4 border-b border-swiss-gray-200 text-[1rem] leading-[1.5] text-swiss-gray-600">
-                    {skill.items}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[40rem] border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-swiss-gray-600 py-swiss-4 border-b border-swiss-gray-200 w-1/4">
+                    Domain
+                  </th>
+                  <th className="text-left text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-swiss-gray-600 py-swiss-4 border-b border-swiss-gray-200">
+                    Tools &amp; Technologies
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {technicalSkills.map((skill) => (
+                  <tr key={skill.category} className="hover:bg-swiss-gray-50">
+                    <td className="py-swiss-4 border-b border-swiss-gray-200 font-semibold text-[0.875rem] pr-swiss-4 align-top">
+                      {skill.category}
+                    </td>
+                    <td className="py-swiss-4 border-b border-swiss-gray-200 text-[1rem] leading-[1.5] text-swiss-gray-600">
+                      {skill.items}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </ResumeSection>
 
         <ResumeSection title="Publications">

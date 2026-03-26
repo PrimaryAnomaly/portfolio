@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
+import { SiteChrome } from "@/components/SiteChrome";
 import { siteConfig } from "@/content/site";
 import "./globals.css";
 
@@ -26,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${ibmPlexMono.variable}`}>
       <body className="font-sans antialiased">
-        {children}
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
