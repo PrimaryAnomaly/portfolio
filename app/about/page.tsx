@@ -15,38 +15,46 @@ export default function AboutPage() {
         <div className="grid grid-cols-12 gap-swiss-5">
           <div className="col-span-12 md:col-span-8">
             <p className="text-[1.25rem] leading-[1.6] text-swiss-gray-600 mb-swiss-6">
-              Hardware engineer and systems integrator with a PhD in Electrical Engineering.
-              Background spans embedded sensor systems, satellite integration and testing,
-              and pharmaceutical process modeling.
+              Electrical engineer. PhD from Korea University. I design sensor
+              hardware, write the firmware that runs on it, and build the test
+              systems that prove it works. Sometimes I also write software,
+              usually because no one else will.
             </p>
 
             <p className="text-[1rem] leading-[1.5] mb-swiss-4">
-              Earned a PhD at Korea University designing multi-modal electrochemical and optical
-              sensor suites for CubeSat payloads. Built embedded systems end-to-end: circuit
-              schematic, PCB layout, assembly, firmware, and system validation. Secured and managed
-              a $220K research grant. Published three first-author papers in IEEE Transactions on
-              Industrial Electronics, MDPI Sensors, and Bioelectrochemistry.
+              My PhD work was CubeSat payload hardware. Electrochemical and
+              optical sensor arrays for small satellites. I did the full stack
+              on that -- schematic capture, PCB layout, board bring-up,
+              firmware, calibration, environmental testing. Managed a $220K
+              research budget. Published in IEEE TIE, MDPI Sensors, and
+              Bioelectrochemistry. Three first-author papers.
             </p>
 
             <p className="text-[1rem] leading-[1.5] mb-swiss-4">
-              Worked as a Systems Integration Engineer at Hanwha Systems on military SAR satellite
-              programs. Led integration and test campaigns across EM, QM, and FM builds. Designed
-              EGSE architecture, developed IST procedures, and resolved hardware-software interface
-              failures across networked subsystems.
+              After that, Hanwha Systems. Systems Integration Engineer on
+              military SAR satellite programs. Integration and test across EM,
+              QM, and FM model builds. I designed EGSE setups, wrote IST
+              procedures, and spent a lot of time debugging interface failures
+              between subsystems that were each working fine on their own.
+              That is where most satellite problems live.
             </p>
 
             <p className="text-[1rem] leading-[1.5] mb-swiss-7">
-              Currently a Postdoctoral Associate at UMass Lowell developing digital twin frameworks
-              and real-time quality monitoring systems for pharmaceutical manufacturing. Architected
-              a Python software suite replacing commercial platforms for mRNA-LNP vaccine production
-              process development.
+              Now I am a Postdoc at UMass Lowell. The work is pharmaceutical
+              process modeling -- digital twins and real-time quality monitoring
+              for manufacturing lines. I built a Python suite that replaced a
+              commercial platform for mRNA-LNP vaccine process development. It
+              is a different domain, but the core problem is the same: measure
+              something, model it, control it.
             </p>
 
             <SectionHeader>Engineering Philosophy</SectionHeader>
 
             <p className="text-[1rem] leading-[1.5] mb-swiss-4">
-              Build it. Test it. Ship it. Document what matters. Every system is a prototype until
-              it survives integration testing. Design for the failure mode you haven't thought of yet.
+              If it has not been tested, it does not work. A schematic is a
+              hypothesis. A prototype is an experiment. The test report is what
+              actually matters. I do not trust simulations I cannot validate,
+              and I do not ship things I cannot debug at 2 AM.
             </p>
           </div>
         </div>

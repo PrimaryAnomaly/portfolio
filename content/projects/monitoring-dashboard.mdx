@@ -7,12 +7,14 @@ tags: ["Software", "Python", "Data Acquisition"]
 
 ## Problem
 
-Characterizing multi-channel sensor arrays requires real-time visualization of analog signals alongside automated calibration routines. Commercial DAQ software lacks the flexibility to handle custom sensor protocols and calibration models.
+Sensor characterization required live multi-channel strip charts plus automated calibration -- run a standard series, fit the curve, store coefficients. The existing LabVIEW VI handled acquisition but calibration was manual and offline in Excel.
 
 ## Approach
 
-Built a Python application using PyQt for the GUI and PyQtGraph for real-time plotting. The backend interfaces with NI DAQ hardware via NI-DAQmx drivers. Implemented automated multi-point calibration with least-squares regression, data logging to HDF5, and configurable alarm thresholds.
+Python 3.10 application. PyQt5 for the interface, PyQtGraph for real-time plotting (8 channels, 10 Hz refresh). Backend talks to an NI USB-6343 via the nidaqmx Python driver. Calibration module runs a configurable N-point standard sequence, fits via numpy least-squares, and writes coefficients + raw data to HDF5. Alarm thresholds are per-channel and configurable at runtime.
+
+Packaged with PyInstaller so the rest of the lab can run it without a Python install.
 
 ## Result
 
-Replaced a LabVIEW-based workflow that required manual data export and offline calibration. Reduced calibration time from 2 hours to 15 minutes. Used across three concurrent research projects in the lab.
+Replaced the LabVIEW + Excel workflow entirely. Calibration that previously took ~2 hours (manual standard swaps, export, curve fit) now runs in 15 minutes end-to-end. Three separate projects in the lab use it as the primary DAQ front end.

@@ -7,12 +7,16 @@ tags: ["Firmware", "Embedded", "LoRa", "ESP32"]
 
 ## Problem
 
-Field-deployed environmental sensors need to transmit data over kilometer-scale distances without cellular infrastructure. Power budget is limited to solar-charged batteries.
+Agricultural test site needed soil and atmospheric data from 6 locations spread over 2 km. No cell coverage on site. Nodes had to run on battery for an entire growing season.
 
 ## Approach
 
-Designed a sensor node around the ESP32 with LoRa radio module (SX1276). Each node measures temperature, humidity, and soil moisture, transmitting packets to a central gateway at configurable intervals. Firmware manages deep-sleep cycling to achieve months of operation on a single 18650 cell. Gateway aggregates data and pushes to a cloud endpoint via Wi-Fi.
+Each node is an ESP32-WROOM-32E + HopeRF RFM95W (SX1276, 915 MHz LoRa). Sensors: SHT31 for temperature/humidity, capacitive soil moisture probe (generic resistive-to-voltage type, calibrated per-unit). Packets are 24 bytes, transmitted at SF7/125 kHz BW on a configurable interval (default 5 min). Between transmissions the ESP32 enters deep sleep (~10 uA).
+
+Gateway runs on a Raspberry Pi 3B+ with an RFM95W hat. Receives packets, timestamps them, and POSTs JSON to an InfluxDB instance over Wi-Fi.
+
+Power source is a single Samsung INR18650-35E (3500 mAh) with a small solar trickle charger. Firmware handles brownout detection and will increase sleep interval if cell voltage drops below 3.3 V.
 
 ## Result
 
-Deployed a 6-node network across a 2 km agricultural test site. Achieved 98.5% packet delivery rate over a 3-month field trial. Average power consumption of 12 mA including transmission bursts, yielding 4+ months battery life.
+6 nodes deployed for 3 months. Packet delivery rate: 98.5%. Average current draw per node: 12 mA including TX bursts. Without solar assist, calculated battery life is ~4 months; with the trickle charger, nodes ran indefinitely through the trial period.

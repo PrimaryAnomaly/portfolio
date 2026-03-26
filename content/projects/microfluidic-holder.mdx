@@ -7,12 +7,14 @@ tags: ["Mechanical", "SolidWorks", "3D Printing"]
 
 ## Problem
 
-Bioregenerative life support experiments require precise fluid routing through microfluidic chips with leak-free connections at varying pressures and temperatures. Existing lab fixtures were ad-hoc and unreliable.
+Microfluidic chips in the bioregenerative life support loop needed a repeatable, leak-free mounting interface. The lab was using hand-clamped acrylic fixtures that leaked above ~10 PSI and took 15 minutes per chip swap.
 
 ## Approach
 
-Designed a custom chip holder and manifold assembly in SolidWorks with full GD&T dimensioning. The manifold integrates O-ring sealed ports, alignment pins, and quick-connect fittings. Prototyped using SLA 3D printing for rapid iteration, with final parts machined from PEEK for chemical compatibility.
+Holder and manifold assembly modeled in SolidWorks. Dowel-pin alignment (two-pin datum scheme) for chip registration. Fluid ports use Parker 2-012 O-ring face seals with captive screw compression. Quick-disconnect fittings (Colder PMC series) on all fluid lines. Full GD&T on the drawing package -- position tolerance of 0.05 mm on the port pattern.
+
+Prototyped on a Formlabs Form 3 in Durable resin for fit checks. Final parts CNC-machined from PEEK for chemical and thermal compatibility.
 
 ## Result
 
-Zero-leak performance at operating pressures up to 30 PSI. Reduced chip swap time from 15 minutes to under 2 minutes. Design integrated into the CubeSat biological payload thermal management subsystem.
+Held 30 PSI with zero leakage over 72-hour pressure-hold tests. Chip swap time dropped to under 2 minutes. Three units built; one integrated into the CubeSat payload thermal management loop, two in use on the bench.

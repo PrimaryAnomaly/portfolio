@@ -7,14 +7,14 @@ tags: ["PCB Design", "Firmware", "KiCad", "STM32"]
 
 ## Problem
 
-Space-bound biological experiments require simultaneous measurement of pH, dissolved oxygen, lactate, and optical density. Commercial sensor modules are too large, too power-hungry, and not rated for the thermal and vibration environment of a CubeSat payload.
+A CubeSat biological payload needed concurrent pH, dissolved oxygen, lactate, and optical density measurements. Nothing off-the-shelf fit the volume, power, or environmental requirements.
 
 ## Approach
 
-Designed a 4-layer PCB in KiCad integrating a multi-channel analog front end with an STM32 microcontroller. The board includes transimpedance amplifiers for electrochemical sensors, LED driver circuits for optical measurements, and a 16-bit ADC for data acquisition. Firmware written in C handles real-time sampling at 1 kHz with DMA transfers.
+4-layer PCB designed in KiCad. STM32F4 MCU, four transimpedance amplifier channels (LMP7721-based) for the electrochemical sensors, constant-current LED drivers for OD measurement, and an ADS1115 16-bit ADC. Firmware in C; sampling at 1 kHz using DMA to avoid CPU-bound bottlenecks.
 
-Fabricated through JLCPCB. Assembled in-house with SMD reflow. Validated against laboratory-grade reference instruments.
+Boards fabricated at JLCPCB, reflowed in-house with solder paste stencil and a modified toaster oven. Each board bench-tested against a Gamry potentiostat and an Agilent 8453 spectrophotometer before integration.
 
 ## Result
 
-Achieved sub-millivolt noise floor on electrochemical channels. Optical density measurements correlated within 2% of commercial spectrophotometer readings. Board passed thermal cycling (-20C to +60C) and random vibration testing per NASA GEVS. Published in MDPI Sensors (2024).
+Electrochemical channels measured under 0.5 mV RMS noise floor. OD readings within 2% of the Agilent reference across 0.1--1.5 AU. Board survived thermal cycling (-20 C to +60 C, 8 cycles) and random vibration (14.1 gRMS) per NASA GEVS. Work published in MDPI Sensors, 2024.

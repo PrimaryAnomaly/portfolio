@@ -1,13 +1,13 @@
 export const siteConfig = {
   name: "Saeyoung Kim",
-  title: "Hardware Engineer · Systems Integration · PhD Electrical Engineering",
+  title: "Hardware Engineer · Embedded Systems · Sensor Design",
   stats: [
     "PhD Electrical Engineering",
-    "Satellite AIT",
+    "PCB & Firmware",
+    "Satellite Flight Hardware",
     "9 Publications",
-    "Sensor Systems",
   ],
-  email: "saeyoung_kim@uml.edu",
+  email: "saeyoung0102@gmail.com",
   linkedin: "saeyoung-macx-kim",
   github: "PrimaryAnomaly",
   url: "https://saeyoungkim.com",
