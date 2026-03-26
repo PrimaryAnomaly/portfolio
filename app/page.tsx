@@ -63,16 +63,21 @@ export default function Home() {
         </div>
         <div>
           {experience.map((job) => (
-            <div key={`${job.company}-${job.dates}`} className="data-row">
-              <div>
-                <span className="font-semibold text-[0.875rem]">{job.title}</span>
+            <div key={`${job.company}-${job.dates}`} className="py-swiss-4 border-b border-swiss-gray-200">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-swiss-2">
+                <div>
+                  <span className="font-semibold text-[0.875rem]">{job.title}</span>
+                  <span className="text-[0.8125rem] text-swiss-gray-600"> — {job.company}, {job.location}</span>
+                </div>
+                <span className="mono text-[0.75rem] text-swiss-gray-400 shrink-0">{job.dates}</span>
               </div>
-              <div>
-                <span className="text-[0.8125rem] text-swiss-gray-600">{job.company}, {job.location}</span>
-              </div>
-              <div>
-                <span className="mono text-[0.75rem] text-swiss-gray-400">{job.dates}</span>
-              </div>
+              <ul className="list-none space-y-swiss-1 ml-swiss-3">
+                {job.bullets.map((bullet, i) => (
+                  <li key={i} className="text-[0.8125rem] leading-[1.5] text-swiss-gray-600 pl-swiss-3 border-l border-swiss-gray-200">
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -138,16 +143,21 @@ export default function Home() {
         </div>
         <div>
           {education.map((edu) => (
-            <div key={`${edu.institution}-${edu.dates}`} className="data-row">
-              <div>
-                <span className="font-semibold text-[0.875rem]">{edu.degree} {edu.field}</span>
+            <div key={`${edu.institution}-${edu.dates}`} className="py-swiss-4 border-b border-swiss-gray-200">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-swiss-2">
+                <div>
+                  <span className="font-semibold text-[0.875rem]">{edu.degree} {edu.field}</span>
+                  <span className="text-[0.8125rem] text-swiss-gray-600"> — {edu.institution}, {edu.location}</span>
+                </div>
+                <span className="mono text-[0.75rem] text-swiss-gray-400 shrink-0">{edu.dates}</span>
               </div>
-              <div>
-                <span className="text-[0.8125rem] text-swiss-gray-600">{edu.institution}</span>
-              </div>
-              <div>
-                <span className="mono text-[0.75rem] text-swiss-gray-400">{edu.dates}</span>
-              </div>
+              <ul className="list-none space-y-swiss-1 ml-swiss-3">
+                {edu.details.map((detail, i) => (
+                  <li key={i} className="text-[0.8125rem] leading-[1.5] text-swiss-gray-600 pl-swiss-3 border-l border-swiss-gray-200">
+                    {detail}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
