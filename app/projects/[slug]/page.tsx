@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { Gallery } from "@/components/mdx/Gallery";
 import { TechDetails } from "@/components/mdx/TechDetails";
 import { getAllProjectSlugs, getProjectBySlug } from "@/lib/mdx";
@@ -31,6 +32,26 @@ const mdxComponents = {
   ),
   a: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a className="text-swiss-red hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
+  ),
+  table: (props: React.HTMLAttributes<HTMLTableElement>) => (
+    <div className="my-swiss-5 border border-swiss-gray-200 overflow-x-auto">
+      <table className="w-full border-collapse mono text-[0.8125rem]" {...props} />
+    </div>
+  ),
+  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <thead className="bg-swiss-gray-50" {...props} />
+  ),
+  th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <th
+      className="text-left text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-swiss-gray-500 px-swiss-4 py-swiss-3 border-b border-swiss-gray-200"
+      {...props}
+    />
+  ),
+  td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <td
+      className="px-swiss-4 py-swiss-3 border-b border-swiss-gray-100 text-swiss-gray-700 leading-[1.5]"
+      {...props}
+    />
   ),
 };
 
@@ -164,7 +185,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {/* ── MDX CONTENT ── */}
       <div className="max-w-[1200px] mx-auto px-swiss-5">
-        <MDXRemote source={content} components={mdxComponents} />
+        <MDXRemote source={content} components={mdxComponents} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
       </div>
 
       {/* ── FOOTER NAV ── */}

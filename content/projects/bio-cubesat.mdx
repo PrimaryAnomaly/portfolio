@@ -1,0 +1,96 @@
+---
+title: "CubeSat Bio-Payload"
+description: "Dual electrochemical/optical sensor system for monitoring microorganism growth aboard a CubeSat. 27-well array, 81 electrodes, 4-board computer stack, pressure vessel, fluidic system. PhD dissertation, Korea University."
+date: "2023-10"
+tags: ["Hardware", "PCB Design", "Spacecraft", "Sensors", "Firmware"]
+hero: "/images/projects/placeholder-hero.svg"
+publication: "https://doi.org/10.3390/s24010265"
+---
+
+## Context
+
+Most CubeSat bio-payloads use a single sensor modality, optical absorbance, to monitor microbial growth. This provides growth rate data but limited chemical insight. To study how space radiation and microgravity affect living systems in more detail, the payload needs additional sensing capabilities.
+
+This PhD dissertation at [Korea University](https://ee.korea.ac.kr/) (advised by Prof. James Jungho Pak) developed a dual-configuration sensor module that integrates electrochemical ion-selective sensors (pH and pNa) alongside optical absorbance within a CubeSat form factor. To my knowledge, this was the first time both modalities were combined in a small-satellite bio-payload.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "Complete bio-payload", caption: "Full payload assembly: pressure vessel, fluidic card, sensor module, computer stack" },
+  { src: "/images/projects/placeholder-2.svg", alt: "System block diagram", caption: "System block diagram showing subsystem relationships" },
+]} />
+
+## Sensor System
+
+The work covered the full development lifecycle: PANI-based electrode fabrication, flowcell design, multi-array sensor card layout, pressure vessel engineering, fluidic system development, payload computer design, and C++ firmware.
+
+The sensor module started as a single-well prototype (80 x 80 x 42 mm, 100 g, 0.195 W) and scaled to a 27-well array with 81 electrodes. Performance on the final integrated system:
+
+- **pH:** 71.0 mV/pH sensitivity (supra-Nernstian), R² > 0.99
+- **pNa:** 75.2 mV/pNa, R² > 0.99
+- **Absorbance:** R² = 0.994 across 0.1 to 5 g/L silica microsphere dilutions
+- **Response time:** 2.7 to 5.6 seconds
+
+The dual sensor was validated in a 36-hour yeast cultivation experiment, tracking absorbance (0.3 to 0.8) and pH (7.5 to 4.0) simultaneously. Readings aligned closely with commercial reference instruments.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-3.svg", alt: "Sensor card close-up", caption: "27-well multi-array sensor card (7 x 10 cm) with pogo-pin interface" },
+  { src: "/images/projects/placeholder-4.svg", alt: "Electrode fabrication", caption: "PANI-based electrode fabrication process" },
+]} />
+
+## Subsystems
+
+**Pressure vessel.** CNC-milled aluminum 6061, pressure tested to 60 psi, held 1 atm for 7 days with a 2x safety margin. Designed in Fusion 360 to house the fluidic card, payload computer, fluid reservoirs, and actuators within CubeSat dimensional constraints.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-5.svg", alt: "Pressure vessel CAD", caption: "Pressure vessel CAD model: isometric and cross-section views" },
+  { src: "/images/projects/placeholder-6.svg", alt: "Pressure vessel fabricated", caption: "Fabricated pressure vessel, CNC-milled aluminum 6061" },
+]} />
+
+**Fluidic card.** Three full design iterations. Iterations 1 and 2 had leakage failures. Iteration 3 resolved the sealing problem and supported flow rates up to 1 mL/min, though complete well filling remained a challenge.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-7.svg", alt: "Fluidic card iterations", caption: "Three design iterations of the fluidic card" },
+  { src: "/images/projects/placeholder-8.svg", alt: "Fluidic card detail", caption: "Iteration 3 fluidic card: channel routing and well layout" },
+]} />
+
+**Payload computer.** 4-board PCB stack designed in KiCad 6.0, manufactured by JLCPCB. ATmega328P MCU, high-resolution ADCs, LED drivers, and multiplexers for reading 81 electrodes and optical channels. The fluidic card is sandwiched between boards in the stack. Firmware in C++.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-9.svg", alt: "PCB stack exploded", caption: "4-board PCB stack exploded view: Aux 1, Detector, Source, Aux 2" },
+  { src: "/images/projects/placeholder-10.svg", alt: "PCB layout", caption: "KiCad PCB layout: component placement and trace routing" },
+  { src: "/images/projects/placeholder-11.svg", alt: "Assembled stack", caption: "Assembled computer stack with fluidic card sandwiched in between" },
+]} columns={3} />
+
+## Specifications
+
+| Parameter | Value |
+|---|---|
+| Sensor module dimensions | 80 x 80 x 42 mm |
+| Weight | 100 g |
+| Power consumption | 0.195 W |
+| Array configuration | 27 wells, 81 electrodes (3 per well: pH, pNa, reference) |
+| pH sensitivity | 71.0 mV/pH (supra-Nernstian), R² > 0.99 |
+| pNa sensitivity | 75.2 mV/pNa, R² > 0.99 |
+| Absorbance linearity | R² = 0.994, range 0.1 to 5 g/L |
+| Response time | 2.7 to 5.6 s |
+| Electrode material | Polyaniline (PANI) on polycarbonate substrate |
+| Reference electrode | Ag/AgCl/PVB |
+| Pressure vessel | Al 6061, 60 psi rated, 2x safety margin, 7-day hold at 1 atm |
+| Fluidic card | 3 iterations, final: 1 mL/min max flow, zero leakage |
+| MCU | ATmega328P, firmware in C++ |
+| PCB | KiCad 6.0, 4-board stack, manufactured by JLCPCB |
+| CAD | Fusion 360 (pressure vessel), KiCad 6.0 (PCBs) |
+
+## Outcome
+
+Full system assembly, integration, and testing (AIT) completed across all sensor modalities. The development model is bench-validated and designed to CubeSat flight specifications.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-12.svg", alt: "AIT test results", caption: "Integrated system test results: pH, pNa, and absorbance sensor responses" },
+  { src: "/images/projects/placeholder-13.svg", alt: "Yeast cultivation", caption: "36-hour yeast cultivation experiment: absorbance and pH tracking" },
+]} />
+
+## Publications
+
+- Kim, S.; Park, S.; Pak, J.J. "Multi-Modal Multi-Array Electrochemical and Optical Sensor Suite for a Biological CubeSat Payload." [MDPI Sensors, 2024, 24, Art. no. 265.](https://doi.org/10.3390/s24010265)
+- Published in IEEE Transactions on Industrial Electronics
+- Published in Measurement Science and Technology

@@ -1,0 +1,61 @@
+---
+title: "AMBIC Data Platform"
+description: "Full-stack web platform for biomanufacturing data: ingestion, normalization, visualization, and sharing across research teams. Handles life-critical data with provenance tracking and granular access control."
+date: "2025-02"
+tags: ["Data Platform", "React", "Supabase", "Biomanufacturing"]
+hero: "/images/projects/placeholder-hero.svg"
+github: "https://github.com/PrimaryAnomaly/ambic-data-nexus"
+---
+
+## Context
+
+Researchers at the [Advanced Mammalian Biomanufacturing Innovation Center (AMBIC)](https://www.ambic.gatech.edu/) work with process data in CSV, XLSX, and JSON from a range of instruments and equipment. Before this platform, data sharing between teams meant emailing spreadsheets, and there was no standardized schema across datasets.
+
+Because this data feeds into pharmaceutical manufacturing decisions, integrity requirements are high. A normalization bug that silently drops rows or misaligns columns could lead to incorrect conclusions in a clinical context.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "Dashboard overview", caption: "Dataset dashboard with file browser and metadata panel" },
+  { src: "/images/projects/placeholder-2.svg", alt: "File browser", caption: "Hierarchical file browser with folder nesting and dataset linking" },
+]} />
+
+## Architecture
+
+Frontend is React + TypeScript with [shadcn/ui](https://ui.shadcn.com/) and [Recharts](https://recharts.org/) for interactive visualization. Backend runs on [Supabase](https://supabase.com/): PostgreSQL for structured data, Deno Edge Functions for file operations, object storage for raw uploads.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-3.svg", alt: "Architecture diagram", caption: "System architecture: React frontend, Supabase backend, Edge Functions" },
+]} columns={1} />
+
+## Stack
+
+| Layer | Detail |
+|---|---|
+| Frontend | React 18, TypeScript, Vite (SWC), Tailwind CSS, shadcn/ui, Recharts |
+| Tables | TanStack Table + TanStack Virtual, 2D row + column virtualization for 3,000+ column datasets |
+| Backend | Supabase: PostgreSQL + Deno Edge Functions + object storage |
+| Data parsing | Papaparse (CSV), ExcelJS (XLSX), native JSON |
+| State | React Query (server), React Context (auth), URL params (navigation) |
+| Auth | Supabase Auth (email/password) + MVP bypass token (internal testing) |
+| Security | Row-level security on all tables; `%/content/%` path pattern for storage RLS |
+| Edge Functions | Deno-based file CRUD, dataset processing, sharing operations |
+
+## Key Technical Challenges
+
+- **Wide datasets.** Some biomanufacturing datasets have 3,000+ columns. The table component uses 2D virtualization (both row and column) so only the visible viewport renders. Without this, initial load would freeze the browser.
+- **Schema normalization with provenance.** Researchers map source columns to a standardized target schema. Every normalized dataset maintains a link back to its source, preserving the full transformation history.
+- **Hierarchical file management.** Folder nesting, dataset linking, and three-tier access control (owner, editor, viewer). The Supabase RLS policies for nested storage paths required careful attention, particularly around the `%/content/%` path pattern matching.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-4.svg", alt: "Normalization workflow", caption: "Column mapping from source schema to standardized target" },
+  { src: "/images/projects/placeholder-5.svg", alt: "Virtualized table", caption: "2D virtualized table rendering a 3,000+ column dataset" },
+]} />
+
+## Data Visualization
+
+Interactive time series charts, data exploration dashboards, annotations, and dataset sharing with access control. The upload and normalization flow was designed to match how researchers already think about their experiments, not how the underlying database models the data.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-6.svg", alt: "Time series chart", caption: "Interactive time series visualization with Recharts" },
+  { src: "/images/projects/placeholder-7.svg", alt: "Analytics view", caption: "Data analytics and exploration interface" },
+  { src: "/images/projects/placeholder-8.svg", alt: "Sharing interface", caption: "Dataset sharing and access control panel" },
+]} columns={3} />

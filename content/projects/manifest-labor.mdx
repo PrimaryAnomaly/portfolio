@@ -1,0 +1,50 @@
+---
+title: "Manifest Labor"
+description: "Multi-modal motion capture pipeline for skilled trade demonstrations, structured for humanoid robot training. Targeting the gap between lab-demo training data and real-world construction work."
+date: "2025-03"
+tags: ["Robotics", "Motion Capture", "ML Data", "Construction"]
+hero: "/images/projects/placeholder-hero.svg"
+github: "https://github.com/PrimaryAnomaly/manifest-labor"
+---
+
+## Context
+
+Most humanoid robot training data comes from lab demonstrations and simulation. Skilled trade work (welding, pipefitting, fabrication) is largely absent from existing datasets like [RT-X](https://robotics-transformer-x.github.io/), [Open X-Embodiment](https://arxiv.org/abs/2310.08864), and [DROID](https://droid-dataset.github.io/). The hand movements, force profiles, and real-time adjustments that experienced tradespeople rely on are embodied knowledge that hasn't been captured in a format usable for ML training.
+
+At the same time, the construction industry faces a growing labor shortage, and the skilled trades workforce is aging out.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "Dataset landscape", caption: "Existing robotics datasets and their coverage domains" },
+  { src: "/images/projects/placeholder-2.svg", alt: "Trade gap analysis", caption: "Skilled trade coverage gaps in current training data" },
+]} />
+
+## Approach
+
+Manifest Labor is a data capture pipeline for skilled trade demonstrations. The system records multi-modal data (video, motion capture, force sensors, audio) and structures it for ML training from the point of collection. The plan is to partner with trade unions, vocational schools, and retired masters to record actual work rather than staged demonstrations.
+
+The guiding research question: *what is the smallest dataset that validates the concept?* The current focus is welding, chosen for its complex motion profiles and strong automation demand. The pipeline architecture is trade-agnostic.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-3.svg", alt: "Capture pipeline", caption: "Multi-modal capture pipeline: video, IMU, force, audio" },
+  { src: "/images/projects/placeholder-4.svg", alt: "Data schema", caption: "Structured data format for ML training ingestion" },
+]} />
+
+## Scope
+
+| Parameter | Value |
+|---|---|
+| Target trade (MVP) | Welding (TIG/MIG) |
+| Capture modalities | Video (multi-angle), IMU motion capture, force/torque sensors, audio |
+| Benchmarked datasets | RT-X, Open X-Embodiment, DROID |
+| Partner targets | Trade unions, vocational schools, retired journeymen |
+| Output format | ML-ready structured data, temporal alignment across modalities |
+
+## Direction
+
+Near-term application is construction automation, where the labor shortage creates immediate demand. Longer-term, this work is relevant to pre-human infrastructure deployment: robotic systems that can fabricate and assemble structures in environments like Mars before crewed missions arrive. That requires training data grounded in real trade expertise.
+
+The project is in early exploration and validation. The priority right now is scoping the minimum viable capture rig and locking the MVP trade.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-5.svg", alt: "Capture rig concept", caption: "Minimum viable capture rig schematic" },
+]} columns={1} />
