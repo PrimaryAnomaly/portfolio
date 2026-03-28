@@ -1,6 +1,6 @@
 ---
 title: "Fleet-Coord"
-description: "Decentralized coordination framework for humanoid robot teams. Two simulated Unitree G1 robots learn to cooperatively lift and carry objects using only human-compatible signals — verbal cues and force feedback — with no central controller."
+description: "Decentralized coordination for humanoid robot teams. Two simulated Unitree G1 robots learn cooperative lifting using verbal cues and force feedback, no central controller or wireless protocol required."
 date: "2026-01"
 tags: ["Reinforcement Learning", "Multi-Agent", "MuJoCo", "Robotics", "PyTorch"]
 hero: "/images/projects/placeholder-hero.svg"
@@ -9,43 +9,39 @@ github: "https://github.com/PrimaryAnomaly/fleet-coord"
 
 ## Context
 
-Most multi-robot systems depend on centralized controllers or reliable wireless communication — assumptions that break down in communication-denied environments like planetary surfaces, disaster zones, or contested infrastructure. Fleet-Coord removes both assumptions. Two simulated [Unitree G1](https://www.unitree.com/g1/) humanoid robots learn to cooperate on manipulation tasks using only signals a human could understand and produce: verbal countdown cues and force feedback through the shared object.
+Existing multi-robot coordination systems assume either a central controller or reliable wireless communication. Neither holds up in communication-denied environments (planetary surfaces, disaster zones, degraded infrastructure). Fleet-Coord drops both assumptions. Two simulated [Unitree G1](https://www.unitree.com/g1/) humanoid robots learn to cooperatively lift and carry objects using only human-compatible signals: verbal countdown cues and force feedback through the shared object.
 
-The design constraint is deliberate: a human must be able to swap in for either robot mid-task without protocol changes. This forces the coordination interface to stay legible — no binary handshakes, no wireless pings, just observable behavior.
+The core constraint is that a human must be able to swap in for either robot mid-task without changing the protocol. No binary handshakes, no wireless pings. Just observable behavior.
 
-<Gallery
-  images={[
-    { src: "/images/projects/placeholder-1.svg", alt: "Two G1 robots in MuJoCo scene", caption: "Symmetric robot placement with shared manipulation object" },
-    { src: "/images/projects/placeholder-2.svg", alt: "Training reward curves", caption: "Stage 1 reward components tracked via TensorBoard" }
-  ]}
-/>
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "Two G1 robots in MuJoCo scene", caption: "Symmetric robot placement with shared manipulation object" },
+  { src: "/images/projects/placeholder-2.svg", alt: "Training reward curves", caption: "Stage 1 reward components tracked via TensorBoard" },
+]} />
 
 ## Architecture
 
-The system is built in four layers. The **environment layer** wraps MuJoCo physics at 1000 Hz and exposes a Gymnasium interface with 202-dimensional observations per robot (joint states, object pose, hand contact forces, partner speech tokens) and 51-dimensional actions (43 joint targets plus an 8-token discrete speech output). A speech channel simulates verbal communication with 20 ms delay and 200 ms persistence — realistic constraints that prevent instant coordination.
+Four layers. The environment layer wraps MuJoCo physics at 1000 Hz behind a Gymnasium interface. Each robot gets 202-dimensional observations (joint states, object pose, hand contact forces, partner speech tokens) and outputs 51-dimensional actions (43 joint targets plus an 8-token discrete speech output). A speech channel simulates verbal communication with 20 ms delay and 200 ms persistence.
 
-The **training layer** bridges the environment to ETH Zurich's RSL-RL framework for multi-agent PPO. Both robots in each environment share rewards, encouraging cooperative behavior. A curriculum manager tracks rolling-window success rates and automatically advances training stages (approach, grip, lift, carry) once performance exceeds threshold.
+The training layer bridges the environment to ETH Zurich's RSL-RL framework for multi-agent PPO. Both robots in each environment share rewards to encourage cooperative behavior. A curriculum manager tracks rolling-window success rates and advances training stages (approach, grip, lift, carry) once performance exceeds threshold.
 
-The **teacher-student architecture** uses a privileged teacher policy (MLP with layers [256, 256, 128]) that sees partner hidden state during training. After convergence, this distills to a student policy using only observable inputs — the path to real hardware deployment.
+Training uses a teacher-student setup. The teacher policy (MLP, layers [256, 256, 128]) sees privileged partner state during training. After convergence, this distills to a student policy using only observable inputs, which is what would run on real hardware.
 
-<Gallery
-  images={[
-    { src: "/images/projects/placeholder-3.svg", alt: "System architecture diagram", caption: "Four-layer architecture: environment, training, utilities, scripts" },
-    { src: "/images/projects/placeholder-4.svg", alt: "Speech channel token flow", caption: "8-token vocabulary with delay and persistence modeling" }
-  ]}
-/>
+<Gallery images={[
+  { src: "/images/projects/placeholder-3.svg", alt: "System architecture diagram", caption: "Four-layer architecture: environment, training, utilities, scripts" },
+  { src: "/images/projects/placeholder-4.svg", alt: "Speech channel token flow", caption: "8-token vocabulary with delay and persistence modeling" },
+]} />
 
 ## Speech Channel
 
-Rather than continuous audio, robots emit discrete tokens from an 8-word vocabulary: silence, "three", "two", "one", "lift", "down", "stop", "regrip". These are sampled directly from the policy's action distribution alongside motor commands. The channel introduces a 1-step transmission delay and 10-step persistence window, meaning the partner has roughly 200 ms to register each cue before it fades.
+Robots emit discrete tokens from an 8-word vocabulary: silence, "three", "two", "one", "lift", "down", "stop", "regrip". These are sampled from the policy's action distribution alongside motor commands. The channel adds a 1-step transmission delay and 10-step persistence window, giving the partner roughly 200 ms to register each cue.
 
-This design is debuggable (replay logs show "robot A said token 4 at step 125"), composable (token sequences build natural countdown patterns), and maps cleanly to real voice commands for human-robot teaming.
+This makes the system debuggable (replay logs show exactly which token was emitted at which step), and it maps directly to real voice commands for human-robot teaming.
 
 ## Reward and Evaluation
 
-Reward shaping is config-driven through YAML files. Stage 1 rewards include dense signals for distance decrease toward the object, stable hand contact, grip duration, and penalties for falling. Each component is logged independently to TensorBoard for debugging — when success metrics showed 100% but visual inspection revealed collapsed robots with spurious contacts, per-component breakdowns identified the gap.
+Reward shaping is config-driven through YAML files. Stage 1 rewards include dense signals for distance decrease, stable hand contact, grip duration, and penalties for falling. Each component logs independently to TensorBoard for debugging.
 
-The fix hardened evaluation to require box-specific geom contact checks and verify both robots remain upright (base tilt < 0.7 rad). Success metrics now enforce structural invariants, not just contact flags.
+Early GPU runs reported 100% success, but visual inspection showed collapsed robots with spurious contacts. The fix: require box-specific geom contact checks and verify both robots remain upright (base tilt < 0.7 rad). Success metrics now enforce structural invariants, not just contact flags.
 
 | Layer | Technology |
 |---|---|
@@ -60,4 +56,4 @@ The fix hardened evaluation to require box-specific geom contact checks and veri
 
 ## Current Status
 
-Stage 1 (approach and grip) is under active training with strict evaluation metrics. Initial GPU runs exposed false-positive success rates, leading to the metric hardening described above. Next steps include warm-starting from pretrained G1 locomotion checkpoints and running controlled A/B comparisons against training from scratch. The long-term goal: fleets of humanoid robots building habitats where communication infrastructure doesn't exist yet.
+Stage 1 (approach and grip) is under active training with the hardened evaluation metrics. Next steps are warm-starting from pretrained G1 locomotion checkpoints and running a controlled comparison against training from scratch.
