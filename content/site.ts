@@ -13,11 +13,3 @@ export const siteConfig = {
   github: "PrimaryAnomaly",
   url: "https://saeyoungkim.com",
 } as const;
-
-export const navLinks = [
-  { label: "About", href: "/about" },
-  { label: "Resume", href: "/resume" },
-  { label: "Projects", href: "/projects" },
-  { label: "Skills", href: "/skills" },
-  { label: "Contact", href: "/contact" },
-] as const;

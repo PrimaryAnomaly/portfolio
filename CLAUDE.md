@@ -18,8 +18,13 @@ Next.js 16 portfolio site. TypeScript, Tailwind CSS 4, MDX via `next-mdx-remote`
 - WSL hot reload doesn't work on `/mnt/c/` paths. `webpack.watchOptions.poll` is set in `next.config.ts` but only applies when webpack is used (not Turbopack dev). Dev server must be restarted manually after file changes on WSL.
 - `package.json` scripts must use cross-platform syntax — no `ENVVAR=value command` (Unix-only). Use `next dev --turbopack` directly.
 
-## Content Architecture
+## Site Structure
 
+Two page types only:
+- `/` — single-page portfolio/resume (all content inline)
+- `/projects/[slug]` — individual project detail pages
+
+Content sources:
 - `content/site.ts` — name, title, intro, email, social links
 - `content/resume.ts` — experience, education, publications, certifications, technicalSkills
 - `content/skills.ts` — skill domains with individual skills and context

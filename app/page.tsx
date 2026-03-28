@@ -95,7 +95,7 @@ export default function Home() {
       </section>
 
       {/* ── 03 PROJECTS ── */}
-      <section className="mb-swiss-7">
+      <section id="projects" className="mb-swiss-7">
         <div className="flex items-baseline gap-swiss-3 mb-swiss-4">
           <span className="section-num">03</span>
           <h2 className="text-[0.75rem] font-semibold uppercase tracking-[0.1em]">Projects</h2>
