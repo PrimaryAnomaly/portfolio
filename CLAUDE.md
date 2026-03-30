@@ -39,3 +39,9 @@ Content sources:
 ## Resume PDF
 
 - Must exist at `public/resume.pdf` for the "PDF Resume" header link to work.
+
+## Excalidraw Skill
+
+- Render script at `~/.claude/skills/excalidraw-diagram-skill/references/render_excalidraw.py` uses **npx Playwright CLI** (not Python Playwright library)
+- Run: `python3 render_excalidraw.py <file.excalidraw>` — outputs PNG next to the source file
+- WSL prerequisite: `sudo apt-get install -y libasound2t64` (Chromium needs `libasound.so.2`; the package name `libasound2` is virtual on Ubuntu 24+)
