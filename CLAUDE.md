@@ -44,4 +44,7 @@ Content sources:
 
 - Render script at `~/.claude/skills/excalidraw-diagram-skill/references/render_excalidraw.py` uses **npx Playwright CLI** (not Python Playwright library)
 - Run: `python3 render_excalidraw.py <file.excalidraw>` — outputs PNG next to the source file
+- Use `--scale 6` for ~600 DPI output (default scale 2). Scale is applied via CSS transform on the SVG.
 - WSL prerequisite: `sudo apt-get install -y libasound2t64` (Chromium needs `libasound.so.2`; the package name `libasound2` is virtual on Ubuntu 24+)
+- Use `fontFamily: 2` (Helvetica/sans-serif) for modern look, not `fontFamily: 3` (Cascadia/monospace)
+- Use `strokeStyle: "dotted"` not `"dashed"` for region borders and short connector lines — dashed looks broken on short segments
