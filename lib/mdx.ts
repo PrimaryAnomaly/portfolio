@@ -12,6 +12,7 @@ export type ProjectFrontmatter = {
   hero?: string;
   github?: string;
   publication?: string;
+  poster?: string;
 };
 
 export type ProjectMeta = ProjectFrontmatter & {
@@ -123,6 +124,7 @@ function parseProjectFrontmatter(data: unknown, slug: string): ProjectFrontmatte
     hero: validateHero(frontmatter.hero, slug),
     github: validateHttpUrl(frontmatter.github, "github", slug),
     publication: validateHttpUrl(frontmatter.publication, "publication", slug),
+    poster: validateHero(frontmatter.poster, slug),
   };
 }
 

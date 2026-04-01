@@ -149,7 +149,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   ))}
                 </div>
               </div>
-              {(meta.github || meta.publication) && (
+              {(meta.github || meta.publication || meta.poster) && (
                 <div>
                   <span className="mono text-[0.625rem] text-swiss-gray-400 uppercase tracking-[0.1em] block mb-swiss-1">
                     Links
@@ -173,6 +173,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                         className="mono text-[0.75rem] text-swiss-black hover:text-swiss-red transition-colors duration-100"
                       >
                         Publication &rarr;
+                      </a>
+                    )}
+                    {meta.poster && (
+                      <a
+                        href={meta.poster}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mono text-[0.75rem] text-swiss-black hover:text-swiss-red transition-colors duration-100"
+                      >
+                        Conference Poster &rarr;
                       </a>
                     )}
                   </div>
