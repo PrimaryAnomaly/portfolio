@@ -3,7 +3,6 @@ title: "AMBIC Data Platform"
 description: "Full-stack web platform for biomanufacturing data: ingestion, normalization, visualization, and sharing across research teams. Handles life-critical data with provenance tracking and granular access control."
 date: "2025-02"
 tags: ["Data Platform", "React", "Supabase", "Biomanufacturing"]
-hero: "/images/projects/ambic-architecture.png"
 github: "https://github.com/PrimaryAnomaly/ambic-data-nexus"
 ---
 
@@ -14,8 +13,8 @@ Researchers at the [Advanced Mammalian Biomanufacturing Innovation Center (AMBIC
 Because this data feeds into pharmaceutical manufacturing decisions, integrity requirements are high. A normalization bug that silently drops rows or misaligns columns could lead to incorrect conclusions in a clinical context.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-1.svg", alt: "Dashboard overview", caption: "Dataset dashboard with file browser and metadata panel" },
-  { src: "/images/projects/placeholder-2.svg", alt: "File browser", caption: "Hierarchical file browser with folder nesting and dataset linking" },
+  { src: "/images/projects/placeholder-1.svg", art: "ambic-data-lake/dashboard", alt: "Dashboard overview", caption: "Dataset dashboard with file browser and metadata panel" },
+  { src: "/images/projects/placeholder-2.svg", art: "ambic-data-lake/file-browser", alt: "File browser", caption: "Hierarchical file browser with folder nesting and dataset linking" },
 ]} />
 
 ## Architecture
@@ -23,7 +22,7 @@ Because this data feeds into pharmaceutical manufacturing decisions, integrity r
 Frontend is React + TypeScript with [shadcn/ui](https://ui.shadcn.com/) and [Recharts](https://recharts.org/) for interactive visualization. Backend runs on [Supabase](https://supabase.com/): PostgreSQL for structured data, Deno Edge Functions for file operations, object storage for raw uploads.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-3.svg", alt: "Architecture diagram", caption: "System architecture: React frontend, Supabase backend, Edge Functions" },
+  { src: "/images/projects/placeholder-3.svg", art: "ambic-data-lake/architecture", alt: "Architecture diagram", caption: "System architecture: React frontend, Supabase backend, Edge Functions" },
 ]} columns={1} />
 
 ## Stack
@@ -46,8 +45,8 @@ Frontend is React + TypeScript with [shadcn/ui](https://ui.shadcn.com/) and [Rec
 - **Hierarchical file management.** Folder nesting, dataset linking, and three-tier access control (owner, editor, viewer). The Supabase RLS policies for nested storage paths required careful attention, particularly around the `%/content/%` path pattern matching.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-4.svg", alt: "Normalization workflow", caption: "Column mapping from source schema to standardized target" },
-  { src: "/images/projects/placeholder-5.svg", alt: "Virtualized table", caption: "2D virtualized table rendering a 3,000+ column dataset" },
+  { src: "/images/projects/placeholder-4.svg", art: "ambic-data-lake/column-mapping", alt: "Normalization workflow", caption: "Column mapping from source schema to standardized target" },
+  { src: "/images/projects/placeholder-5.svg", art: "ambic-data-lake/virtual-table", alt: "Virtualized table", caption: "2D virtualized table rendering a 3,000+ column dataset" },
 ]} />
 
 ## Data Visualization
@@ -55,7 +54,7 @@ Frontend is React + TypeScript with [shadcn/ui](https://ui.shadcn.com/) and [Rec
 Interactive time series charts, data exploration dashboards, annotations, and dataset sharing with access control. The upload and normalization flow was designed to match how researchers already think about their experiments, not how the underlying database models the data.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-6.svg", alt: "Time series chart", caption: "Interactive time series visualization with Recharts" },
-  { src: "/images/projects/placeholder-7.svg", alt: "Analytics view", caption: "Data analytics and exploration interface" },
-  { src: "/images/projects/placeholder-8.svg", alt: "Sharing interface", caption: "Dataset sharing and access control panel" },
+  { src: "/images/projects/placeholder-6.svg", art: "ambic-data-lake/time-series", alt: "Time series chart", caption: "Interactive time series visualization with Recharts" },
+  { src: "/images/projects/placeholder-7.svg", art: "ambic-data-lake/analytics", alt: "Analytics view", caption: "Data analytics and exploration interface" },
+  { src: "/images/projects/placeholder-8.svg", art: "ambic-data-lake/sharing", alt: "Sharing interface", caption: "Dataset sharing and access control panel" },
 ]} columns={3} />

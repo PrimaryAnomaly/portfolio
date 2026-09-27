@@ -2,10 +2,20 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="max-w-[1200px] mx-auto px-swiss-5 py-swiss-10">
-      <h1 className="text-[2rem] font-bold mb-swiss-2">404</h1>
-      <p className="text-[0.875rem] text-swiss-gray-600 mb-swiss-5">Page not found.</p>
-      <Link href="/" className="mono text-[0.75rem] text-swiss-black hover:text-swiss-red">&larr; Back</Link>
-    </div>
+    <main className="mx-auto grid min-h-dvh max-w-[1320px] content-center px-5 md:px-8">
+      <p className="mono tnum text-[0.8125rem] text-signal-ink">404</p>
+      <h1 className="mt-3 text-[clamp(3rem,10vw,8rem)] font-semibold leading-[0.9] tracking-[-0.045em] narrow">
+        <span className="line-mask intro-rise">
+          <span>Lost signal.</span>
+        </span>
+      </h1>
+      <p className="intro-fade mt-6 max-w-[44ch] text-[1.0625rem] text-ink-2">This page doesn&rsquo;t exist. It may have moved, or the link is wrong.</p>
+      <Link href="/" className="press group intro-fade mt-8 inline-flex h-12 w-fit items-center gap-2.5 rounded-full bg-ink px-6 font-medium text-paper">
+        <span className="nudge rotate-180" aria-hidden>
+          →
+        </span>
+        Back to the portfolio
+      </Link>
+    </main>
   );
 }

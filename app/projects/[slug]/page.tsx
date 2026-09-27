@@ -1,59 +1,73 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { Gallery } from "@/components/mdx/Gallery";
 import { TechDetails } from "@/components/mdx/TechDetails";
-import { getAllProjectSlugs, getProjectBySlug } from "@/lib/mdx";
+import { getAllProjects, getAllProjectSlugs, getProjectBySlug } from "@/lib/mdx";
 import { siteConfig } from "@/content/site";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { ProjectCover } from "@/components/site/ProjectCover";
+import { diagrams } from "@/components/diagrams";
+import { DiagramFrame } from "@/components/diagrams/DiagramFrame";
 
 const mdxComponents = {
   Gallery,
   TechDetails,
   h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h2
-      className="text-[1.125rem] font-bold uppercase tracking-[0.06em] mt-swiss-8 mb-swiss-4 pt-swiss-5 border-t border-swiss-gray-200"
+      className="mb-5 mt-16 border-t border-rule pt-8 text-[clamp(1.5rem,2.4vw,1.875rem)] font-semibold tracking-[-0.03em] first:mt-0"
       {...props}
     />
   ),
   h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h3 className="text-[0.9375rem] font-bold tracking-[-0.01em] mt-swiss-5 mb-swiss-2" {...props} />
+    <h3 className="mb-3 mt-10 text-[1.1875rem] font-semibold tracking-[-0.015em]" {...props} />
   ),
   p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p className="text-[0.875rem] leading-[1.8] text-swiss-gray-600 mb-swiss-4 max-w-[60ch]" {...props} />
+    <p className="mb-5 max-w-[68ch] text-[1.0625rem] leading-[1.75] text-ink-2 [&_strong]:font-semibold [&_strong]:text-ink" {...props} />
   ),
-  ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
-    <ul className="list-none space-y-swiss-2 mb-swiss-5" {...props} />
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => <ul className="mb-6 max-w-[68ch] space-y-2.5" {...props} />,
+  ol: (props: React.HTMLAttributes<HTMLOListElement>) => (
+    <ol className="mb-6 max-w-[68ch] list-decimal space-y-2.5 pl-5 marker:text-ink-3" {...props} />
   ),
   li: (props: React.HTMLAttributes<HTMLLIElement>) => (
-    <li className="text-[0.875rem] leading-[1.7] text-swiss-gray-600 pl-swiss-4 border-l-2 border-swiss-gray-200" {...props} />
+    <li
+      className="relative pl-5 text-[1.0625rem] leading-[1.7] text-ink-2 before:absolute before:left-0 before:top-[0.8em] before:h-px before:w-2.5 before:bg-ink-3 [&_strong]:font-semibold [&_strong]:text-ink"
+      {...props}
+    />
   ),
   a: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-    <a className="text-swiss-red hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
+    <a
+      className="text-ink underline decoration-signal decoration-1 underline-offset-[3px] transition-colors hover:text-signal-ink"
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  ),
+  code: (props: React.HTMLAttributes<HTMLElement>) => (
+    <code className="mono rounded-[3px] bg-tint px-1.5 py-0.5 text-[0.875em]" {...props} />
   ),
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
-    <div className="my-swiss-5 border border-swiss-gray-200 overflow-x-auto">
-      <table className="w-full border-collapse mono text-[0.8125rem]" {...props} />
+    <div className="my-8 overflow-x-auto border-y border-rule">
+      <table className="w-full border-collapse text-[0.9375rem]" {...props} />
     </div>
   ),
-  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-    <thead className="bg-swiss-gray-50" {...props} />
-  ),
   th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <th
-      className="text-left text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-swiss-gray-500 px-swiss-4 py-swiss-3 border-b border-swiss-gray-200"
-      {...props}
-    />
+    <th className="border-b border-rule-strong px-4 py-3 text-left text-[0.8125rem] font-medium text-ink-3 first:pl-0" {...props} />
   ),
   td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <td
-      className="px-swiss-4 py-swiss-3 border-b border-swiss-gray-100 text-swiss-gray-700 leading-[1.5]"
-      {...props}
-    />
+    <td className="tnum border-b border-rule px-4 py-3 align-top leading-[1.5] text-ink-2 first:pl-0 first:text-ink" {...props} />
   ),
 };
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+function formatDate(d: string) {
+  const [y, m] = d.split("-");
+  return `${MONTHS[Number(m) - 1]} ${y}`;
+}
+
+const i = (n: number) => ({ "--i": n }) as React.CSSProperties;
 
 export function generateStaticParams() {
   return getAllProjectSlugs().map((slug) => ({ slug }));
@@ -79,139 +93,119 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   }
 
   const { meta, content } = getProjectBySlug(slug);
+  const Diagram = diagrams[slug];
+  const all = getAllProjects();
+  const idx = all.findIndex((p) => p.slug === slug);
+  const next = all[(idx + 1) % all.length];
+
+  const links = [
+    meta.github && { href: meta.github, label: "Source on GitHub" },
+    meta.publication && { href: meta.publication, label: "Publication" },
+    meta.poster && { href: meta.poster, label: "Conference poster (PDF)" },
+  ].filter(Boolean) as { href: string; label: string }[];
 
   return (
-    <div className="min-h-screen">
-      {/* ── NAV BAR ── */}
-      <nav className="max-w-[1200px] mx-auto px-swiss-5 py-swiss-4 flex justify-between items-baseline">
-        <Link
-          href="/"
-          className="mono text-[0.75rem] text-swiss-gray-400 hover:text-swiss-black transition-colors duration-100"
-        >
-          &larr; {siteConfig.name}
-        </Link>
-        <div className="flex gap-swiss-4 mono text-[0.6875rem] text-swiss-gray-300 uppercase tracking-[0.08em]">
-          {meta.tags.map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
-        </div>
-      </nav>
+    <>
+      <div aria-hidden className="scroll-progress fixed inset-x-0 top-0 z-50 h-[2px] bg-signal" />
+      <SiteHeader name={siteConfig.name} links={[{ href: "/#work", label: "All work" }]} />
 
-      {/* ── HERO IMAGE ── */}
-      {meta.hero && (
-        <div className="w-full max-w-[1200px] mx-auto px-swiss-5 mb-swiss-6">
-          <div className="relative w-full aspect-[16/9] bg-swiss-gray-50 border border-swiss-gray-200 overflow-hidden">
-            <Image
-              src={meta.hero}
-              alt={meta.title}
-              fill
-              className="object-cover"
-              sizes="100vw"
-              priority
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ── TITLE BLOCK ── */}
-      <div className="max-w-[1200px] mx-auto px-swiss-5 mb-swiss-7">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-swiss-6 items-start">
-          <div>
-            <h1 className="text-[2rem] font-bold tracking-[-0.03em] leading-[1.1] mb-swiss-3">
-              {meta.title}
+      <main className="mx-auto max-w-[1320px] px-5 pt-28 md:px-8 md:pt-36">
+        {/* ── TITLE ── */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8">
+          <div className="md:col-span-8">
+            <p className="intro-fade flex items-center gap-3 text-[0.875rem] text-ink-2" style={i(0)}>
+              <Link href="/#work" className="u-link hover:text-ink">
+                Selected work
+              </Link>
+              <span className="h-3 w-px bg-rule-strong" aria-hidden />
+              <span className="mono tnum">
+                {String(idx + 1).padStart(2, "0")} / {String(all.length).padStart(2, "0")}
+              </span>
+            </p>
+            <h1 className="mt-6 text-[clamp(2.75rem,7.5vw,6.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] narrow">
+              <span className="line-mask intro-rise" style={i(0)}>
+                <span>{meta.title}</span>
+              </span>
             </h1>
-            <p className="text-[0.9375rem] text-swiss-gray-500 leading-[1.6] max-w-[55ch]">
+            <p className="intro-fade mt-7 max-w-[58ch] text-[clamp(1.0625rem,1.5vw,1.25rem)] leading-[1.6] text-ink-2" style={i(1)}>
               {meta.description}
             </p>
           </div>
 
-          {/* ── META SIDEBAR ── */}
-          <div className="border-t border-swiss-gray-200 pt-swiss-4 lg:border-t-0 lg:border-l lg:pl-swiss-6 lg:pt-0">
-            <div className="space-y-swiss-3">
-              <div>
-                <span className="mono text-[0.625rem] text-swiss-gray-400 uppercase tracking-[0.1em] block mb-swiss-1">
-                  Date
-                </span>
-                <span className="text-[0.8125rem] text-swiss-gray-700">{meta.date}</span>
-              </div>
-              <div>
-                <span className="mono text-[0.625rem] text-swiss-gray-400 uppercase tracking-[0.1em] block mb-swiss-1">
-                  Tags
-                </span>
-                <div className="flex flex-wrap gap-swiss-2">
-                  {meta.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="mono text-[0.6875rem] px-swiss-2 py-[2px] border border-swiss-gray-200 text-swiss-gray-600"
-                    >
-                      {tag}
-                    </span>
+          <dl className="intro-fade grid grid-cols-2 content-end gap-x-6 gap-y-6 self-end text-[0.9375rem] md:col-span-4 md:grid-cols-1" style={i(2)}>
+            <div className="border-t border-rule pt-3">
+              <dt className="text-[0.8125rem] text-ink-3">Date</dt>
+              <dd className="mt-1">{formatDate(meta.date)}</dd>
+            </div>
+            <div className="border-t border-rule pt-3">
+              <dt className="text-[0.8125rem] text-ink-3">Disciplines</dt>
+              <dd className="mt-1">{meta.tags.join(", ")}</dd>
+            </div>
+            {links.length > 0 && (
+              <div className="col-span-2 border-t border-rule pt-3 md:col-span-1">
+                <dt className="text-[0.8125rem] text-ink-3">Links</dt>
+                <dd className="mt-1 flex flex-col items-start gap-1">
+                  {links.map((l) => (
+                    <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-1.5">
+                      <span className="u-link">{l.label}</span>
+                      <span className="nudge nudge-up text-signal" aria-hidden>
+                        ↗
+                      </span>
+                    </a>
                   ))}
-                </div>
+                </dd>
               </div>
-              {(meta.github || meta.publication || meta.poster) && (
-                <div>
-                  <span className="mono text-[0.625rem] text-swiss-gray-400 uppercase tracking-[0.1em] block mb-swiss-1">
-                    Links
-                  </span>
-                  <div className="flex flex-col gap-swiss-1">
-                    {meta.github && (
-                      <a
-                        href={meta.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mono text-[0.75rem] text-swiss-black hover:text-swiss-red transition-colors duration-100"
-                      >
-                        GitHub &rarr;
-                      </a>
-                    )}
-                    {meta.publication && (
-                      <a
-                        href={meta.publication}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mono text-[0.75rem] text-swiss-black hover:text-swiss-red transition-colors duration-100"
-                      >
-                        Publication &rarr;
-                      </a>
-                    )}
-                    {meta.poster && (
-                      <a
-                        href={meta.poster}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mono text-[0.75rem] text-swiss-black hover:text-swiss-red transition-colors duration-100"
-                      >
-                        Conference Poster &rarr;
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
+            )}
+          </dl>
+        </div>
+
+        {/* ── HERO ── */}
+        {Diagram ? (
+          <figure className="mt-14 border border-rule bg-plate md:mt-20">
+            <div className="overflow-x-auto px-5 py-8 md:px-12 md:py-14">
+              <DiagramFrame className="min-w-[760px]">
+                <Diagram />
+              </DiagramFrame>
+            </div>
+          </figure>
+        ) : (
+          <div data-reveal="clip" className="relative mt-14 aspect-[16/10] overflow-hidden border border-rule bg-plate md:mt-20 md:aspect-[16/9]">
+            <div className="clip-inner absolute inset-0">
+              <ProjectCover slug={slug} src={meta.hero} alt={meta.title} sizes="(max-width: 1320px) 100vw, 1320px" priority />
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* ── MDX CONTENT ── */}
-      <div className="max-w-[1200px] mx-auto px-swiss-5">
-        <MDXRemote source={content} components={mdxComponents} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
-      </div>
+        {/* ── BODY ── */}
+        <article className="grid grid-cols-1 gap-8 pt-16 md:grid-cols-12 md:pt-24">
+          <div className="md:col-span-10 md:col-start-2 lg:col-span-8 lg:col-start-3">
+            <MDXRemote source={content} components={mdxComponents} options={{ blockJS: false, blockDangerousJS: true, mdxOptions: { remarkPlugins: [remarkGfm] } }} />
+          </div>
+        </article>
 
-      {/* ── FOOTER NAV ── */}
-      <footer className="max-w-[1200px] mx-auto px-swiss-5 mt-swiss-8 pb-swiss-7">
-        <div className="border-t border-swiss-gray-200 pt-swiss-5 flex justify-between items-center">
-          <Link
-            href="/#projects"
-            className="mono text-[0.75rem] text-swiss-gray-400 hover:text-swiss-red transition-colors duration-100"
-          >
-            &larr; All projects
+        {/* ── NEXT ── */}
+        {next && next.slug !== slug && (
+          <Link href={`/projects/${next.slug}`} className="group mt-28 block border-t border-rule pb-20 pt-10 md:mt-36">
+            <div className="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
+              <div className="md:col-span-7">
+                <p className="text-[0.875rem] text-ink-3">Next project</p>
+                <p className="mt-3 flex items-baseline gap-4 text-[clamp(2.25rem,6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.045em] narrow">
+                  <span className="u-link">{next.title}</span>
+                  <span className="nudge text-signal" aria-hidden>
+                    →
+                  </span>
+                </p>
+                <p className="mt-4 line-clamp-2 max-w-[52ch] text-ink-2">{next.description}</p>
+              </div>
+              <div className="relative aspect-[16/10] overflow-hidden border border-rule bg-plate md:col-span-5">
+                <div className="card-media absolute inset-0">
+                  <ProjectCover slug={next.slug} src={next.hero} alt={next.title} sizes="(max-width: 768px) 100vw, 40vw" />
+                </div>
+              </div>
+            </div>
           </Link>
-          <span className="mono text-[0.625rem] text-swiss-gray-300">
-            {siteConfig.name}
-          </span>
-        </div>
-      </footer>
-    </div>
+        )}
+      </main>
+    </>
   );
 }

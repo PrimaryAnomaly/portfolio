@@ -2,26 +2,51 @@
 
 import { useId, useState } from "react";
 
-export function TechDetails({ title = "Technical Details", children }: { title?: string; children: React.ReactNode }) {
+/**
+ * Disclosure. Height animates via grid-template-rows 0fr → 1fr (the one
+ * sanctioned layout animation: accordions); content fades with it. The
+ * plus rotates into a minus-like cross using transform only.
+ */
+export function TechDetails({ title = "Technical details", children }: { title?: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
 
   return (
-    <div className="my-swiss-6 border border-swiss-gray-200">
+    <div className="my-10 border-y border-rule">
       <button
-        onClick={() => setOpen(!open)}
+        type="button"
+        onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-controls={contentId}
-        className="w-full flex justify-between items-center p-swiss-4 text-left font-semibold text-[0.875rem] uppercase tracking-[0.1em] cursor-pointer hover:bg-swiss-gray-50 transition-colors duration-100"
+        className="group flex w-full cursor-pointer items-center justify-between gap-4 py-5 text-left text-[1.0625rem] font-semibold tracking-[-0.01em]"
       >
-        {title}
-        <span className="text-swiss-gray-400">{open ? "\u2212" : "+"}</span>
+        <span className="u-link">{title}</span>
+        <span
+          aria-hidden
+          className="relative grid size-8 shrink-0 place-items-center rounded-full border border-rule-strong transition-transform duration-300 ease-[var(--ease-out)] group-active:scale-95"
+        >
+          <span className="absolute h-px w-3 bg-ink" />
+          <span
+            className="absolute h-3 w-px bg-ink transition-transform duration-300 ease-[var(--ease-out)]"
+            style={{ transform: open ? "scaleY(0)" : "scaleY(1)" }}
+          />
+        </span>
       </button>
-      {open && (
-        <div id={contentId} className="p-swiss-6 pt-0 border-t border-swiss-gray-200">
-          {children}
+      <div
+        id={contentId}
+        className="grid transition-[grid-template-rows] duration-500 ease-[var(--ease-out)] motion-reduce:transition-none"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+        inert={!open}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div
+            className="pb-6 transition-[opacity,transform] duration-500 ease-[var(--ease-out)]"
+            style={{ opacity: open ? 1 : 0, transform: open ? "none" : "translateY(-6px)" }}
+          >
+            {children}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

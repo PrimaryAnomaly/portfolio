@@ -1,22 +1,66 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", "Courier New", monospace;
+/* ─────────────────────────────────────────────────────────────
+   Tokens
+   Paper / ink with one signal colour: International Orange,
+   the aerospace safety colour. Orange is for marks, not text —
+   text-weight orange uses --signal-ink for contrast.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --paper: #f5f5f3;
+  --plate: #ffffff;
+  --ink: #111214;
+  --ink-2: #4d5056;
+  --ink-3: #6e7177;
+  --rule: #deded9;
+  --rule-strong: #c9c9c3;
+  --signal: #ff4f00;
+  --signal-ink: #c23a00;
+  --tint: rgba(17, 18, 20, 0.035);
 
-  --color-swiss-black: #000000;
-  --color-swiss-white: #ffffff;
-  --color-swiss-red: #ff0000;
-  --color-swiss-gray-50: #fafafa;
-  --color-swiss-gray-100: #f5f5f5;
-  --color-swiss-gray-200: #e5e5e5;
-  --color-swiss-gray-300: #d4d4d4;
-  --color-swiss-gray-400: #a3a3a3;
-  --color-swiss-gray-500: #737373;
-  --color-swiss-gray-600: #525252;
-  --color-swiss-gray-700: #404040;
-  --color-swiss-gray-800: #262626;
-  --color-swiss-gray-900: #171717;
+  /* Motion — Emil Kowalski curves */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0c0d0f;
+    --plate: #141518;
+    --ink: #ededea;
+    --ink-2: #a6a8ad;
+    --ink-3: #85888e;
+    --rule: #25272b;
+    --rule-strong: #34363b;
+    --signal: #ff5a14;
+    --signal-ink: #ff7a3d;
+    --tint: rgba(237, 237, 234, 0.04);
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-instrument), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-paper: var(--paper);
+  --color-plate: var(--plate);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-tint: var(--tint);
+
+  /* legacy aliases kept so older markup still resolves */
+  --color-swiss-black: var(--ink);
+  --color-swiss-red: var(--signal-ink);
 
   --spacing-swiss-1: 4px;
   --spacing-swiss-2: 8px;
@@ -28,60 +72,242 @@
   --spacing-swiss-8: 64px;
   --spacing-swiss-9: 96px;
   --spacing-swiss-10: 128px;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-* { box-sizing: border-box; }
+@layer base {
+/* ─── Base ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: 88px;
+}
+
+/* Lenis owns scrolling when active */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
 
 body {
   font-family: var(--font-sans);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: #000;
-  background: #fff;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
+::selection { background: var(--signal); color: #fff; }
 
-a { text-decoration: none; color: inherit; }
-a:hover { color: #ff0000; }
+h1, h2, h3, h4 { text-wrap: balance; letter-spacing: -0.02em; line-height: 1.08; }
+p, li { text-wrap: pretty; }
 
-:where(a, button, [role="button"], input, select, textarea):focus-visible {
-  outline: 2px solid #ff0000;
+a { color: inherit; text-decoration: none; }
+
+:where(a, button, [role="button"], summary):focus-visible {
+  outline: 2px solid var(--signal);
   outline-offset: 3px;
+  border-radius: 2px;
 }
 
-/* Section dividers */
-.section-border { border-top: 2px solid #000; }
-
-/* Dense table rows */
-.data-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 16px;
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e5e5;
-  align-items: baseline;
-}
-
-.data-row:hover { background: #fafafa; }
-
-/* Section number accent */
-.section-num {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: #ff0000;
-  letter-spacing: 0.05em;
-}
-
-/* Mono labels */
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
+  font-feature-settings: "zero";
+  letter-spacing: 0;
+}
+.tnum { font-variant-numeric: tabular-nums; }
+
+.wide { font-stretch: 100%; }
+.narrow { font-stretch: 75%; }
+}
+
+@layer components {
+/* ─────────────────────────────────────────────────────────────
+   Motion primitives
+   Only transform / opacity / clip-path. Everything one-shot or
+   paused off-screen. Reduced motion keeps fades, drops travel.
+   ───────────────────────────────────────────────────────────── */
+
+/* Line mask: parent clips, child rises from its own height */
+.line-mask { display: block; overflow: hidden; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.line-mask > span { display: block; }
+
+@keyframes rise {
+  from { transform: translate3d(0, 105%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Page-load choreography (hero). One orchestrated moment. */
+.intro-rise > span {
+  animation: rise 1100ms var(--ease-expo) both;
+  animation-delay: calc(120ms + var(--i, 0) * 90ms);
+}
+.intro-fade {
+  animation: fade-up 900ms var(--ease-out) both;
+  animation-delay: calc(420ms + var(--i, 0) * 70ms);
+}
+
+/* Scroll reveal, driven by <Reveal> toggling data-in once */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 800ms var(--ease-out),
+    transform 1000ms var(--ease-expo);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+.js [data-reveal][data-in] { opacity: 1; transform: none; }
+
+.js [data-reveal="mask"] { opacity: 1; transform: none; }
+.js [data-reveal="mask"] .line-mask > span {
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1000ms var(--ease-expo);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+.js [data-reveal="mask"][data-in] .line-mask > span { transform: none; }
+
+.js [data-reveal="clip"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1100ms var(--ease-in-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.js [data-reveal="clip"][data-in] { clip-path: inset(0 0 0 0); }
+.js [data-reveal="clip"] .clip-inner {
+  transform: scale(1.12);
+  transition: transform 1600ms var(--ease-expo);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.js [data-reveal="clip"][data-in] .clip-inner { transform: none; }
+
+/* Link underline: scaleX from the leading edge, retracts to the trailing edge */
+.u-link {
+  position: relative;
+  display: inline-block;
+}
+.u-link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 450ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .u-link:hover::after { transform: scaleX(1); transform-origin: left center; }
+}
+.u-link:focus-visible::after { transform: scaleX(1); }
+
+/* Anything pressable */
+.press { transition: transform 160ms var(--ease-out), opacity 200ms ease, background-color 200ms ease, color 200ms ease; }
+.press:active { transform: scale(0.97); }
+
+/* Arrow that nudges on parent hover */
+.nudge { display: inline-block; transition: transform 400ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .nudge { transform: translate3d(4px, 0, 0); }
+  .group:hover .nudge-up { transform: translate3d(3px, -3px, 0); }
+}
+
+/* Project card media */
+.card-media { transition: transform 900ms var(--ease-expo); }
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .card-media { transform: scale(1.035); }
+}
+
+/* Scroll-linked progress, compositor only, progressive enhancement */
+.scroll-progress {
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root block);
+  }
+  .rail-fill {
+    transform-origin: top center;
+    animation: grow-y linear both;
+    animation-timeline: view(block);
+    animation-range: cover 20% cover 65%;
+  }
+}
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+/* Diagrams (components/diagrams). Draw-in once, then ambient pulses. */
+.js [data-reveal="diagram"] { opacity: 1; transform: none; }
+.js .dg-n { opacity: 0; transition: opacity 700ms var(--ease-out); transition-delay: calc(var(--d, 0) * 1ms); }
+.js .dg-e {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--dur, 700ms) var(--ease-in-out);
+  transition-delay: calc(var(--d, 0) * 1ms);
+}
+.js .dg-h { opacity: 0; transition: opacity 250ms var(--ease-out); transition-delay: calc(var(--d, 0) * 1ms); }
+.js .dg-pulse { opacity: 0; transition: opacity 800ms ease 2200ms; }
+.js [data-in] .dg-n, .js [data-in] .dg-h, .js [data-in] .dg-pulse { opacity: 1; }
+.js [data-in] .dg-e { stroke-dashoffset: 0; }
+
+/* Orbit diagram */
+.orbit-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2200ms var(--ease-in-out) 700ms forwards;
+}
+.orbit-ring { animation: fade 1200ms var(--ease-out) both; animation-delay: calc(200ms + var(--i, 0) * 120ms); }
+.orbit-spin { animation: spin linear infinite; will-change: transform; }
+.orbit-paused .orbit-spin { animation-play-state: paused; }
+.orbit-pop { transform-box: fill-box; transform-origin: center; animation: pop 600ms var(--ease-out) 2700ms both; }
+
+/* Page enter (template.tsx) */
+.page-enter { animation: page-in 700ms var(--ease-out) backwards; }
+/* fill: backwards, and ends at transform: none, so the wrapper never
+   becomes a containing block for the fixed header once settled */
+@keyframes page-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: none; }
+}
+}
+
+@layer components {
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .intro-rise > span,
+  .page-enter,
+  .intro-fade { animation: fade 400ms ease both; animation-delay: 0ms; }
+  .js [data-reveal], .js [data-reveal="mask"] .line-mask > span, .js [data-reveal="clip"] .clip-inner {
+    transform: none !important;
+    transition: opacity 400ms ease;
+  }
+  .js [data-reveal="clip"] { clip-path: none; opacity: 0; transition: opacity 400ms ease; }
+  .js [data-reveal="clip"][data-in] { opacity: 1; }
+  .orbit-draw { animation: none; stroke-dashoffset: 0; }
+  .orbit-spin { animation: none; }
+  .orbit-pop { animation: fade 400ms ease both; }
+  .card-media, .nudge { transition: none; }
+  .js .dg-e { stroke-dashoffset: 0; transition: none; }
+  .dg-pulse { display: none; }
+}
 }

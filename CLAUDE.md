@@ -2,7 +2,26 @@
 
 ## Project
 
-Next.js 16 portfolio site. TypeScript, Tailwind CSS 4, MDX via `next-mdx-remote`. Swiss/brutalist design system.
+Next.js 16 portfolio site. TypeScript, Tailwind CSS 4, MDX via `next-mdx-remote`. Swiss editorial design system with one signal colour (International Orange).
+
+## Design system
+
+- Tokens live as CSS variables in `app/globals.css` (`--paper`, `--ink`, `--ink-2/3`, `--rule`, `--signal`, `--signal-ink`) with a dark-mode set under `prefers-color-scheme`. Use the Tailwind names (`bg-paper`, `text-ink-2`, `border-rule`, `bg-signal`…), never raw hex.
+- `--signal` is for marks (dots, rules, arcs). Orange text uses `text-signal-ink` for contrast.
+- Type: Instrument Sans (variable `wdth` axis; `.narrow` = 75% width for display type) + IBM Plex Mono for numeric data only.
+- Base element rules are in `@layer base` and motion classes in `@layer components`, so Tailwind utilities always win. Don't add unlayered element selectors — they override utilities.
+- Design/motion skills are vendored in `.claude/skills/` (Emil Kowalski, ui-skills, frontend-design). Follow them for any UI or animation change.
+
+## Motion (60fps rules)
+
+- Animate only `transform`, `opacity`, `clip-path`. Easing tokens: `--ease-out`, `--ease-in-out`, `--ease-drawer`, `--ease-expo`.
+- Hero load choreography: `.line-mask` + `.intro-rise` (masked rise) and `.intro-fade`, staggered with a `--i` style var.
+- Scroll reveals: add `data-reveal` (fade-up), `data-reveal="mask"` (wrap text in `.line-mask > span`) or `data-reveal="clip"` (with a `.clip-inner` child). `RevealObserver` (one IntersectionObserver) sets `data-in` once. Clip reveals are observed via their parent, because Chrome treats a fully clipped target as non-intersecting.
+- Reveal styles are scoped under `html.js` so content stays visible without JS.
+- Lenis (`SmoothScroll`) provides inertial wheel scrolling; disabled for reduced motion; touch stays native. Same-page `#hash` links must be plain `<a>` so Lenis can glide to them.
+- Scroll-linked effects (reading progress, experience rail) use CSS `animation-timeline`, never scroll listeners.
+- Continuous loops (orbit diagram) pause off-screen via IntersectionObserver. Every animation has a `prefers-reduced-motion` fallback.
+- `app/template.tsx` fades pages in with `fill-mode: backwards` ending at `transform: none` — a lingering transform would break the fixed header.
 
 ## Build
 
@@ -28,13 +47,22 @@ Content sources:
 - `content/site.ts` — name, title, intro, email, social links
 - `content/resume.ts` — experience, education, publications, certifications, technicalSkills
 - `content/skills.ts` — skill domains with individual skills and context
-- `content/projects/*.mdx` — project write-ups with frontmatter (title, description, date, tags, hero)
+- `content/projects/*.mdx` — project write-ups with frontmatter (title, description, date, tags; optional github, publication, poster)
 - Section order on home page: Skills & Certifications (01) → Experience (02) → Projects (03) → Education (04) → Publications (05)
 
 ## MDX Gotchas
 
-- Gallery component receives `images` prop from MDX inline JSX. In Turbopack dev mode, complex inline array props may arrive as `undefined`. Gallery has a null check + string fallback to handle this. Production builds work fine.
+- next-mdx-remote v6 strips JS expressions from MDX by default (`blockJS`). The project page passes `blockJS: false, blockDangerousJS: true` so `<Gallery images={[...]} />` props survive.
+- Gallery has a null check + string fallback for `images`. Missing or `placeholder` images render a designed "photo to come" plate, and placeholder project heroes render a per-project SVG motif (`components/site/ProjectCover.tsx`).
 - Place project images in `public/images/projects/`. Reference as `/images/projects/filename.ext`.
+
+## Diagrams, covers and illustrations (pure SVG)
+
+- All artwork is React SVG drawn with `components/diagrams/kit.tsx` in site tokens, so it follows light/dark mode. No raster diagrams.
+- Architecture diagrams: `components/diagrams/<Name>.tsx`, registered by slug in `components/diagrams/index.tsx`; they become the project-page hero.
+- Card covers: `components/covers/<slug>.tsx` (400×300 `<Art>` boards), registered in `components/covers/index.ts`.
+- Gallery stand-ins: `components/illustrations/<slug>.tsx`, referenced from MDX via `art: "<slug>/<name>"` on a Gallery image. A real file at `src` (not a placeholder) always wins; illustrations carry an "Illustration" tag.
+- Rules: every edge starts and ends on an element (node, bus, junction dot, rule); grey outline = component, orange = the one story path and where it lands, no decorative solid fills; never imply results or numbers not stated in the MDX; one calm SMIL ambient loop per piece inside `.dg-pulse` (paused off-screen by `DiagramFrame`).
 
 ## Resume PDF
 

@@ -3,7 +3,6 @@ title: "Lyophilization Mechanistic Model"
 description: "First-principles ODE simulator for freeze-drying LNP/mRNA formulations. Nine coupled state variables across four process phases, with a batch driver that generates synthetic datasets for MSPC and ML pipelines."
 date: "2025-01"
 tags: ["Simulation", "ODE Modeling", "Biopharma", "Python"]
-hero: "/images/projects/placeholder-hero.svg"
 github: "https://github.com/YoonLabUML/lyo-mech-model"
 ---
 
@@ -14,8 +13,8 @@ Lyophilization is the process that stabilizes mRNA vaccines for storage and tran
 This project is a mechanistic simulator grounded in heat transfer, mass transfer, and LNP degradation kinetics. Developed at the [University of Massachusetts Lowell](https://www.uml.edu/engineering/chemical/) Department of Chemical Engineering.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-1.svg", alt: "State trajectories", caption: "Nine state variables tracked through freeze, anneal, primary dry, secondary dry" },
-  { src: "/images/projects/placeholder-2.svg", alt: "Phase transitions", caption: "Automatic phase transition detection across four process phases" },
+  { src: "/images/projects/placeholder-1.svg", art: "lyo-mech-model/trajectories", alt: "State trajectories", caption: "Nine state variables tracked through freeze, anneal, primary dry, secondary dry" },
+  { src: "/images/projects/placeholder-2.svg", art: "lyo-mech-model/transitions", alt: "Phase transitions", caption: "Automatic phase transition detection across four process phases" },
 ]} />
 
 ## Model
@@ -29,8 +28,8 @@ The core is a 9-state ODE system: product temperature (Tp), ice front position (
 These are mechanistic relationships derived from the underlying chemistry, not empirical curve fits.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-3.svg", alt: "LNP dynamics", caption: "LNP-specific state evolution: EE leakage, RIN degradation, particle aggregation" },
-  { src: "/images/projects/placeholder-4.svg", alt: "Phase-aware behavior", caption: "Phase-dependent physics: sublimation suppressed during freeze, desorption active in secondary dry" },
+  { src: "/images/projects/placeholder-3.svg", art: "lyo-mech-model/lnp", alt: "LNP dynamics", caption: "LNP-specific state evolution: EE leakage, RIN degradation, particle aggregation" },
+  { src: "/images/projects/placeholder-4.svg", art: "lyo-mech-model/physics", alt: "Phase-aware behavior", caption: "Phase-dependent physics: sublimation suppressed during freeze, desorption active in secondary dry" },
 ]} />
 
 ## Specifications
@@ -53,8 +52,8 @@ A batch driver wraps the ODE kernel with recipe parsing from Excel templates (ma
 All parameters resolve from a single `config.yaml`. Missing parameters raise explicit errors at startup. This was a deliberate choice after earlier versions had inconsistent defaults across modules (e.g., `E_leak` defaulting to 40,000 J/mol in one file and 45,000 in another).
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-5.svg", alt: "Synthetic batches", caption: "Multi-batch synthetic dataset with realistic vial-to-vial variation" },
-  { src: "/images/projects/placeholder-6.svg", alt: "CQA predictions", caption: "Predicted vs target quality attributes across batch runs" },
+  { src: "/images/projects/placeholder-5.svg", art: "lyo-mech-model/batches", alt: "Synthetic batches", caption: "Multi-batch synthetic dataset with realistic vial-to-vial variation" },
+  { src: "/images/projects/placeholder-6.svg", art: "lyo-mech-model/parity", alt: "CQA predictions", caption: "Predicted vs target quality attributes across batch runs" },
 ]} />
 
 ## CQA Correlation Analysis
@@ -62,6 +61,6 @@ All parameters resolve from a single `config.yaml`. Missing parameters raise exp
 The system maps process-quality relationships across the full parameter space: EE loss vs thermal exposure, RIN degradation vs cumulative moisture damage, particle aggregation drivers (pH, ionic strength, lipid ratio), and per-phase contribution to final CQA outcomes.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-7.svg", alt: "CQA correlations", caption: "Process parameter to quality attribute correlation heatmap" },
-  { src: "/images/projects/placeholder-8.svg", alt: "Phase impact", caption: "Per-phase contribution to final CQA values" },
+  { src: "/images/projects/placeholder-7.svg", art: "lyo-mech-model/heatmap", alt: "CQA correlations", caption: "Process parameter to quality attribute correlation heatmap" },
+  { src: "/images/projects/placeholder-8.svg", art: "lyo-mech-model/contribution", alt: "Phase impact", caption: "Per-phase contribution to final CQA values" },
 ]} />
