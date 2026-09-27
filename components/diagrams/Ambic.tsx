@@ -8,7 +8,7 @@ import { Band, Chip, Diagram, Edge, Label, Node, Pulse, X0, cols, roundedPath } 
   lands in storage and in PostgreSQL.
 */
 
-const H = 612;
+const H = 656;
 const SPINE = X0 + 200; // x of the upload path through every layer
 const BRANCH = X0 + 400; // where the upload path enters PostgreSQL
 
@@ -20,7 +20,8 @@ export function AmbicDiagram() {
   const svc = cols(3, 20);
 
   const pillW = 160;
-  
+  const pills = ["Researchers", "Data analysts", "Scientists"].map((t, i) => ({ t, x: SPINE - pillW / 2 + i * (pillW + 16) }));
+
   const junctionY = 402;
   const uploadPath = roundedPath([
     [SPINE, 40],
@@ -42,12 +43,38 @@ export function AmbicDiagram() {
         <text x={0} y={25} fontSize={15} fontWeight={600} fill="var(--ink)" letterSpacing="-0.01em">
           Users
         </text>
-        <text x={0} y={45} fontSize={11.5} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
-          CSV, XLSX, JSON files
+        <text x={0} y={45} fontSize={12} fill="var(--ink-3)">
+          No software to install
         </text>
       </g>
-      <Node x={SPINE - pillW / 2} y={0} w={pillW} h={40} pill align="center" title="Researchers" tone="signal" d={60} />
+      {pills.map((p, i) => (
+        <Node key={p.t} x={p.x} y={0} w={pillW} h={40} pill align="center" title={p.t} tone={i === 0 ? "signal" : "default"} d={60 + i * 60} />
+      ))}
+      {/* the other users join the same entry point */}
+      <path
+        className="dg-e"
+        style={{ ...d(260), "--dur": "500ms" } as React.CSSProperties}
+        d={roundedPath([
+          [pills[2].x + pillW / 2, 40],
+          [pills[2].x + pillW / 2, 68],
+          [SPINE, 68],
+        ])}
+        pathLength={1}
+        fill="none"
+        stroke="var(--ink-3)"
+        strokeLinecap="round"
+      />
+      <path
+        className="dg-e"
+        style={{ ...d(260), "--dur": "250ms" } as React.CSSProperties}
+        d={`M ${pills[1].x + pillW / 2} 40 L ${pills[1].x + pillW / 2} 68`}
+        pathLength={1}
+        fill="none"
+        stroke="var(--ink-3)"
+        strokeLinecap="round"
+      />
       <Edge pts={[[SPINE, 40], [SPINE, 128]]} tone="signal" d={200} dur={450} />
+      <circle className="dg-n" style={d(520)} cx={SPINE} cy={68} r={3} fill="var(--ink-3)" />
       <Label x={SPINE + 12} y={88} mono size={11} tone="signal" d={500}>
         upload
       </Label>
@@ -55,12 +82,12 @@ export function AmbicDiagram() {
       {/* Frontend */}
       <Band y={100} h={170} name="Frontend" meta="React, TypeScript, Vite" d={300} />
       <Label x={0} y={168} mono size={11.5} d={300}>
-        shadcn/ui, Recharts
+        deployed on Vercel
       </Label>
       {[
         ["Dashboard", "File and folder browser"],
         ["Dataset viewer", "Tables and charts"],
-        ["Analytics", "Data exploration"],
+        ["Analytics", "Stats and visualization"],
         ["Normalization", "Column mapping"],
       ].map(([t, s], i) => (
         <Node key={t} x={web[i].x} y={130} w={web[i].w} h={68} title={t} sub={s} d={380 + i * 60} />
@@ -68,9 +95,14 @@ export function AmbicDiagram() {
       <g className="dg-n" style={d(640)}>
         <line x1={web[1].x + 16} y1={198} x2={web[1].x + 16} y2={216} stroke="var(--rule-strong)" />
       </g>
-      <Chip x={web[1].x} y={216} w={136} label="2D virtualization" d={660} />
-      <Label x={web[1].x + 148} y={232} size={11.5} d={700}>
-        3,000+ columns
+      <Chip x={web[1].x} y={216} w={104} label="Web Worker" d={660} />
+      {/* wide tables: 2D (row + column) virtualization */}
+      <g className="dg-n" style={d(660)}>
+        <line x1={web[1].x + 128} y1={198} x2={web[1].x + 128} y2={216} stroke="var(--rule-strong)" />
+      </g>
+      <Chip x={web[1].x + 112} y={216} w={136} label="2D virtualization" d={690} />
+      <Label x={web[1].x} y={258} size={11.5} d={720}>
+        3,000+ column datasets
       </Label>
 
       {/* Frontend to API */}
@@ -89,11 +121,11 @@ export function AmbicDiagram() {
         Deno runtime
       </Label>
       {[
-        ["Dataset processing", "Processes uploads"],
-        ["File operations", "Create, read, update, delete"],
-        ["Sharing and permissions", "Sharing operations"],
+        ["Data processing", "process-dataset-upload"],
+        ["File operations", "objects-post, get, patch, delete"],
+        ["Sharing and permissions", "objects-share-post, get, delete"],
       ].map(([t, s], i) => (
-        <Node key={t} x={api[i].x} y={300} w={api[i].w} h={68} title={t} sub={s} d={860 + i * 60} />
+        <Node key={t} x={api[i].x} y={300} w={api[i].w} h={68} title={t} sub={s} code d={860 + i * 60} />
       ))}
 
       {/* API to services */}
@@ -104,36 +136,35 @@ export function AmbicDiagram() {
       <Edge pts={[[api[2].cx, 368], [api[2].cx, 458]]} d={1260} dur={350} />
 
       {/* Services */}
-      <Band y={430} h={H - 430} name="Backend services" meta="Supabase" d={1250} />
+      <Band y={430} h={H - 430} name="Backend services" meta="Supabase Cloud" d={1250} />
 
       {/* Storage */}
-      <Node x={svc[0].x} y={460} w={svc[0].w} h={70} title="Object storage" sub="Raw uploads" d={1400} />
+      <Node x={svc[0].x} y={460} w={svc[0].w} h={70} title="Storage" sub="user-files bucket" code d={1400} />
       {["csv", "xlsx", "json"].map((t, i) => (
         <Chip key={t} x={svc[0].x + i * (third(svc[0].w) + 8)} y={546} w={third(svc[0].w)} label={t} d={1500 + i * 35} />
       ))}
-      <Label x={svc[0].x} y={592} mono size={11} d={1650}>
-        {"storage RLS: %/content/% paths"}
-      </Label>
+      <Chip x={svc[0].x} y={578} w={svc[0].w} label="processed csv" tone="signal" d={1620} />
 
       {/* PostgreSQL */}
       <Node x={svc[1].x} y={460} w={svc[1].w} h={70} title="PostgreSQL" sub="Row-level security on all tables" d={1450} />
-      {["normalized datasets", "source links"].map((t, i) => (
+      {["objects", "datasets", "permissions", "shared_datasets"].map((t, i) => (
         <Chip
           key={t}
-          x={svc[1].x + i * (half(svc[1].w) + 8)}
-          y={546}
+          x={svc[1].x + (i % 2) * (half(svc[1].w) + 8)}
+          y={546 + Math.floor(i / 2) * 32}
           w={half(svc[1].w)}
           label={t}
-          tone={i === 0 ? "signal" : "default"}
+          tone={t === "datasets" ? "signal" : "default"}
           d={1550 + i * 35}
         />
       ))}
-      <Label x={svc[1].x} y={592} size={11.5} d={1700}>
-        Every normalized dataset links back to its source
+
+      <Label x={svc[1].x} y={632} size={11.5} d={1700}>
+        Normalized datasets link back to their source
       </Label>
 
       {/* Auth */}
-      <Node x={svc[2].x} y={460} w={svc[2].w} h={70} title="Auth" sub="Email and password" d={1500} />
+      <Node x={svc[2].x} y={460} w={svc[2].w} h={70} title="Auth" sub="JWT, email/password" d={1500} />
       {["owner", "editor", "viewer"].map((t, i) => (
         <Chip key={t} x={svc[2].x + i * (third(svc[2].w) + 8)} y={546} w={third(svc[2].w)} label={t} d={1650 + i * 35} />
       ))}

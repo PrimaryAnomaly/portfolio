@@ -86,7 +86,7 @@ export function DaemonDiagram() {
         Research questions, interventions, parameter restrictions, monitoring
       </Label>
 
-      <Band y={112} h={176} name="Web layer" meta="FastAPI, Next.js, shadcn/ui, SSE" d={250} />
+      <Band y={112} h={176} name="Web layer" meta="FastAPI, Next.js, SSE" d={250} />
       <Bus x1={web[0].cx} x2={web[3].cx} y={webBusTop} d={380} />
       {web.map((c, i) => (
         <Edge key={i} pts={[[c.cx, webBusTop], [c.cx, webTop]]} d={480 + i * 40} dur={180} />

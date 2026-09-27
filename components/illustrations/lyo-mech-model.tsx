@@ -520,66 +520,77 @@ function Batches() {
 
 /* ---------- 6. predicted vs target CQAs ---------- */
 
+/* Structure only: which attributes are compared, on which axes, against y = x.
+   No data points, so nothing implies how close predictions come to targets. */
 const CQA_PANELS = ["moisture", "EE", "RIN", "Z50"];
-const N_BATCH = 7;
 
 function Parity() {
   const w = 128;
   const h = 90;
   const xs = [92, 248];
   const ysTop = [56, 170];
-  const r = rng(21);
-  const targets = Array.from({ length: N_BATCH }, (_, i) => 0.14 + (0.72 * (i + 0.5)) / N_BATCH);
-  const panels = CQA_PANELS.map((name, pi) => {
-    const x0 = xs[pi % 2];
-    const y0 = ysTop[Math.floor(pi / 2)];
-    const order = [...targets].sort(() => r() - 0.5);
-    const pts: [number, number][] = order.map((t) => {
-      const p = clamp(t + (r() - 0.5) * 0.12);
-      return [f1(x0 + t * w), f1(y0 + h - p * h)];
-    });
-    return { name, x0, y0, pts };
-  });
+  const panels = CQA_PANELS.map((name, pi) => ({ name, x0: xs[pi % 2], y0: ysTop[Math.floor(pi / 2)] }));
+  const n = panels.length;
   return (
-    <Art id="lyo-parity" label="Predicted against target quality attributes for each batch run">
+    <Art id="lyo-parity" label="Predicted against target for moisture, EE, RIN and Z50, each read against the y = x reference">
       {panels.map((p, i) => (
         <g key={p.name}>
           <Axes x0={p.x0} x1={p.x0 + w} y0={p.y0} y1={p.y0 + h} d={i * 70} />
-          <line
-            className="dg-n"
-            style={dl(160 + i * 70)}
-            x1={p.x0}
-            y1={p.y0 + h}
-            x2={p.x0 + w}
-            y2={p.y0}
-            stroke="var(--rule-strong)"
+          <path
+            className="dg-e"
+            style={dl(260 + i * 90, 700)}
+            pathLength={1}
+            d={`M ${p.x0} ${p.y0 + h} L ${p.x0 + w} ${p.y0}`}
+            fill="none"
+            stroke="var(--ink-3)"
             strokeWidth={0.8}
-            strokeDasharray="1 2.5"
           />
           <T x={p.x0 + 6} y={p.y0 + 10} tone="ink2" mono={p.name !== "moisture"} d={120 + i * 70}>
             {p.name}
           </T>
-          <g className="dg-n" style={dl(420 + i * 90)} fill="var(--ink-2)">
-            {p.pts.map(([x, y], k) => (
-              <circle key={k} cx={x} cy={y} r={2} />
-            ))}
-          </g>
         </g>
       ))}
+      <T x={xs[0] + w} y={ysTop[0] + 40} anchor="end" d={700}>
+        y = x
+      </T>
       <T x={xs[0] - 12} y={ysTop[0] + h + 57} anchor="middle" mono={false} transform={`rotate(-90 ${xs[0] - 12} ${ysTop[0] + h + 57})`} d={200}>
         predicted
       </T>
       <T x={(xs[0] + xs[1] + w) / 2} y={ysTop[1] + h + 22} anchor="middle" mono={false} d={200}>
         target
       </T>
+      {/* ambient: a marker glides along y = x, one panel at a time */}
       <g className="dg-pulse">
-        {panels.map((p) => {
-          const m = holdMove(p.pts, 0.12);
+        {panels.map((p, k) => {
+          const s = steps(k, n, 1, 0, 0.03);
+          const a = f1(k / n) + 0.02;
+          const b = f1((k + 1) / n) - 0.04;
           return (
-            <circle key={p.name} r={5.5} fill="none" stroke="var(--signal)" strokeWidth={1} cx={p.pts[0][0]} cy={p.pts[0][1]}>
-              <animate attributeName="cx" values={m.x} keyTimes={m.keyTimes} keySplines={m.keySplines} calcMode="spline" dur="12s" repeatCount="indefinite" />
-              <animate attributeName="cy" values={m.y} keyTimes={m.keyTimes} keySplines={m.keySplines} calcMode="spline" dur="12s" repeatCount="indefinite" />
-            </circle>
+            <g key={p.name} opacity={k === 0 ? 1 : 0}>
+              <animate attributeName="opacity" values={s.values} keyTimes={s.keyTimes} dur="12s" repeatCount="indefinite" />
+              <circle r={6} fill="var(--signal)" opacity={0.14}>
+                <animateMotion
+                  dur="12s"
+                  repeatCount="indefinite"
+                  path={`M ${p.x0} ${p.y0 + h} L ${p.x0 + w} ${p.y0}`}
+                  keyPoints="0;0;1;1"
+                  keyTimes={`0;${a};${b};1`}
+                  calcMode="spline"
+                  keySplines={`0 0 1 1;${EASE};0 0 1 1`}
+                />
+              </circle>
+              <circle r={2.4} fill="var(--signal)">
+                <animateMotion
+                  dur="12s"
+                  repeatCount="indefinite"
+                  path={`M ${p.x0} ${p.y0 + h} L ${p.x0 + w} ${p.y0}`}
+                  keyPoints="0;0;1;1"
+                  keyTimes={`0;${a};${b};1`}
+                  calcMode="spline"
+                  keySplines={`0 0 1 1;${EASE};0 0 1 1`}
+                />
+              </circle>
+            </g>
           );
         })}
       </g>
