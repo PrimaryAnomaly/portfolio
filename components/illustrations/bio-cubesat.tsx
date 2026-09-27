@@ -814,21 +814,17 @@ function Iterations() {
         );
       })}
 
-      {/* static leak on iteration 2 */}
+      {/* leaks at the bottom seam of iterations 1 and 2 */}
       <g className="dg-n" style={dd(800)}>
-        <path d={DROP} transform={`translate(${cards[1] + CW + 5} ${Y + 96})`} fill="var(--ink-3)" opacity={0.7} />
-        <path d={`M ${cards[1] + CW - 2} ${Y + 86} q 3 4 7 5`} fill="none" stroke="var(--ink-3)" strokeWidth={0.6} />
-      </g>
-      {/* dripping seam on iteration 1 */}
-      <g className="dg-n" style={dd(600)}>
-        <path d={`M ${cards[0] + CW - 2} ${Y + 56} q 3 4 7 5`} fill="none" stroke="var(--ink-3)" strokeWidth={0.6} />
+        <path d={DROP} transform={`translate(${cards[1] + 74} ${Y + CH + 5})`} fill="var(--ink-3)" opacity={0.7} />
+        <path d={DROP} transform={`translate(${cards[0] + 22} ${Y + CH + 5}) scale(0.7)`} fill="var(--ink-3)" opacity={0.7} />
       </g>
       <g className="dg-pulse">
         <path d={DROP} fill="var(--ink-3)" opacity={0.7}>
           <animateTransform
             attributeName="transform"
             type="translate"
-            values={`${cards[0] + CW + 5} ${Y + 66};${cards[0] + CW + 5} ${Y + 66};${cards[0] + CW + 5} ${Y + 92}`}
+            values={`${cards[0] + 74} ${Y + CH + 5};${cards[0] + 74} ${Y + CH + 5};${cards[0] + 74} ${Y + CH + 22}`}
             keyTimes="0;0.55;1"
             calcMode="spline"
             keySplines={`0 0 1 1;0.55 0 0.9 0.6`}

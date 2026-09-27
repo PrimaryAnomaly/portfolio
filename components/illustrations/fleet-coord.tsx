@@ -495,7 +495,7 @@ function Speech() {
           stroke="var(--ink-3)"
           strokeWidth={0.8}
         />
-        <Txt x={sx(emit + 1)} y={BY + 28} size={9}>
+        <Txt x={(sx(emit + 1) + sx(emit + 1 + hold)) / 2} y={BY + 28} size={9} anchor="middle">
           10-step persistence, about 200 ms
         </Txt>
       </Fade>

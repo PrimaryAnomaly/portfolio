@@ -41,13 +41,6 @@ export default function Cover() {
   const tan = [-38, 38].map((a) => [CX + R * Math.cos(rad(a)), CY + R * Math.sin(rad(a))]);
   return (
     <Art id="cover-bio-cubesat" label="One well of the 27-well sensor card, magnified: pH, pNa and reference electrodes around the optical path, with yeast cells in suspension">
-      {/* magnifier lines from the live well on the card to the big well */}
-      <g className="dg-n" style={dd(900)}>
-        {tan.map(([x, y]) => (
-          <line key={y} x1={live.x} y1={live.y} x2={x} y2={y} stroke="var(--ink-3)" strokeWidth={0.6} strokeDasharray="1.5 2.5" />
-        ))}
-      </g>
-
       {/* the well */}
       <g className="dg-n" style={dd(0)}>
         <circle cx={CX} cy={CY} r={R} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
@@ -143,6 +136,25 @@ export default function Cover() {
           }),
         )}
       </g>
+      {/* magnifier lines from the live well on the card to the big well */}
+      <g className="dg-n" style={dd(900)}>
+        {tan.map(([x, y]) => {
+          const th = Math.atan2(y - live.y, x - live.x);
+          return (
+            <line
+              key={y}
+              x1={live.x + 4.6 * Math.cos(th)}
+              y1={live.y + 4.6 * Math.sin(th)}
+              x2={x}
+              y2={y}
+              stroke="var(--ink-3)"
+              strokeWidth={0.7}
+              strokeDasharray="1.5 2.5"
+            />
+          );
+        })}
+      </g>
+
       <text className="dg-n" style={{ ...dd(1000), ...mono }} x={256} y={98} fontSize={10} fill="var(--ink-3)">
         27 wells
       </text>
