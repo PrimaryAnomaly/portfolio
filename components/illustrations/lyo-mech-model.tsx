@@ -587,17 +587,17 @@ function Parity() {
   );
 }
 
-/* ---------- 7. parameter-to-CQA correlation heatmap ---------- */
+/* ---------- 7. parameter-to-CQA dependency map ---------- */
 
 const PARAMS = ["thermal exposure", "moisture", "pH", "ionic strength", "lipid ratio"];
 const CQAS = ["X", "EE", "RIN", "Z50", "PDI"];
-/* Qualitative signs and strengths following the relationships named in the write-up */
-const CORR = [
-  [-0.25, -0.85, -0.5, 0.45, 0.3],
-  [0.9, -0.45, -0.85, 0.3, 0.2],
-  [0.05, -0.3, -0.2, 0.6, 0.4],
-  [0.05, -0.2, -0.1, 0.8, 0.55],
-  [0, 0.35, 0.1, -0.55, -0.4],
+/* Only the dependencies the write-up states the model encodes (1 = modelled). No signs or strengths. */
+const DEPS = [
+  [0, 1, 1, 1, 1],
+  [1, 1, 1, 0, 0],
+  [0, 1, 0, 1, 1],
+  [0, 0, 0, 1, 1],
+  [0, 0, 0, 1, 1],
 ];
 const FOCUS: [number, number][] = [
   [0, 1],
@@ -617,8 +617,9 @@ function Heatmap() {
     FOCUS.map(([r, c]) => [cx(c), cy(r)]),
     0.12,
   );
+  const keyY = gy + 5 * ch + 20;
   return (
-    <Art id="lyo-heatmap" label="Correlation between process parameters and quality attributes" grid={false}>
+    <Art id="lyo-heatmap" label="Which process parameters each quality attribute depends on in the model" grid={false}>
       {CQAS.map((c, i) => (
         <T key={c} x={cx(i)} y={gy - 9} anchor="middle" tone="ink2" d={60 + i * 40}>
           {c}
@@ -637,39 +638,18 @@ function Heatmap() {
           <line key={`v${i}`} x1={gx + i * cw} y1={gy} x2={gx + i * cw} y2={gy + 5 * ch} />
         ))}
       </g>
-      {CORR.map((row, r) =>
-        row.map((v, c) => {
-          const s = f1(26 * Math.sqrt(Math.abs(v)));
-          if (s < 3) return <circle key={`${r}-${c}`} className="dg-n" style={dl(300)} cx={cx(c)} cy={cy(r)} r={0.9} fill="var(--ink-3)" />;
-          return (
-            <rect
-              key={`${r}-${c}`}
-              className="dg-n"
-              style={dl(260 + (r + c) * 70)}
-              x={f1(cx(c) - s / 2)}
-              y={f1(cy(r) - s / 2)}
-              width={s}
-              height={s}
-              fill={v > 0 ? "var(--ink-2)" : "none"}
-              stroke="var(--ink-2)"
-              strokeWidth={v > 0 ? 0 : 0.9}
-            />
-          );
-        }),
+      {DEPS.map((row, r) =>
+        row.map((v, c) =>
+          v ? (
+            <circle key={`${r}-${c}`} className="dg-n" style={dl(260 + (r + c) * 70)} cx={cx(c)} cy={cy(r)} r={4.5} fill="var(--ink-2)" />
+          ) : (
+            <circle key={`${r}-${c}`} className="dg-n" style={dl(300)} cx={cx(c)} cy={cy(r)} r={1.6} fill="none" stroke="var(--rule-strong)" strokeWidth={0.8} />
+          ),
+        ),
       )}
-      {/* key */}
-      <g className="dg-n" style={dl(1000)}>
-        <rect x={gx} y={gy + 5 * ch + 16} width={7} height={7} fill="var(--ink-2)" />
-        <rect x={gx + 72.5} y={gy + 5 * ch + 16.5} width={6} height={6} fill="none" stroke="var(--ink-2)" strokeWidth={0.9} />
-      </g>
-      <T x={gx + 12} y={gy + 5 * ch + 23} d={1000}>
-        positive
-      </T>
-      <T x={gx + 84} y={gy + 5 * ch + 23} d={1000}>
-        negative
-      </T>
-      <T x={gx + 5 * cw} y={gy + 5 * ch + 23} anchor="end" d={1000}>
-        area ∝ |r|
+      <circle className="dg-n" style={dl(1000)} cx={gx + 4.5} cy={keyY - 3} r={4.5} fill="var(--ink-2)" />
+      <T x={gx + 14} y={keyY} d={1000}>
+        modelled dependency
       </T>
       <g className="dg-pulse">
         <rect x={-cw / 2 + 2} y={-ch / 2 + 2} width={cw - 4} height={ch - 4} fill="none" stroke="var(--signal)" strokeWidth={1.2}>
@@ -691,60 +671,53 @@ function Heatmap() {
 
 /* ---------- 8. per-phase contribution to final CQAs ---------- */
 
-const SHARES: { name: string; s: number[] }[] = [
-  { name: "moisture", s: [0.03, 0.04, 0.3, 0.63] },
-  { name: "EE", s: [0.14, 0.1, 0.31, 0.45] },
-  { name: "RIN", s: [0.1, 0.06, 0.36, 0.48] },
-  { name: "Z50", s: [0.34, 0.2, 0.26, 0.2] },
-  { name: "PDI", s: [0.3, 0.2, 0.26, 0.24] },
-];
+/* Conceptual decomposition only: each final CQA attributed across the four phases. Equal segments, no magnitudes. */
+const CQA_ROWS = ["moisture", "EE", "RIN", "Z50", "PDI"];
 
 function PhaseContribution() {
   const lx = 44;
   const gx = 104;
-  const colW = 68;
-  const top = 90;
-  const pitch = 34;
-  const barH = 8;
-  const len = (s: number) => f1(Math.max(1.5, s * 88));
-  const bottom = top + (SHARES.length - 1) * pitch + 16;
+  const x1 = 372;
+  const gap = 3;
+  const segW = (x1 - gx - gap * 3) / 4;
+  const sx = (k: number) => f1(gx + k * (segW + gap));
+  const top = 96;
+  const pitch = 32;
+  const barH = 10;
+  const bottom = top + (CQA_ROWS.length - 1) * pitch + barH / 2;
   return (
-    <Art id="lyo-contribution" label="Share of each final quality attribute contributed by each process phase">
+    <Art id="lyo-contribution" label="Each final quality attribute attributed across the four process phases">
       {PHASES.map((name, k) => (
-        <T key={name} x={gx + k * colW + 4} y={70} mono={false} d={60 + k * 60}>
+        <T key={name} x={sx(k)} y={top - 20} mono={false} d={60 + k * 60}>
           {name}
         </T>
       ))}
-      <g className="dg-n" style={dl(40)} stroke="var(--rule-strong)" strokeWidth={0.8}>
-        {PHASES.map((_, k) => (
-          <line key={k} x1={gx + k * colW} y1={top - 12} x2={gx + k * colW} y2={bottom} />
-        ))}
-      </g>
-      {SHARES.map((row, r) => {
+      {CQA_ROWS.map((name, r) => {
         const y = top + r * pitch;
         return (
-          <g key={row.name}>
-            <T x={lx} y={y + 3} mono={row.name !== "moisture"} tone="ink2" size={9.5} d={120 + r * 50}>
-              {row.name}
+          <g key={name}>
+            <T x={lx} y={y + 3.5} mono={name !== "moisture"} tone="ink2" size={9.5} d={120 + r * 50}>
+              {name}
             </T>
-            {row.s.map((s, k) => (
+            {PHASES.map((_, k) => (
               <rect
                 key={k}
                 className="dg-n"
                 style={dl(300 + r * 60 + k * 70)}
-                x={gx + k * colW}
+                x={sx(k)}
                 y={y - barH / 2}
-                width={len(s)}
+                width={f1(segW)}
                 height={barH}
-                fill="var(--ink-3)"
-                opacity={0.55}
+                fill="none"
+                stroke="var(--ink-3)"
+                strokeWidth={0.8}
               />
             ))}
           </g>
         );
       })}
-      <T x={gx} y={bottom + 18} d={900}>
-        share of final value
+      <T x={gx} y={bottom + 24} d={900}>
+        final value, attributed by phase
       </T>
       <g className="dg-pulse">
         {PHASES.map((name, k) => {
@@ -752,9 +725,9 @@ function PhaseContribution() {
           return (
             <g key={name} opacity={k === 0 ? 1 : 0}>
               <animate attributeName="opacity" values={s.values} keyTimes={s.keyTimes} dur="10s" repeatCount="indefinite" />
-              <line x1={gx + k * colW} y1={top - 12} x2={gx + k * colW} y2={bottom} stroke="var(--signal)" strokeWidth={1.2} />
-              {SHARES.map((row, r) => (
-                <rect key={row.name} x={gx + k * colW} y={top + r * pitch - barH / 2} width={len(row.s[k])} height={barH} fill="var(--signal)" />
+              <line x1={sx(k)} y1={top - 14} x2={f1(sx(k) + segW)} y2={top - 14} stroke="var(--signal)" strokeWidth={1.2} />
+              {CQA_ROWS.map((row, r) => (
+                <rect key={row} x={sx(k)} y={top + r * pitch - barH / 2} width={f1(segW)} height={barH} fill="var(--signal)" />
               ))}
             </g>
           );
