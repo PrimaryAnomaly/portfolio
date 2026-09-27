@@ -13,7 +13,7 @@ const C = 200;
 const R_EARTH = 100;
 const R_MARS = 152.4;
 const A = (R_EARTH + R_MARS) / 2; // semi-major axis
-const B = Math.sqrt(R_EARTH * R_MARS); // semi-minor axis
+const B = Math.round(Math.sqrt(R_EARTH * R_MARS) * 100) / 100; // semi-minor axis
 const TRANSFER = `M ${C - R_EARTH} ${C} A ${A} ${B} 0 0 1 ${C + R_MARS} ${C}`;
 
 const EARTH_PERIOD = 80; // seconds per revolution (display time)
@@ -23,16 +23,19 @@ const MARS_PERIOD = EARTH_PERIOD * 1.881;
 const EARTH_START = 270;
 const MARS_START = 314;
 
+// Rounded so server and client render byte-identical attributes
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
 const ticks = Array.from({ length: 120 }, (_, i) => {
   const a = (i / 120) * Math.PI * 2;
   const major = i % 10 === 0;
   const r1 = 192;
-  const r2 = major ? 182 : 187;
+  const rr = major ? 182 : 187;
   return {
-    x1: C + Math.cos(a) * r1,
-    y1: C + Math.sin(a) * r1,
-    x2: C + Math.cos(a) * r2,
-    y2: C + Math.sin(a) * r2,
+    x1: r2(C + Math.cos(a) * r1),
+    y1: r2(C + Math.sin(a) * r1),
+    x2: r2(C + Math.cos(a) * rr),
+    y2: r2(C + Math.sin(a) * rr),
     major,
   };
 });

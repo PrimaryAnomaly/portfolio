@@ -9,6 +9,8 @@ import { getAllProjects, getAllProjectSlugs, getProjectBySlug } from "@/lib/mdx"
 import { siteConfig } from "@/content/site";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ProjectCover } from "@/components/site/ProjectCover";
+import { diagrams } from "@/components/diagrams";
+import { DiagramFrame } from "@/components/diagrams/DiagramFrame";
 
 const mdxComponents = {
   Gallery,
@@ -91,6 +93,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   }
 
   const { meta, content } = getProjectBySlug(slug);
+  const Diagram = diagrams[slug];
   const all = getAllProjects();
   const idx = all.findIndex((p) => p.slug === slug);
   const next = all[(idx + 1) % all.length];
@@ -157,11 +160,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </div>
 
         {/* ── HERO ── */}
-        <div data-reveal="clip" className="relative mt-14 aspect-[16/10] overflow-hidden border border-rule bg-plate md:mt-20 md:aspect-[16/9]">
-          <div className="clip-inner absolute inset-0">
-            <ProjectCover slug={slug} src={meta.hero} alt={meta.title} sizes="(max-width: 1320px) 100vw, 1320px" priority />
+        {Diagram ? (
+          <figure className="mt-14 border border-rule bg-plate md:mt-20">
+            <div className="overflow-x-auto px-5 py-8 md:px-12 md:py-14">
+              <DiagramFrame className="min-w-[760px]">
+                <Diagram />
+              </DiagramFrame>
+            </div>
+          </figure>
+        ) : (
+          <div data-reveal="clip" className="relative mt-14 aspect-[16/10] overflow-hidden border border-rule bg-plate md:mt-20 md:aspect-[16/9]">
+            <div className="clip-inner absolute inset-0">
+              <ProjectCover slug={slug} src={meta.hero} alt={meta.title} sizes="(max-width: 1320px) 100vw, 1320px" priority />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ── BODY ── */}
         <article className="grid grid-cols-1 gap-8 pt-16 md:grid-cols-12 md:pt-24">

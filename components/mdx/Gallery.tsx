@@ -1,9 +1,13 @@
 import fs from "fs";
 import path from "path";
 import Image from "next/image";
+import { illustrations } from "@/components/illustrations";
+import { DiagramFrame } from "@/components/diagrams/DiagramFrame";
 
 type GalleryImage = {
   src: string;
+  /** Key into components/illustrations, used until a real photo exists */
+  art?: string;
   alt: string;
   caption?: string;
 };
@@ -60,6 +64,8 @@ export function Gallery(props: {
                       : "(max-width: 640px) 100vw, 50vw"
                 }
               />
+            ) : img.art && illustrations[img.art] ? (
+              <Illustration Art={illustrations[img.art]} />
             ) : (
               <PendingPlate label={img.alt} />
             )}
@@ -73,6 +79,20 @@ export function Gallery(props: {
         </figure>
       ))}
     </div>
+  );
+}
+
+/* Drawn stand-in, clearly marked, until the real photo or screenshot lands */
+function Illustration({ Art }: { Art: React.ComponentType }) {
+  return (
+    <>
+      <DiagramFrame className="absolute inset-0 text-ink-3">
+        <Art />
+      </DiagramFrame>
+      <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-rule bg-plate/90 px-2 py-0.5 text-[0.6875rem] text-ink-3">
+        Illustration
+      </span>
+    </>
   );
 }
 
