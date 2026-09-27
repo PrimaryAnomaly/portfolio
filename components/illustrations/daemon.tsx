@@ -1,5 +1,5 @@
 import type { ComponentType, CSSProperties, ReactNode } from "react";
-import { Art, Pulse } from "@/components/diagrams/kit";
+import { Art } from "@/components/diagrams/kit";
 
 /*
   DAEMON gallery illustrations. Drawn stand-ins for future screenshots,
@@ -124,59 +124,47 @@ function Architecture() {
   const rx = 142;
   const ry = 48;
   const at = (deg: number): [number, number] => [cx + rx * Math.cos((deg * Math.PI) / 180), cy + ry * Math.sin((deg * Math.PI) / 180)];
-  const agents: {
-    name: string;
-    a: number;
-    lx: number;
-    ly: number;
-    anchor: "start" | "middle" | "end";
-    to: [number, number] | null;
-  }[] = [
-    { name: "Scout", a: 234, lx: 0, ly: -14, anchor: "middle", to: [164, 126] },
-    {
-      name: "Refiner",
-      a: 306,
-      lx: 0,
-      ly: -14,
-      anchor: "middle",
-      to: [236, 126],
-    },
-    { name: "Auditor", a: 18, lx: 13, ly: 4, anchor: "start", to: [240, 166] },
-    { name: "Conservative", a: 90, lx: 12, ly: 20, anchor: "start", to: null },
-    { name: "Monitor", a: 162, lx: -13, ly: 4, anchor: "end", to: [160, 166] },
+
+  // knowledge base cylinder
+  const kx = 152;
+  const kw = 96;
+  const top = 116;
+  const bot = 170;
+
+  const agents: { name: string; a: number; lx: number; ly: number; to: [number, number] }[] = [
+    { name: "Scout", a: 216, lx: 0, ly: -14, to: [kx, 128] },
+    { name: "Refiner", a: 270, lx: 0, ly: -14, to: [cx, top - 10] },
+    { name: "Auditor", a: 324, lx: 0, ly: -14, to: [kx + kw, 128] },
+    { name: "Conservative", a: 18, lx: 0, ly: 22, to: [kx + kw, 160] },
+    { name: "Monitor", a: 162, lx: 0, ly: 22, to: [kx, 160] },
   ];
   const back = `M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cy}`;
   const front = `M ${cx + rx} ${cy} A ${rx} ${ry} 0 0 1 ${cx - rx} ${cy}`;
-  const orbit = back + ` A ${rx} ${ry} 0 0 1 ${cx - rx} ${cy}`;
-
-  const kx = 160;
-  const kw = 80;
-  const top = 116;
-  const bot = 170;
-  const band = (y: number) => `M ${kx} ${y} A ${kw / 2} 10 0 0 0 ${kx + kw} ${y}`;
+  const ringY = cy + ry;
+  const simTop = 234;
+  // results travel from the digital twin, through the agents' ring, into the shared store
+  const result = `M ${cx} ${simTop} L ${cx} ${bot + 10}`;
 
   return (
-    <Art id="daemon-architecture" label="Five agents orbiting a shared knowledge base, with the simulation backend below">
+    <Art id="daemon-architecture" label="Five agents around a shared knowledge base; simulation results flow up into the store">
       <Draw d={back} at={100} dur={900} stroke="var(--rule-strong)" />
       <Draw d={front} at={500} dur={900} stroke="var(--ink-3)" />
 
       {/* spokes: every agent reads and writes the same store */}
       <Fade d={700}>
-        {agents.map(({ name, a, to }) =>
-          to ? (
-            <line
-              key={name}
-              x1={at(a)[0]}
-              y1={at(a)[1]}
-              x2={to[0]}
-              y2={to[1]}
-              stroke="var(--ink-3)"
-              strokeWidth={1}
-              strokeDasharray="0.1 3.5"
-              strokeLinecap="round"
-            />
-          ) : null,
-        )}
+        {agents.map(({ name, a, to }) => (
+          <line
+            key={name}
+            x1={at(a)[0]}
+            y1={at(a)[1]}
+            x2={to[0]}
+            y2={to[1]}
+            stroke="var(--ink-3)"
+            strokeWidth={1}
+            strokeDasharray="0.1 3.5"
+            strokeLinecap="round"
+          />
+        ))}
       </Fade>
 
       {/* knowledge base */}
@@ -188,34 +176,36 @@ function Architecture() {
           strokeWidth={1}
         />
         <ellipse cx={kx + kw / 2} cy={top} rx={kw / 2} ry={10} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
-        <path d={band(top + 18)} fill="none" stroke="var(--rule-strong)" strokeWidth={1} />
-        <path d={band(top + 36)} fill="none" stroke="var(--rule-strong)" strokeWidth={1} />
-        <Txt x={252} y={140} size={10} tone="ink2" mono={false}>
+        <Txt x={cx} y={146} size={10} tone="ink" mono={false} anchor="middle">
           Knowledge base
         </Txt>
-        <Txt x={252} y={152} size={9}>
+        <Txt x={cx} y={159} size={9} anchor="middle">
           SQLite
         </Txt>
       </Fade>
 
       {/* agents */}
-      {agents.map(({ name, a, lx, ly, anchor }, i) => {
+      {agents.map(({ name, a, lx, ly }, i) => {
         const [x, y] = at(a);
         return (
           <Fade key={name} d={600 + i * 90}>
             <circle cx={x} cy={y} r={7} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
             <circle cx={x} cy={y} r={2} fill="var(--ink-2)" />
-            <Txt x={x + lx} y={y + ly} size={10} tone="ink" mono={false} anchor={anchor}>
+            <Txt x={x + lx} y={y + ly} size={10} tone="ink" mono={false} anchor="middle">
               {name}
             </Txt>
           </Fade>
         );
       })}
 
-      {/* simulation backend */}
-      <Fade d={1000}>
-        <line x1={200} y1={203} x2={200} y2={234} stroke="var(--ink-3)" strokeDasharray="0.1 3.5" strokeLinecap="round" />
-        <rect x={140.5} y={234.5} width={119} height={39} rx={3} fill="var(--plate)" stroke="var(--rule-strong)" />
+      {/* simulation backend: results land in the knowledge base */}
+      <Draw d={result} at={1000} dur={500} stroke="var(--signal)" w={1.25} />
+      <Fade d={1300}>
+        <circle cx={cx} cy={ringY} r={2.6} fill="var(--signal)" />
+        <path d={`M ${cx - 4} ${bot + 16} L ${cx} ${bot + 10} L ${cx + 4} ${bot + 16}`} fill="none" stroke="var(--signal)" strokeWidth={1.25} strokeLinecap="round" strokeLinejoin="round" />
+      </Fade>
+      <Fade d={900}>
+        <rect x={140.5} y={simTop + 0.5} width={119} height={39} rx={3} fill="var(--plate)" stroke="var(--rule-strong)" />
         <path d="M 150 244 C 176 244, 196 264, 250 264" fill="none" stroke="var(--ink-3)" />
         <path d="M 150 262 C 180 262, 200 248, 250 246" fill="none" stroke="var(--rule-strong)" />
         <Txt x={272} y={250} size={10} tone="ink2" mono={false}>
@@ -226,7 +216,7 @@ function Architecture() {
         </Txt>
       </Fade>
 
-      <Pulse path={orbit} dur={11} r={3} />
+      <Travel path={result} dur={7} r={3} />
     </Art>
   );
 }
@@ -309,7 +299,7 @@ function DiscoveryCycle() {
           strokeLinecap="round"
         />
       </Fade>
-      <Draw d={d} at={200} dur={1400} stroke="var(--ink-3)" />
+      <Draw d={d} at={200} dur={1400} stroke="var(--signal)" w={1.25} />
       {ticks.map((t, i) => (
         <Fade key={i} d={300 + i * 70}>
           <circle
@@ -336,7 +326,7 @@ function DiscoveryCycle() {
         <Txt x={274} y={234} size={10} tone="signal" mono={false}>
           Converged
         </Txt>
-        <Txt x={30} y={272} size={9}>
+        <Txt x={cx} y={274} size={9} anchor="middle">
           one turn per cycle
         </Txt>
       </Fade>
@@ -359,15 +349,6 @@ function Collaboration() {
   // each agent reviews its neighbour: a shallow swag between the two
   const swag = (i: number) => ` Q ${(ax(i) + ax(i + 1)) / 2} ${AY + 16} ${ax(i + 1) - 8} ${AY}`;
   const swags = names.slice(0, -1).map((_, i) => `M ${ax(i) + 8} ${AY}` + swag(i));
-  // debate travels across the agents, down into the card, back up to Scout
-  const loop =
-    `M ${ax(0) + 8} ${AY}` +
-    names
-      .slice(0, -1)
-      .map((_, i) => swag(i) + ` L ${ax(i + 1) + 8} ${AY}`)
-      .join("") +
-    ` L ${ax(4)} ${AY + 8} C ${ax(4)} ${AY + 42}, ${lands[4]} ${CT - 34}, ${lands[4]} ${CT}` +
-    ` L ${lands[0]} ${CT} C ${lands[0]} ${CT - 34}, ${ax(0)} ${AY + 42}, ${ax(0)} ${AY + 8} L ${ax(0) + 8} ${AY}`;
 
   return (
     <Art id="daemon-collab" label="Five agents review each other's conclusions and refine a shared hypothesis">
@@ -417,13 +398,27 @@ function Collaboration() {
           <rect key={j} x={134} y={CT + 32 + j * 10} width={[128, 112, 84][j]} height={3} rx={1.5} fill="var(--rule-strong)" />
         ))}
         <rect x={134} y={CT + 70} width={132} height={3} rx={1.5} fill="var(--rule)" />
-        <rect x={134} y={CT + 70} width={104} height={3} rx={1.5} fill="var(--ink-3)" />
         <Txt x={134} y={CT + 84} size={9}>
           confidence
         </Txt>
       </Fade>
-
-      <Pulse path={loop} dur={12} r={3} />
+      {/* confidence settles as the agents review the hypothesis */}
+      <Fade d={1300}>
+        <rect x={134} y={CT + 70} width={78} height={3} rx={1.5} fill="var(--signal)" />
+      </Fade>
+      <g className="dg-pulse">
+        <rect x={134} y={CT + 70} height={3} rx={1.5} fill="var(--signal)" width={78}>
+          <animate
+            attributeName="width"
+            dur="10s"
+            repeatCount="indefinite"
+            values="78;96;88;104;104;78"
+            keyTimes="0;0.25;0.45;0.7;0.9;1"
+            calcMode="spline"
+            keySplines={splines(5)}
+          />
+        </rect>
+      </g>
     </Art>
   );
 }
@@ -433,7 +428,7 @@ function Collaboration() {
 /* ------------------------------------------------------------------ */
 
 function KnowledgeBase() {
-  const tables = ["sessions", "cycles", "agents", "experiments"];
+  const tables = ["agents", "experiments", "evidence"];
   const TX = 162;
   const TW = 210;
   const TY = 60;
@@ -447,7 +442,7 @@ function KnowledgeBase() {
     <Art id="daemon-kb" label="SQLite knowledge base: hypotheses tracked with Bayesian confidence, auto-accept at 0.9 and retire below 0.2">
       {/* related tables */}
       {tables.map((t, i) => {
-        const y = 72 + i * 48;
+        const y = 96 + i * 48;
         return (
           <Fade key={t} d={100 + i * 80}>
             <rect x={28.5} y={y + 0.5} width={99} height={34} rx={2} fill="var(--plate)" stroke="var(--rule-strong)" />
@@ -459,7 +454,7 @@ function KnowledgeBase() {
           </Fade>
         );
       })}
-      <Draw d={`M 144 89 L 144 233 M 144 161 L ${TX} 161`} at={400} dur={600} stroke="var(--ink-3)" w={0.8} />
+      <Draw d={`M 144 113 L 144 209 M 144 161 L ${TX} 161`} at={400} dur={600} stroke="var(--ink-3)" w={0.8} />
 
       {/* hypotheses table */}
       <Fade d={450}>
@@ -477,10 +472,10 @@ function KnowledgeBase() {
         <line x1={px(0.2)} y1={TY + 32} x2={px(0.2)} y2={TY + 192} stroke="var(--ink-3)" strokeDasharray="0.1 3" strokeLinecap="round" />
         <line x1={px(0.9)} y1={TY + 32} x2={px(0.9)} y2={TY + 192} stroke="var(--signal)" strokeDasharray="0.1 3" strokeLinecap="round" />
         <Txt x={px(0.2)} y={TY + 216} size={9} anchor="middle">
-          retire 0.2
+          {"retire < 0.2"}
         </Txt>
         <Txt x={px(0.9)} y={TY + 216} size={9} tone="signal" anchor="middle">
-          accept 0.9
+          {"accept ≥ 0.9"}
         </Txt>
       </Fade>
       {rows.map((p, i) => {
@@ -497,7 +492,7 @@ function KnowledgeBase() {
                   cx={px(p)}
                   cy={y}
                   r={3.5}
-                  fill={accepted ? "var(--signal)" : retired ? "var(--plate)" : "var(--ink-3)"}
+                  fill={accepted ? "var(--signal)" : "var(--plate)"}
                   stroke={accepted ? "var(--signal)" : "var(--ink-3)"}
                 />
               )}
@@ -561,7 +556,7 @@ function Dashboard() {
           {/* sidebar */}
           <line x1={92} y1={66} x2={92} y2={267} stroke="var(--rule)" />
           {[0, 1, 2, 3, 4].map((i) => (
-            <g key={i}>{bar(42, 86 + i * 18, i === 0 ? 38 : 30, i === 0 ? "var(--ink-3)" : "var(--rule-strong)")}</g>
+            <g key={i}>{bar(42, 86 + i * 18, i === 0 ? 38 : 30)}</g>
           ))}
         </Window>
         {/* live agent activity */}
@@ -576,7 +571,7 @@ function Dashboard() {
               </Txt>
               <line x1={176} y1={102 + r * 12} x2={358} y2={102 + r * 12} stroke="var(--rule)" />
               {lanes[r].map((t) => (
-                <rect key={t} x={176 + t * 0.74} y={99 + r * 12} width={9} height={6} rx={1} fill="var(--ink-3)" opacity={0.55} />
+                <rect key={t} x={176 + t * 0.74} y={99 + r * 12} width={9} height={6} rx={1} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
               ))}
             </g>
           ))}
@@ -591,7 +586,7 @@ function Dashboard() {
             <g key={i}>
               {bar(116, 200 + i * 15, [50, 38, 46, 30][i])}
               <rect x={176} y={198.5 + i * 15} width={36} height={3} rx={1.5} fill="var(--rule)" />
-              <rect x={176} y={198.5 + i * 15} width={[32, 20, 26, 10][i]} height={3} rx={1.5} fill="var(--ink-3)" />
+              <rect x={176} y={198.5 + i * 15} width={[32, 20, 26, 10][i]} height={3} rx={1.5} fill="var(--rule-strong)" />
             </g>
           ))}
         </Fade>
@@ -606,9 +601,9 @@ function Dashboard() {
         <Draw
           d={smooth([
             [248, 202],
-            [268, 214],
-            [288, 211],
-            [308, 228],
+            [268, 215],
+            [288, 223],
+            [308, 230],
             [328, 234],
             [346, 238],
           ])}
@@ -629,7 +624,7 @@ function Dashboard() {
               attributeName="opacity"
               values="1;0.25;1"
               keyTimes="0;0.5;1"
-              dur="3s"
+              dur="6s"
               calcMode="spline"
               keySplines={splines(2)}
               repeatCount="indefinite"
@@ -644,7 +639,8 @@ function Dashboard() {
 /* 06 Hypothesis panel: list, detail, evidence chain */
 function HypothesisPanel() {
   const chain = [128, 164, 200, 236];
-  const path = `M 216 ${chain[0]} L 216 ${chain[3]} L 216 ${chain[0]}`;
+  const CHAIN_TOP = 111; // under the selected hypothesis' confidence bar
+  const path = `M 216 ${CHAIN_TOP} L 216 ${chain[3] - 4}`;
   return (
     <Art id="daemon-hypotheses" label="Wireframe of the hypothesis panel: a selected hypothesis with its confidence and evidence chain">
       <g transform="translate(0 12)">
@@ -660,16 +656,15 @@ function HypothesisPanel() {
               <g key={i}>
                 {sel && <rect x={29} y={y - 4} width={141} height={32} fill="var(--paper)" />}
                 {sel && <rect x={29} y={y - 4} width={3} height={32} fill="var(--signal)" />}
-                {bar(42, y + 6, [84, 96, 70, 90, 60][i], sel ? "var(--ink-2)" : "var(--rule-strong)")}
-                <rect x={42} y={y + 15} width={60} height={3} rx={1.5} fill="var(--rule)" />
+                {bar(42, y + 6, [84, 96, 70, 90, 60][i], sel ? "var(--ink-3)" : "var(--rule-strong)")}
+                <rect x={42} y={y + 15} width={60} height={3} rx={1.5} fill="none" stroke="var(--rule)" strokeWidth={0.8} />
                 <rect
                   x={42}
                   y={y + 15}
                   width={[50, 44, 18, 30, 8][i]}
                   height={3}
                   rx={1.5}
-                  fill={sel ? "var(--ink-2)" : "var(--ink-3)"}
-                  opacity={sel ? 1 : 0.6}
+                  fill="var(--rule-strong)"
                 />
               </g>
             );
@@ -677,16 +672,16 @@ function HypothesisPanel() {
         </Fade>
         {/* detail */}
         <Fade d={450}>
-          {bar(186, 84, 120, "var(--ink-2)", 5)}
+          {bar(186, 84, 120, "var(--ink-3)", 5)}
           {bar(186, 98, 150)}
           <rect x={186} y={106} width={170} height={5} rx={2.5} fill="var(--rule)" />
-          <rect x={186} y={106} width={126} height={5} rx={2.5} fill="var(--ink-2)" />
+          <rect x={186} y={106} width={126} height={5} rx={2.5} fill="var(--rule-strong)" />
         </Fade>
         {/* evidence chain: hypothesis back to the simulation runs that support it */}
-        <Draw d={`M 216 ${chain[0]} L 216 ${chain[3]}`} at={650} dur={700} stroke="var(--ink-3)" />
+        <Draw d={`M 216 ${CHAIN_TOP} L 216 ${chain[3] - 4}`} at={650} dur={700} stroke="var(--signal)" w={1.25} />
         {chain.map((y, i) => (
           <Fade key={y} d={700 + i * 110}>
-            <circle cx={216} cy={y} r={4} fill="var(--plate)" stroke="var(--ink-2)" />
+            <circle cx={216} cy={y} r={4} fill="var(--plate)" stroke="var(--signal)" strokeWidth={1.25} />
             <line x1={220} y1={y} x2={244} y2={y} stroke="var(--rule-strong)" />
             <rect x={244.5} y={y - 11.5} width={112} height={23} rx={2} fill="var(--plate)" stroke="var(--rule-strong)" />
             <path
@@ -703,7 +698,7 @@ function HypothesisPanel() {
             {bar(186, y, 18)}
           </Fade>
         ))}
-        <Pulse path={path} dur={8} r={3} />
+        <Travel path={path} dur={8} r={3} />
       </g>
     </Art>
   );
@@ -715,12 +710,12 @@ function ExperimentLog() {
   const RY = (i: number) => 104 + i * 22;
   const trend = [
     [6, 4, 2, 1],
-    [5, 5, 3, 1],
-    [7, 3, 1, 0],
-    [4, 4, 4, 2],
+    [1, 3, 5, 6],
+    [4, 4, 3, 4],
+    [2, 5, 3, 2],
     [6, 5, 2, 2],
-    [5, 3, 3, 0],
-    [7, 4, 1, 1],
+    [2, 2, 4, 6],
+    [5, 3, 4, 3],
   ];
   const widths = [
     [30, 22, 36],
@@ -753,7 +748,7 @@ function ExperimentLog() {
                 <line x1={36} y1={y + 11} x2={364} y2={y + 11} stroke="var(--rule)" />
                 {bar(44, y, 12)}
                 {widths[i].map((w, j) => (
-                  <rect key={j} x={84 + j * 52} y={y - 2} width={w} height={4} rx={2} fill="var(--ink-3)" opacity={0.45} />
+                  <rect key={j} x={84 + j * 52} y={y - 2} width={w} height={4} rx={2} fill="var(--rule-strong)" />
                 ))}
                 <path d={smooth(t.map((v, k) => [262 + k * 22, y + 4 - v] as [number, number]))} fill="none" stroke="var(--ink-2)" />
                 <circle cx={352} cy={y} r={2.6} fill="none" stroke="var(--ink-3)" />
@@ -854,10 +849,10 @@ function SessionResults() {
         <line x1={X0} y1={y(0.9)} x2={X1 + 14} y2={y(0.9)} stroke="var(--signal)" strokeDasharray="0.1 3" strokeLinecap="round" />
         <line x1={X0} y1={y(0.2)} x2={X1 + 14} y2={y(0.2)} stroke="var(--ink-3)" strokeDasharray="0.1 3" strokeLinecap="round" />
         <Txt x={X0 + 6} y={y(0.9) - 6} size={9} tone="signal">
-          accept 0.9
+          {"accept ≥ 0.9"}
         </Txt>
         <Txt x={X0 + 6} y={y(0.2) + 13} size={9}>
-          retire 0.2
+          {"retire < 0.2"}
         </Txt>
       </Fade>
       {others.map((o, i) => {
@@ -866,6 +861,8 @@ function SessionResults() {
           <g key={i}>
             <Draw d={smooth(o.pts)} at={400 + i * 120} dur={900} stroke="var(--ink-3)" />
             <Fade d={1200 + i * 60}>
+              {/* a hypothesis proposed mid-session enters where it was proposed */}
+              {o.pts[0][0] > X0 && <circle cx={o.pts[0][0]} cy={o.pts[0][1]} r={2.2} fill="var(--plate)" stroke="var(--ink-3)" />}
               {o.retired ? (
                 <path
                   d={`M ${e[0] - 3} ${e[1] - 3} L ${e[0] + 3} ${e[1] + 3} M ${e[0] + 3} ${e[1] - 3} L ${e[0] - 3} ${e[1] + 3}`}
@@ -960,7 +957,7 @@ function Convergence() {
             calcMode="spline"
             keySplines={splines(3)}
           />
-          <line x1={cx(0)} y1={B - H - 10} x2={cx(0)} y2={QY - 6} stroke="var(--ink-2)" strokeWidth={0.8} strokeDasharray="2 2" />
+          <line x1={cx(0)} y1={B - H - 10} x2={cx(0)} y2={QY - 6} stroke="var(--signal)" strokeWidth={0.9} />
         </g>
       </g>
     </Art>

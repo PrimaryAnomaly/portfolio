@@ -13,7 +13,7 @@ const ease = "0.4 0 0.2 1";
 
 export default function Cover() {
   const j = {
-    head: [106, 84],
+    head: [106, 94],
     neck: [106, 106],
     sh: [110, 113],
     el: [126, 152],
@@ -88,7 +88,7 @@ export default function Cover() {
       </g>
       {/* mocap markers */}
       <g className="dg-n" style={dl(350)} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1.1}>
-        {(["neck", "sh", "el", "hip", "kf", "kb", "af", "ab"] as const).map((k) => (
+        {(["sh", "el", "hip", "kf", "kb", "af", "ab"] as const).map((k) => (
           <circle key={k} cx={j[k][0]} cy={j[k][1]} r={3.2} />
         ))}
       </g>
@@ -103,10 +103,10 @@ export default function Cover() {
       {/* torch and wrist sensor, travelling the seam */}
       <g className="dg-n" style={dl(450)}>
         <g>
-          <line x1={wrist(seam0)[0]} y1={wrist(seam0)[1]} x2={seam0} y2={benchY - 7} stroke="var(--ink)" strokeWidth={2.2} strokeLinecap="round" />
+          <line x1={wrist(seam0)[0]} y1={wrist(seam0)[1]} x2={seam0} y2={benchY - 7} stroke="var(--ink-2)" strokeWidth={1.3} strokeLinecap="round" />
           <circle cx={seam0} cy={benchY - 6} r={7} fill="var(--signal)" opacity={0.18} />
           <circle cx={seam0} cy={benchY - 6} r={2.6} fill="var(--signal)" />
-          <rect x={wrist(seam0)[0] - 4.5} y={wrist(seam0)[1] - 4.5} width={9} height={9} rx={1.5} fill="var(--signal)" />
+          <rect x={wrist(seam0)[0] - 4} y={wrist(seam0)[1] - 4} width={8} height={8} rx={1.5} fill="var(--plate)" stroke="var(--signal)" strokeWidth={1.3} />
           <animateTransform attributeName="transform" type="translate" values={`0 0; ${travel} 0; ${travel} 0; 0 0`} keyTimes={kt} calcMode="spline" keySplines={ks} {...clock} />
         </g>
       </g>

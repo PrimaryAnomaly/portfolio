@@ -213,8 +213,8 @@ function Trajectories() {
   const pitch = 23;
   const amp = 16;
   const base = (i: number) => top + i * pitch + 16;
-  const cursorTop = 52;
   const cursorBot = base(8) + 4;
+  const axisY = cursorBot + 4;
   return (
     <Art id="lyo-trajectories" label="Nine state variables traced through freeze, anneal, primary dry and secondary dry">
       <PhaseLabels x0={x0} x1={x1} y={45} d={80} />
@@ -245,7 +245,7 @@ function Trajectories() {
         <g>
           <animateTransform attributeName="transform" type="translate" values={`0 0;${x1 - x0} 0`} dur="11s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.04;0.9;0.96;1" dur="11s" repeatCount="indefinite" />
-          <line x1={x0} y1={cursorTop} x2={x0} y2={cursorBot} stroke="var(--signal)" strokeWidth={0.7} opacity={0.55} />
+          <line x1={x0} y1={50} x2={x0} y2={axisY} stroke="var(--signal)" strokeWidth={0.7} opacity={0.55} />
           <circle cx={x0} r={2.6} fill="var(--signal)">
             <animate attributeName="cy" values={ys((t) => tp(t), base(0), amp)} dur="11s" repeatCount="indefinite" />
           </circle>
@@ -275,7 +275,7 @@ function Transitions() {
       <line className="dg-n" style={dl(40)} x1={x0} y1={pcBase - pcAmp - 2} x2={x0} y2={pcBase + 4} stroke="var(--ink-3)" strokeWidth={0.7} />
       <g className="dg-n" style={dl(80)} stroke="var(--rule-strong)" strokeWidth={0.8} strokeDasharray="1 2.5">
         {marks.map(([x, y]) => (
-          <line key={x} x1={x} y1={y + 6} x2={x} y2={stripY} />
+          <line key={x} x1={x} y1={y + 2.6} x2={x} y2={stripY} />
         ))}
       </g>
       <Curve d={trace(tp, x0, x1, tpBase, tpAmp)} delay={200} dur={1000} w={1} />
@@ -354,24 +354,24 @@ function LnpEvolution() {
           </g>
         );
       })}
+      {/* ambient: a reading rides the lead series, its value ticked on the axis */}
       <g className="dg-pulse">
-        {LNP.map((s, i) => {
-          const x0 = left + i * (w + gap);
-          const vals = ys(s.f, base, amp);
-          const lead = i === 0;
-          const col = lead ? "var(--signal)" : "var(--ink-2)";
-          return (
-            <g key={s.name}>
-              <line x1={x0 - 5} x2={x0} y1={0} y2={0} stroke={col} strokeWidth={1}>
-                <animateTransform attributeName="transform" type="translate" values={vals.split(";").map((y) => `0 ${y}`).join(";")} dur="10s" repeatCount="indefinite" />
-              </line>
-              <circle r={lead ? 2.6 : 2} fill={col}>
-                <animate attributeName="cx" values={`${x0};${x0 + w}`} dur="10s" repeatCount="indefinite" />
-                <animate attributeName="cy" values={vals} dur="10s" repeatCount="indefinite" />
-              </circle>
-            </g>
-          );
-        })}
+        <line x1={left - 5} x2={left} y1={0} y2={0} stroke="var(--signal)" strokeWidth={1}>
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values={ys(LNP[0].f, base, amp)
+              .split(";")
+              .map((y) => `0 ${y}`)
+              .join(";")}
+            dur="10s"
+            repeatCount="indefinite"
+          />
+        </line>
+        <circle r={2.6} fill="var(--signal)">
+          <animate attributeName="cx" values={`${left};${left + w}`} dur="10s" repeatCount="indefinite" />
+          <animate attributeName="cy" values={ys(LNP[0].f, base, amp)} dur="10s" repeatCount="indefinite" />
+        </circle>
       </g>
     </Art>
   );
@@ -411,10 +411,10 @@ function PhasePhysics() {
       <T x={x0} y={188} mono={false} tone="ink" size={10} d={180}>
         desorption
       </T>
-      <g className="dg-n" style={dl(100)} stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1 2.5">
-        <line x1={x0} y1={r1} x2={X(P[2])} y2={r1} />
-        <line x1={X(P[3])} y1={r1} x2={x1} y2={r1} />
-        <line x1={x0} y1={r2} x2={X(P[3])} y2={r2} />
+      <g className="dg-n" style={dl(100)} strokeWidth={0.8} strokeDasharray="1 2.5">
+        <line x1={x0} y1={r1} x2={X(P[2])} y2={r1} stroke="var(--signal)" />
+        <line x1={X(P[3])} y1={r1} x2={x1} y2={r1} stroke="var(--signal)" />
+        <line x1={x0} y1={r2} x2={X(P[3])} y2={r2} stroke="var(--ink-3)" />
       </g>
       <Curve d={active} tone="signal" delay={380} dur={900} />
       <Curve d={dActive} delay={700} dur={800} />
@@ -590,26 +590,30 @@ function Parity() {
 /* ---------- 7. parameter-to-CQA dependency map ---------- */
 
 const PARAMS = ["thermal exposure", "moisture", "pH", "ionic strength", "lipid ratio"];
-const CQAS = ["X", "EE", "RIN", "Z50", "PDI"];
-/* Only the dependencies the write-up states the model encodes (1 = modelled). No signs or strengths. */
+const CQAS = ["EE", "RIN", "Z50"];
+/* Only the dependencies the write-up states the model encodes (1 = modelled). No signs or strengths.
+   EE: thermal (glass-transition proximity), moisture, pH. RIN: thermal, moisture.
+   Particle size (Z50): temperature history, pH, ionic strength, lipid ratio. */
 const DEPS = [
-  [0, 1, 1, 1, 1],
-  [1, 1, 1, 0, 0],
-  [0, 1, 0, 1, 1],
-  [0, 0, 0, 1, 1],
-  [0, 0, 0, 1, 1],
+  [1, 1, 1],
+  [1, 1, 0],
+  [1, 0, 1],
+  [0, 0, 1],
+  [0, 0, 1],
 ];
+/* The relationships the write-up names explicitly */
 const FOCUS: [number, number][] = [
-  [0, 1],
-  [1, 2],
-  [3, 3],
-  [4, 3],
+  [0, 0],
+  [1, 1],
+  [3, 2],
+  [4, 2],
 ];
 
 function Heatmap() {
-  const gx = 146;
+  const nc = CQAS.length;
+  const gx = 164;
   const gy = 72;
-  const cw = 44;
+  const cw = 56;
   const ch = 34;
   const cx = (c: number) => gx + c * cw + cw / 2;
   const cy = (r: number) => gy + r * ch + ch / 2;
@@ -632,9 +636,9 @@ function Heatmap() {
       ))}
       <g className="dg-n" style={dl(40)} stroke="var(--rule)" strokeWidth={0.7}>
         {Array.from({ length: 6 }, (_, i) => (
-          <line key={`h${i}`} x1={gx} y1={gy + i * ch} x2={gx + 5 * cw} y2={gy + i * ch} />
+          <line key={`h${i}`} x1={gx} y1={gy + i * ch} x2={gx + nc * cw} y2={gy + i * ch} />
         ))}
-        {Array.from({ length: 6 }, (_, i) => (
+        {Array.from({ length: nc + 1 }, (_, i) => (
           <line key={`v${i}`} x1={gx + i * cw} y1={gy} x2={gx + i * cw} y2={gy + 5 * ch} />
         ))}
       </g>
@@ -727,7 +731,7 @@ function PhaseContribution() {
               <animate attributeName="opacity" values={s.values} keyTimes={s.keyTimes} dur="10s" repeatCount="indefinite" />
               <line x1={sx(k)} y1={top - 14} x2={f1(sx(k) + segW)} y2={top - 14} stroke="var(--signal)" strokeWidth={1.2} />
               {CQA_ROWS.map((row, r) => (
-                <rect key={row} x={sx(k)} y={top + r * pitch - barH / 2} width={f1(segW)} height={barH} fill="var(--signal)" />
+                <rect key={row} x={sx(k)} y={top + r * pitch - barH / 2} width={f1(segW)} height={barH} fill="var(--signal)" fillOpacity={0.12} stroke="var(--signal)" strokeWidth={1.1} />
               ))}
             </g>
           );

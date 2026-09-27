@@ -17,7 +17,8 @@ const HY = FLOOR - 62 * S;
 const HA = AX + 24 * S;
 const HB = BX - 24 * S;
 const MOUTH = FLOOR - 96 * S;
-const cue = `M ${AX + 13} ${MOUTH} Q 200 ${MOUTH - 78} ${BX - 13} ${MOUTH}`;
+// from A's face to B's face (head half-width is 7·S)
+const cue = `M ${AX + 11} ${MOUTH} Q 200 ${MOUTH - 78} ${BX - 11} ${MOUTH}`;
 
 export default function Cover() {
   return (
@@ -37,10 +38,10 @@ export default function Cover() {
 
       {/* the shared load */}
       <g className="dg-n" style={d(450)}>
-        <rect x={HA + 0.5} y={HY - 18.5} width={HB - HA - 1} height={37} rx={2} fill="var(--plate)" stroke="var(--ink)" />
+        <rect x={HA + 0.5} y={HY - 18.5} width={HB - HA - 1} height={37} rx={2} fill="var(--plate)" stroke="var(--ink-2)" />
         <line x1={HA + 6} y1={HY - 12} x2={HB - 6} y2={HY - 12} stroke="var(--rule-strong)" />
         {[HA, HB].map((x) => (
-          <circle key={x} cx={x} cy={HY} r={3} fill="var(--ink)" />
+          <circle key={x} cx={x} cy={HY} r={2.6} fill="var(--plate)" stroke="var(--ink-2)" />
         ))}
       </g>
 
@@ -51,7 +52,8 @@ export default function Cover() {
         d={cue}
         pathLength={1}
         fill="none"
-        stroke="var(--rule-strong)"
+        stroke="var(--signal)"
+        strokeWidth={1.25}
         strokeLinecap="round"
       />
       <g className="dg-n" style={d(600)}>
@@ -60,9 +62,9 @@ export default function Cover() {
             key={k}
             d={`M ${AX + 10 + k * 0.35} ${MOUTH - k * 0.8} Q ${AX + 10 + k} ${MOUTH} ${AX + 10 + k * 0.35} ${MOUTH + k * 0.8}`}
             fill="none"
-            stroke={i === 0 ? "var(--signal)" : "var(--ink-3)"}
+            stroke="var(--signal)"
             strokeLinecap="round"
-            opacity={1 - i * 0.25}
+            opacity={1 - i * 0.3}
           />
         ))}
       </g>

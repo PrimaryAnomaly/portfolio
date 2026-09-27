@@ -4,7 +4,7 @@ import { Art } from "@/components/diagrams/kit";
 /*
   One well, magnified: the three electrodes (pH, pNa, reference) around
   the optical path, yeast cells in suspension, and the 27-well card it
-  comes from. The cells drift slowly; that is the one ambient motion.
+  comes from. Ambient: the optical reading breathes slowly in the well.
 */
 
 const dd = (d: number, dur?: number) => ({ "--d": d, ...(dur ? { "--dur": `${dur}ms` } : {}) }) as CSSProperties;
@@ -68,8 +68,8 @@ export default function Cover() {
             />
             <g className="dg-n" style={dd(200 + i * 90)}>
               <circle cx={px} cy={py} r={13} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
-              <circle cx={px} cy={py} r={8} fill="var(--ink-3)" opacity={0.55} />
-              <rect x={ex - 3} y={ey - 3} width={6} height={6} fill="var(--ink-2)" />
+              <circle cx={px} cy={py} r={7.5} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
+              <rect x={ex - 3} y={ey - 3} width={6} height={6} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
             </g>
             <text
               className="dg-n"
@@ -93,7 +93,18 @@ export default function Cover() {
         <path d={`M ${CX - 30} ${CY} H ${CX - 26} M ${CX + 26} ${CY} H ${CX + 30} M ${CX} ${CY - 30} V ${CY - 26} M ${CX} ${CY + 26} V ${CY + 30}`} stroke="var(--signal)" strokeWidth={1} />
       </g>
 
-      {/* yeast in suspension, drifting */}
+      {/* ambient: the optical reading breathes */}
+      <g className="dg-pulse">
+        <circle cx={CX} cy={CY} r={24} fill="var(--signal)" opacity={0}>
+          <animate attributeName="opacity" values="0;0.1;0" keyTimes="0;0.5;1" calcMode="spline" keySplines={`${EASE};${EASE}`} dur="7s" repeatCount="indefinite" />
+        </circle>
+        <circle cx={live.x} cy={live.y} r={4} fill="none" stroke="var(--signal)" strokeWidth={0.8} opacity={0}>
+          <animate attributeName="r" values="4;9" keyTimes="0;1" calcMode="spline" keySplines={EASE} dur="7s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.8;0" keyTimes="0;1" calcMode="spline" keySplines={EASE} dur="7s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* yeast in suspension */}
       <g className="dg-n" style={dd(650)}>
         <g>
           {cells.map(([dx, dy, rot, bud], i) => (
@@ -103,16 +114,6 @@ export default function Cover() {
               <circle cx={-1.4} cy={0.6} r={1.2} fill="var(--ink-3)" />
             </g>
           ))}
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            values="0 0;3 -2;1 3;-2 1;0 0"
-            keyTimes="0;0.25;0.5;0.75;1"
-            calcMode="spline"
-            keySplines={`${EASE};${EASE};${EASE};${EASE}`}
-            dur="14s"
-            repeatCount="indefinite"
-          />
         </g>
       </g>
 

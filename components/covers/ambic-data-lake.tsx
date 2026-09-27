@@ -66,7 +66,7 @@ export default function Cover() {
       </g>
       {rows.map((y, i) => (
         <g key={y} className="dg-n" style={d(320 + i * 50)}>
-          <rect x={SX + 10} y={y - 1.5} width={raw[i][0]} height={3} rx={1.5} fill={i === SIG ? "var(--ink-2)" : "var(--ink-3)"} opacity={i === SIG ? 1 : 0.55} />
+          <rect x={SX + 10} y={y - 1.5} width={raw[i][0]} height={3} rx={1.5} fill={i === SIG ? "var(--signal)" : "var(--ink-3)"} opacity={i === SIG ? 1 : 0.55} />
           <rect x={SX + 16 + raw[i][0]} y={y - 1.5} width={raw[i][1]} height={3} rx={1.5} fill="var(--ink-3)" opacity={0.3} />
           <circle cx={SX + SW} cy={y} r={2.2} fill="var(--paper)" stroke={i === SIG ? "var(--signal)" : "var(--ink-3)"} strokeWidth={0.9} />
         </g>
@@ -78,15 +78,16 @@ export default function Cover() {
           normalized
         </text>
         <rect x={TX + 0.5} y={TOP + 0.5} width={TW} height={BOT - TOP} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.9} />
-        <rect x={TX + 0.5} y={TOP + 0.5} width={TW} height={26} fill="var(--ink)" />
+        {/* header row: outlined, named fields in the target schema */}
+        <line x1={TX} y1={TOP + 26} x2={TX + TW} y2={TOP + 26} stroke="var(--ink-2)" strokeWidth={0.9} />
         {[0, 0.36, 0.68].map((f) => (
-          <rect key={f} x={TX + 8 + f * TW} y={TOP + 12} width={20} height={3} rx={1.5} fill="var(--paper)" opacity={0.75} />
+          <rect key={f} x={TX + 8 + f * TW} y={TOP + 12} width={20} height={3} rx={1.5} fill="var(--ink-2)" />
         ))}
         {rows.slice(0, -1).map((y) => (
           <line key={y} x1={TX} y1={y + 12} x2={TX + TW} y2={y + 12} stroke="var(--rule)" strokeWidth={0.8} />
         ))}
         {[TX + TW * 0.36, TX + TW * 0.68].map((x) => (
-          <line key={x} x1={x} y1={TOP + 26} x2={x} y2={BOT} stroke="var(--rule)" strokeWidth={0.8} />
+          <line key={x} x1={x} y1={TOP} x2={x} y2={BOT} stroke="var(--rule)" strokeWidth={0.8} />
         ))}
       </g>
       {rows.map((y, j) => {
@@ -127,7 +128,7 @@ export default function Cover() {
       ))}
       <g className="dg-n" style={d(1300)}>
         <text x={(SX + SW + TX) / 2} y={BOT + 30} fontSize={9} fill="var(--ink-3)" textAnchor="middle" style={mono}>
-          column mapping, source kept
+          column mapping, source linked
         </text>
       </g>
 

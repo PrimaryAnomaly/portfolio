@@ -134,7 +134,7 @@ function Dashboard() {
               {on && <rect x={s1 + 1} y={y - 10} width={s2 - s1 - 1} height={20} fill="var(--paper)" />}
               {on && <rect x={s1} y={y - 10} width={2} height={20} fill="var(--signal)" />}
               <FileGlyph x={s1 + 10} y={y - 5} tone={on ? "var(--ink)" : "var(--ink-3)"} />
-              <Bar x={s1 + 26} y={y} w={w} tone={on ? "var(--ink-2)" : "var(--rule-strong)"} />
+              <Bar x={s1 + 26} y={y} w={w} tone={on ? "var(--ink-3)" : "var(--rule-strong)"} />
               <Bar x={s2 - 22} y={y} w={12} />
               {i < rows.length - 1 && <line x1={s1 + 10} y1={y + 10.5} x2={s2 - 10} y2={y + 10.5} stroke="var(--rule)" strokeWidth={0.6} />}
             </g>
@@ -148,8 +148,8 @@ function Dashboard() {
           const y = Y + 86 + i * 18;
           return (
             <g key={i}>
-              <Bar x={s2 + 10} y={y} w={20 + ((i * 7) % 12)} />
-              <Bar x={s2 + 10} y={y + 7} w={[58, 44, 66, 38, 52, 60][i]} tone="var(--ink-3)" />
+              <Bar x={s2 + 10} y={y} w={20 + ((i * 7) % 12)} tone="var(--rule)" />
+              <Bar x={s2 + 10} y={y + 7} w={[58, 44, 66, 38, 52, 60][i]} />
             </g>
           );
         })}
@@ -215,13 +215,10 @@ function FileBrowser() {
               <FolderGlyph x={x} y={y - 5} open={kind === "o"} />
             ) : (
               <g>
-                <FileGlyph x={x + 1} y={y - 5} tone={on ? "var(--ink)" : "var(--ink-3)"} />
-                {kind === "l" && (
-                  <rect x={x - 1.5} y={y - 7} width={12} height={14} rx={2} fill="none" stroke="var(--signal)" strokeWidth={0.7} strokeDasharray="1.5 1.5" />
-                )}
+                <FileGlyph x={x + 1} y={y - 5} tone={on ? "var(--ink-2)" : "var(--ink-3)"} />
               </g>
             )}
-            <Bar x={x + 18} y={y} w={widths[i]} tone={on ? "var(--ink-2)" : kind === "o" || kind === "f" ? "var(--ink-3)" : "var(--rule-strong)"} />
+            <Bar x={x + 18} y={y} w={widths[i]} tone={on ? "var(--ink-3)" : kind === "o" || kind === "f" ? "var(--rule-strong)" : "var(--rule)"} />
           </g>
         );
       })}
@@ -238,21 +235,22 @@ function FileBrowser() {
   );
 }
 
-/* 03 Architecture, compact: the browser talks to Postgres directly (behind RLS);
-   file operations go through a Deno Edge Function to object storage */
+/* 03 Architecture, compact: the React frontend calls Deno Edge Functions,
+   which reach PostgreSQL and object storage (both behind RLS). Orange: raw
+   uploads going through a function into object storage. */
 function Architecture() {
   const gx = 40;
   const cx = 250;
   const tiers = [86, 160, 236];
-  const fnX = [cx - 75, cx - 25, cx + 25, cx + 75];
-  const hot = fnX[1];
-  const stX = cx - 60; // storage centre
+  const fnX = [cx - 56, cx, cx + 56]; // file CRUD, dataset processing, sharing
+  const hot = fnX[0];
+  const stX = cx - 56; // storage centre
   const pgX = cx + 56; // Postgres centre
   const gy = tiers[2] - 2; // glyph centre in the data tier
-  const filePath = `M ${hot} ${tiers[0] + 16} L ${hot} ${tiers[2] - 34} Q ${hot} ${tiers[2] - 26} ${hot - 8} ${tiers[2] - 26} L ${stX + 8} ${tiers[2] - 26} Q ${stX} ${tiers[2] - 26} ${stX} ${tiers[2] - 18} L ${stX} ${gy - 18}`;
+  const filePath = `M ${hot} ${tiers[0] + 16.5} L ${hot} ${gy - 18}`;
   const dbX = pgX;
   return (
-    <Art id="ambic-architecture" label="System architecture: React frontend, Deno Edge Functions for file operations, Supabase Postgres and object storage behind row-level security">
+    <Art id="ambic-architecture" label="System architecture: React frontend, Deno Edge Functions, Supabase PostgreSQL and object storage behind row-level security">
       {tiers.map((y, i) => (
         <g key={y} className="dg-n" style={dl(i * 150)}>
           <line x1={gx} y1={y - 30} x2={360} y2={y - 30} stroke="var(--rule-strong)" strokeWidth={0.8} />
@@ -295,10 +293,10 @@ function Architecture() {
           Storage
         </T>
         <T x={pgX} y={gy + 22} s={9} a="middle">
-          Postgres
+          PostgreSQL
         </T>
       </g>
-      {/* the browser reads structured data straight from Postgres */}
+      {/* structured data goes through a function to PostgreSQL */}
       <path
         className="dg-e"
         style={dl(1000, 600)}
@@ -367,7 +365,7 @@ function ColumnMapping() {
               strokeWidth={on ? 1.1 : 0.8}
               strokeDasharray={mapped ? undefined : "1.5 2"}
             />
-            <Bar x={sx + 8} y={sy(i)} w={w} tone={on ? "var(--ink-2)" : mapped ? "var(--rule-strong)" : "var(--rule)"} />
+            <Bar x={sx + 8} y={sy(i)} w={w} tone={on ? "var(--ink-3)" : mapped ? "var(--rule-strong)" : "var(--rule)"} />
           </g>
         );
       })}
@@ -376,8 +374,8 @@ function ColumnMapping() {
         return (
           <g key={i} className="dg-n" style={dl(300 + i * 60)}>
             <rect x={tx + 0.5} y={ty(i) - 9.5} width={tw - 1} height={19} rx={2} fill="var(--plate)" stroke={on ? "var(--signal)" : "var(--ink-3)"} strokeWidth={on ? 1.1 : 0.8} />
-            <rect x={tx} y={ty(i) - 10} width={2.5} height={20} fill={on ? "var(--signal)" : "var(--ink-3)"} />
-            <Bar x={tx + 11} y={ty(i)} w={w} tone={on ? "var(--ink)" : "var(--ink-3)"} />
+            {on && <rect x={tx} y={ty(i) - 10} width={2.5} height={20} fill="var(--signal)" />}
+            <Bar x={tx + 11} y={ty(i)} w={w} tone={on ? "var(--ink-3)" : "var(--rule-strong)"} />
           </g>
         );
       })}
@@ -409,8 +407,7 @@ function ColumnMapping() {
           strokeWidth={0.8}
           strokeDasharray="1.5 2.5"
         />
-        <rect x={188} y={255} width={58} height={14} fill="var(--plate)" />
-        <T x={217} y={265.5} a="middle">
+        <T x={217} y={278} a="middle">
           provenance
         </T>
       </g>
@@ -422,10 +419,12 @@ function ColumnMapping() {
 function VirtualTable() {
   const x0 = 28,
     y0 = 72,
-    cw = 22,
+    cw = 19,
     rh = 12;
   const nc = 18,
-    nr = 20;
+    nr = 18;
+  const x1 = x0 + nc * cw; // table's right edge
+  const brk = x0 + 15 * cw; // drafting break: columns omitted here
   const vw = cw * 6,
     vh = rh * 8;
   const vx = x0 + cw * 3,
@@ -437,7 +436,7 @@ function VirtualTable() {
       cells.push(<rect key={`${r}-${c}`} x={x0 + c * cw + 4} y={y0 + r * rh + 4.5} width={w} height={3} rx={1.5} fill={r === 0 ? "var(--ink-2)" : "var(--ink-3)"} />);
     }
   }
-  const path = "0 0; 110 30; 176 -8; 132 84; 22 70; 0 0";
+  const path = "0 0; 76 24; 100 -8; 60 60; 12 48; 0 0";
   const kt = "0;0.22;0.42;0.64;0.84;1";
   const ks = Array(5).fill(ease).join(";");
   return (
@@ -452,14 +451,26 @@ function VirtualTable() {
       {/* the lattice that is never rendered */}
       <g className="dg-n" style={dl(0)} stroke="var(--rule)" strokeWidth={0.6}>
         {Array.from({ length: nr + 1 }, (_, r) => (
-          <line key={`r${r}`} x1={x0} y1={y0 + r * rh} x2={400} y2={y0 + r * rh} />
+          <line key={`r${r}`} x1={x0} y1={y0 + r * rh} x2={x1} y2={y0 + r * rh} />
         ))}
-        {Array.from({ length: nc }, (_, c) => (
-          <line key={`c${c}`} x1={x0 + c * cw} y1={y0} x2={x0 + c * cw} y2={300} />
+        {Array.from({ length: nc + 1 }, (_, c) => (
+          <line key={`c${c}`} x1={x0 + c * cw} y1={y0} x2={x0 + c * cw} y2={y0 + nr * rh} />
         ))}
       </g>
       <g className="dg-n" style={dl(150)}>
-        <line x1={x0} y1={y0 + rh} x2={400} y2={y0 + rh} stroke="var(--rule-strong)" strokeWidth={0.8} />
+        <line x1={x0} y1={y0 + rh} x2={x1} y2={y0 + rh} stroke="var(--rule-strong)" strokeWidth={0.8} />
+        {/* break: the table continues for thousands of columns */}
+        <rect x={brk + 2} y={y0 - 1} width={cw - 4} height={nr * rh + 2} fill="var(--plate)" />
+        {[brk + 2, brk + cw - 2].map((bx) => (
+          <path
+            key={bx}
+            d={`M ${bx} ${y0} ` + Array.from({ length: nr * 2 }, (_, k) => `L ${bx + (k % 2 ? -2 : 2)} ${y0 + (k + 1) * (rh / 2)}`).join(" ")}
+            fill="none"
+            stroke="var(--rule-strong)"
+            strokeWidth={0.7}
+            strokeLinejoin="round"
+          />
+        ))}
       </g>
       {/* rendered cells: only inside the viewport */}
       <g className="dg-n" style={dl(500)} clipPath="url(#ambic-vt-clip)">
@@ -471,14 +482,14 @@ function VirtualTable() {
           <animateTransform attributeName="transform" type="translate" values={path} keyTimes={kt} calcMode="spline" keySplines={ks} dur="14s" begin="2.4s" repeatCount="indefinite" />
         </rect>
       </g>
-      {/* dimension: columns run far past the edge */}
+      {/* dimension: first column to last, across the break */}
       <g className="dg-n" style={dl(800)} stroke="var(--ink-3)" strokeWidth={0.8} fill="none">
-        <line x1={x0} y1={50} x2={x0} y2={62} />
-        <line x1={x0} y1={56} x2={400} y2={56} />
+        <line x1={x0} y1={56} x2={x0} y2={66} />
+        <line x1={x1} y1={56} x2={x1} y2={66} />
+        <line x1={x0} y1={61} x2={x1} y2={61} />
       </g>
       <g className="dg-n" style={dl(900)}>
-        <rect x={x0 + 150} y={49} width={96} height={14} fill="var(--plate)" />
-        <T x={x0 + 198} y={59.5} a="middle" fill="var(--ink-2)">
+        <T x={(x0 + x1) / 2} y={50} a="middle" fill="var(--ink-2)">
           3,000+ columns
         </T>
       </g>
@@ -536,7 +547,7 @@ function TimeSeries() {
       {/* annotation flag */}
       <g className="dg-n" style={dl(1000)}>
         <line x1={ann} y1={py0 - 4} x2={ann} y2={py1} stroke="var(--ink-3)" strokeWidth={0.7} strokeDasharray="1.5 2" />
-        <path d={`M ${ann} ${py0 - 12} L ${ann + 10} ${py0 - 12} L ${ann + 7} ${py0 - 8} L ${ann + 10} ${py0 - 4} L ${ann} ${py0 - 4} Z`} fill="var(--ink-3)" />
+        <path d={`M ${ann} ${py0 - 12} L ${ann + 10} ${py0 - 12} L ${ann + 7} ${py0 - 8} L ${ann + 10} ${py0 - 4} L ${ann} ${py0 - 4} Z`} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.8} strokeLinejoin="round" />
       </g>
       {/* range brush */}
       <g className="dg-n" style={dl(1100)}>
@@ -554,7 +565,7 @@ function TimeSeries() {
       </defs>
       <g className="dg-pulse" clipPath="url(#ambic-ts-clip)">
         <g>
-          <line x1={0} y1={-200} x2={0} y2={200} stroke="var(--ink-2)" strokeWidth={0.7} />
+          <line x1={0} y1={-200} x2={0} y2={200} stroke="var(--signal)" strokeWidth={0.7} opacity={0.6} />
           <circle r={5.5} fill="var(--signal)" opacity={0.16} />
           <circle r={2.4} fill="var(--signal)" />
           <animateMotion dur="10s" repeatCount="indefinite" path={run} keyPoints="0.12;0.9;0.12" keyTimes="0;0.5;1" calcMode="spline" keySplines={`${ease};${ease}`} />
@@ -586,7 +597,7 @@ function Analytics() {
     sy1 = Y + H - 16;
   const pts = SCATTER.map(([t, n]) => {
     const x = sx0 + 10 + t * (sx1 - sx0 - 20);
-    const y = sy1 - 12 - t * (sy1 - sy0 - 40) * 0.8 - (n - 0.5) * 50 - 8;
+    const y = sy1 - 14 - n * (sy1 - sy0 - 28);
     return [x, Math.max(sy0 + 6, Math.min(sy1 - 6, y))] as const;
   });
   const br = { x: sx0 + 86, y: sy0 + 34, w: 58, h: 52 };
@@ -628,11 +639,14 @@ function Analytics() {
         <rect x={br.x} y={br.y} width={br.w} height={br.h} fill="var(--signal)" opacity={0.06} />
         <rect x={br.x} y={br.y} width={br.w} height={br.h} fill="none" stroke="var(--signal)" strokeWidth={0.9} strokeDasharray="3 2" />
       </g>
+      <g className="dg-n" style={dl(800)}>
+        <path d={`M ${br.x + br.w - 3} ${br.y + br.h + 3} l 0 10 l 2.6 -2.4 l 2 4.2 l 1.6 -0.8 l -2 -4.1 l 3.5 -0.2 Z`} fill="var(--paper)" stroke="var(--ink-2)" strokeWidth={0.8} strokeLinejoin="round" />
+      </g>
+      {/* the live selection breathes */}
       <g className="dg-pulse">
-        <g>
-          <path d={`M ${br.x + br.w - 3} ${br.y + br.h + 3} l 0 10 l 2.6 -2.4 l 2 4.2 l 1.6 -0.8 l -2 -4.1 l 3.5 -0.2 Z`} fill="var(--paper)" stroke="var(--ink)" strokeWidth={0.8} strokeLinejoin="round" />
-          <animateTransform attributeName="transform" type="translate" values="0 0; 5 4; 0 0" keyTimes="0;0.5;1" calcMode="spline" keySplines={`${ease};${ease}`} dur="6s" repeatCount="indefinite" />
-        </g>
+        <rect x={br.x} y={br.y} width={br.w} height={br.h} fill="var(--signal)" opacity={0.04}>
+          <animate attributeName="opacity" values="0.04;0.14;0.04" keyTimes="0;0.5;1" calcMode="spline" keySplines={`${ease};${ease}`} dur="7s" repeatCount="indefinite" />
+        </rect>
       </g>
       {/* histogram, bins inside the brush highlighted */}
       {bars.map((h, i) => {
@@ -675,7 +689,7 @@ function Sharing() {
       {/* dataset header */}
       <g className="dg-n" style={dl(150)}>
         <FileGlyph x={X + 16} y={Y + 29} tone="var(--ink-2)" />
-        <Bar x={X + 32} y={Y + 34} w={96} tone="var(--ink-2)" />
+        <Bar x={X + 32} y={Y + 34} w={96} tone="var(--ink-3)" />
         {/* lock */}
         <g fill="none" stroke="var(--ink-3)" strokeWidth={0.8}>
           <rect x={X + W - 26.5} y={Y + 31.5} width={11} height={8} rx={1} />
@@ -694,8 +708,16 @@ function Sharing() {
         <path d={`M ${X + W - 30} ${Y + 73} l 3.5 3.5 l 3.5 -3.5`} fill="none" stroke="var(--signal)" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" />
       </g>
       <g className="dg-pulse">
-        <rect x={X + 86} y={Y + 69} width={1.2} height={12} fill="var(--ink)">
-          <animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.45;0.5;0.95;1" dur="2.4s" repeatCount="indefinite" />
+        <rect x={X + 86} y={Y + 69} width={1.2} height={12} fill="var(--signal)">
+          <animate
+            attributeName="opacity"
+            values="1;1;0.15;0.15;1"
+            keyTimes="0;0.4;0.5;0.9;1"
+            calcMode="spline"
+            keySplines={`${ease};${ease};${ease};${ease}`}
+            dur="5s"
+            repeatCount="indefinite"
+          />
         </rect>
       </g>
       <g className="dg-n" style={dl(400)}>
@@ -708,7 +730,7 @@ function Sharing() {
           <circle cx={X + 26} cy={ry(i)} r={9} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
           <circle cx={X + 26} cy={ry(i) - 2.6} r={2.8} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
           <path d={`M ${X + 20.5} ${ry(i) + 6} a 5.5 4.2 0 0 1 11 0`} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
-          <Bar x={X + 44} y={ry(i) - 3} w={[70, 56, 64][i]} tone="var(--ink-2)" />
+          <Bar x={X + 44} y={ry(i) - 3} w={[70, 56, 64][i]} tone="var(--ink-3)" />
           <Bar x={X + 44} y={ry(i) + 5} w={[92, 80, 86][i]} />
           <text x={X + W - 16} y={ry(i) + 4} fontSize={12} fill="var(--ink-2)" textAnchor="end">
             {r}

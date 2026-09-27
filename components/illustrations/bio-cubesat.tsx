@@ -211,7 +211,7 @@ function Assembly() {
       </g>
 
       {/* tubing */}
-      <Ln d={flow} at={500} dur={700} stroke="var(--ink-3)" w={0.9} />
+      <Ln d={flow} at={500} dur={700} stroke="var(--signal)" w={1} />
 
       {/* stack: standoffs, boards, components */}
       <g className="dg-n" style={dd(250)}>
@@ -377,7 +377,7 @@ function SensorCard() {
       {/* multiplexer scan */}
       <g className="dg-pulse">
         <g>
-          <line x1={wx(0)} y1={76} x2={wx(0)} y2={180} stroke="var(--ink-2)" strokeWidth={0.6} strokeDasharray="1 2" />
+          <line x1={wx(0)} y1={76} x2={wx(0)} y2={180} stroke="var(--signal)" strokeWidth={0.7} strokeDasharray="1 2" opacity={0.7} />
           <animateTransform
             attributeName="transform"
             type="translate"
@@ -450,14 +450,14 @@ function Fabrication() {
                 [-12, 12].map((o) => (
                   <g key={o}>
                     <line x1={x + o} y1={100} x2={x + o} y2={124} stroke="var(--ink-2)" strokeWidth={1.6} />
-                    <rect x={x + o - 3} y={122} width={6} height={5} fill="var(--ink-2)" />
+                    <rect x={x + o - 3} y={122} width={6} height={5} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.8} />
                     <circle cx={x + o} cy={96} r={7} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
                   </g>
                 ))}
-              {s >= 2 && <circle cx={x - 12} cy={96} r={5} fill={sig ? "var(--signal)" : "var(--ink-3)"} opacity={sig ? 0.9 : 0.55} />}
+              {s >= 2 && <circle cx={x - 12} cy={96} r={5} fill="var(--signal)" opacity={0.9} />}
               {s >= 3 && (
                 <>
-                  <circle cx={x + 12} cy={96} r={5} fill="var(--ink-2)" />
+                  <circle cx={x + 12} cy={96} r={4.5} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
                   <circle cx={x + 12} cy={96} r={9.5} fill="none" stroke="var(--ink-3)" strokeWidth={0.6} strokeDasharray="1 1.5" />
                 </>
               )}
@@ -465,17 +465,17 @@ function Fabrication() {
             {/* section */}
             <g className="dg-n" style={dd(at + 120)}>
               <rect x={x - 32} y={166} width={64} height={10} fill="url(#hx-bio-fab)" stroke="var(--ink-2)" strokeWidth={0.8} />
-              {s >= 1 && [-12, 12].map((o) => <rect key={o} x={x + o - 7} y={163.5} width={14} height={2.5} fill="var(--ink-2)" />)}
+              {s >= 1 && [-12, 12].map((o) => <rect key={o} x={x + o - 7} y={163} width={14} height={3} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.7} />)}
               {s >= 2 && (
                 <path
                   d={`M ${x - 20} 163.5 Q ${x - 12} 152 ${x - 4} 163.5 Z`}
-                  fill={sig ? "var(--signal)" : "var(--ink-3)"}
-                  opacity={sig ? 0.9 : 0.55}
+                  fill="var(--signal)"
+                  opacity={0.9}
                 />
               )}
               {s >= 3 && (
                 <>
-                  <path d={`M ${x + 5} 163.5 Q ${x + 12} 154 ${x + 19} 163.5 Z`} fill="var(--ink-2)" />
+                  <path d={`M ${x + 5} 163 Q ${x + 12} 154 ${x + 19} 163 Z`} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.8} />
                   <path d={`M ${x + 1} 163.5 Q ${x + 12} 146 ${x + 23} 163.5`} fill="none" stroke="var(--ink-3)" strokeWidth={0.6} strokeDasharray="1 1.5" />
                 </>
               )}
@@ -651,8 +651,6 @@ function VesselBuilt() {
             [54, 74],
             [120, 74],
             [186, 74],
-            [54, 140],
-            [186, 140],
             [54, 206],
             [120, 206],
             [186, 206],
@@ -673,8 +671,8 @@ function VesselBuilt() {
       </g>
 
       {/* line to gauge */}
-      <Ln d={`M 131 140 H ${gx - gr}`} at={600} dur={500} stroke="var(--ink-2)" w={1} />
-      <Ln d={`M 131 144 H ${gx - gr}`} at={600} dur={500} stroke="var(--ink-3)" w={0.6} />
+      <Ln d={`M 131 140 H ${gx - gr}`} at={600} dur={500} stroke="var(--signal)" w={1} />
+      <Ln d={`M 131 144 H ${gx - gr}`} at={600} dur={500} stroke="var(--signal)" w={0.6} />
 
       {/* gauge */}
       <g className="dg-n" style={dd(750)}>
@@ -703,22 +701,13 @@ function VesselBuilt() {
       </T>
       <g className="dg-n" style={dd(1000)}>
         <g transform={`rotate(${(135 + needle * 270) % 360} ${gx} ${gy})`}>
-          <g>
-            <line x1={gx - 8} y1={gy} x2={gx + gr - 12} y2={gy} stroke="var(--signal)" strokeWidth={1.4} strokeLinecap="round" />
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              values={`0 ${gx} ${gy};2.5 ${gx} ${gy};0 ${gx} ${gy}`}
-              keyTimes="0;0.5;1"
-              calcMode="spline"
-              keySplines={`${EASE};${EASE}`}
-              dur="8s"
-              repeatCount="indefinite"
-            />
-          </g>
+          <line x1={gx - 8} y1={gy} x2={gx + gr - 12} y2={gy} stroke="var(--signal)" strokeWidth={1.4} strokeLinecap="round" />
         </g>
-        <circle cx={gx} cy={gy} r={3.4} fill="var(--ink)" />
+        <circle cx={gx} cy={gy} r={3.2} fill="var(--plate)" stroke="var(--signal)" strokeWidth={1.2} />
       </g>
+
+      {/* ambient: test pressure travelling from the fitting to the gauge */}
+      <Pulse path={`M 131 142 H ${gx - gr}`} dur={6} r={2} />
 
       <g className="dg-n" style={dd(1100)}>
         <line x1={40} y1={238} x2={360} y2={238} stroke="var(--rule-strong)" strokeWidth={0.6} />
@@ -798,7 +787,7 @@ function Iterations() {
                 strokeWidth={final ? 1.25 : 1}
               />
             </g>
-            <Ln d={ch[i]} at={at + 200} dur={800} stroke="var(--ink-3)" w={0.9} />
+            <Ln d={ch[i]} at={at + 200} dur={800} stroke={final ? "var(--signal)" : "var(--ink-3)"} w={0.9} />
             <g className="dg-n" style={dd(at + 300)}>
               {wells(x)}
             </g>
@@ -818,22 +807,21 @@ function Iterations() {
       <g className="dg-n" style={dd(800)}>
         <path d={DROP} transform={`translate(${cards[1] + 74} ${Y + CH + 5})`} fill="var(--ink-3)" opacity={0.7} />
         <path d={DROP} transform={`translate(${cards[0] + 22} ${Y + CH + 5}) scale(0.7)`} fill="var(--ink-3)" opacity={0.7} />
+        <path d={DROP} transform={`translate(${cards[0] + 74} ${Y + CH + 5})`} fill="var(--ink-3)" opacity={0.7} />
       </g>
-      <g className="dg-pulse">
-        <path d={DROP} fill="var(--ink-3)" opacity={0.7}>
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            values={`${cards[0] + 74} ${Y + CH + 5};${cards[0] + 74} ${Y + CH + 5};${cards[0] + 74} ${Y + CH + 22}`}
-            keyTimes="0;0.55;1"
-            calcMode="spline"
-            keySplines={`0 0 1 1;0.55 0 0.9 0.6`}
-            dur="6s"
-            repeatCount="indefinite"
-          />
-          <animate attributeName="opacity" values="0;0.7;0.7;0" keyTimes="0;0.35;0.8;1" dur="6s" repeatCount="indefinite" />
-        </path>
-      </g>
+      {/* ambient: flow through the sealed iteration, inlet to outlet via one row */}
+      <Pulse
+        path={P([
+          [cards[2], Y + 20],
+          [cards[2] + 14, Y + 20],
+          [cards[2] + 14, Y + 68],
+          [cards[2] + 82, Y + 68],
+          [cards[2] + 82, Y + 116],
+          [cards[2] + CW, Y + 116],
+        ])}
+        dur={8}
+        r={2}
+      />
     </Art>
   );
 }
@@ -843,30 +831,31 @@ function Iterations() {
 /* ------------------------------------------------------------------ */
 
 function FluidicDetail() {
-  const wx = (c: number) => 80 + c * 30;
-  const wy = (r: number) => 100 + r * 50;
-  const route = roundedPath(
-    [
-      [58, 100],
-      [340, 100],
-      [340, 150],
-      [60, 150],
-      [60, 200],
-      [342, 200],
-    ],
-    16,
-  );
+  // Same topology as iteration 3 in the iterations figure, card turned landscape:
+  // an inlet bus feeds nine parallel branches of three wells into an outlet bus.
+  const wx = (c: number) => 76 + c * 29;
+  const wy = (r: number) => 110 + r * 45;
+  const busT = 84,
+    busB = 222;
+  const inlet: Pt = [52, busT],
+    outlet: Pt = [342, busB];
+  const net = [
+    `M ${inlet[0]} ${busT} H ${wx(8)}`,
+    ...Array.from({ length: 9 }, (_, c) => `M ${wx(c)} ${busT} V ${busB}`),
+    `M ${wx(0)} ${busB} H ${outlet[0]}`,
+  ].join(" ");
+  const route = P([inlet, [wx(4), busT], [wx(4), busB], outlet]);
   return (
-    <Art id="bio-fluidic" label="Iteration 3 fluidic card: channel from inlet through all 27 wells to outlet">
+    <Art id="bio-fluidic" label="Iteration 3 fluidic card: an inlet bus feeds parallel branches through all 27 wells to an outlet bus">
       <g className="dg-n" style={dd(0)}>
         <rect x={40.5} y={58.5} width={319} height={183} rx={6} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
       </g>
       {/* channel walls */}
       <g className="dg-n" style={dd(250)}>
-        <path d={route} fill="none" stroke="var(--ink-3)" strokeWidth={7} strokeLinejoin="round" />
-        <path d={route} fill="none" stroke="var(--plate)" strokeWidth={5.4} strokeLinejoin="round" />
+        <path d={net} fill="none" stroke="var(--ink-3)" strokeWidth={7} strokeLinejoin="round" />
+        <path d={net} fill="none" stroke="var(--plate)" strokeWidth={5.4} strokeLinejoin="round" />
       </g>
-      <Ln d={route} at={450} dur={1100} stroke="var(--signal)" w={0.9} />
+      <Ln d={net} at={450} dur={1100} stroke="var(--signal)" w={0.9} />
       {Array.from({ length: 3 }, (_, r) =>
         Array.from({ length: 9 }, (_, c) => (
           <g key={`${r}-${c}`} className="dg-n" style={dd(300 + (r * 9 + c) * 18)}>
@@ -875,26 +864,21 @@ function FluidicDetail() {
           </g>
         )),
       )}
-      {(
-        [
-          [58, 100],
-          [342, 200],
-        ] as Pt[]
-      ).map(([x, y], i) => (
+      {[inlet, outlet].map(([x, y], i) => (
         <g key={i} className="dg-n" style={dd(800 + i * 100)}>
           <circle cx={x} cy={y} r={6.5} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={1} />
-          <circle cx={x} cy={y} r={2.4} fill="var(--ink-2)" />
+          <circle cx={x} cy={y} r={2.4} fill="none" stroke="var(--ink-2)" strokeWidth={0.8} />
         </g>
       ))}
-      <T x={50} y={82} tone="ink" at={900}>
+      <T x={inlet[0] - 6} y={73} tone="ink" at={900}>
         Inlet
       </T>
-      <T x={350} y={227} a="end" tone="ink" at={950}>
+      <T x={356} y={211} a="end" tone="ink" at={950}>
         Outlet
       </T>
-      <Lead pts={[[wx(4), wy(1) + 10.5], [wx(4) + 12, 176], [236, 176]]} label="Well" at={1000} />
+      <Lead pts={[[wx(8) + 10.5, wy(1)], [330, wy(1)]]} label="Well" at={1000} />
 
-      <Pulse path={route} dur={14} r={2.4} />
+      <Pulse path={route} dur={10} r={2.4} />
 
       <g className="dg-n" style={dd(1050)}>
         <line x1={40} y1={252} x2={360} y2={252} stroke="var(--rule-strong)" strokeWidth={0.6} />
@@ -949,7 +933,6 @@ function Exploded() {
           const I = isoAt(160, y0(k));
           const card = kind === "card";
           const edge = card ? "var(--signal)" : "var(--ink-2)";
-          const off = (k - 2) * 2.5;
           const rect = (x: number, y: number, w: number, h: number, fill = "var(--plate)") => (
             <path key={`${x}-${y}`} d={poly([I(x, y), I(x + w, y), I(x + w, y + h), I(x, y + h)])} fill={fill} stroke="var(--ink-3)" strokeWidth={0.6} />
           );
@@ -960,28 +943,17 @@ function Exploded() {
                 <path d={poly([I(0, A), I(A, A), [I(A, A)[0], I(A, A)[1] + 3], [I(0, A)[0], I(0, A)[1] + 3]])} fill="var(--plate)" stroke={edge} strokeWidth={0.8} />
                 <path d={poly([I(A, 0), I(A, A), [I(A, A)[0], I(A, A)[1] + 3], [I(A, 0)[0], I(A, 0)[1] + 3]])} fill="var(--paper)" stroke={edge} strokeWidth={0.8} />
                 <path d={poly([I(0, 0), I(A, 0), I(A, A), I(0, A)])} fill="var(--plate)" stroke={edge} strokeWidth={card ? 1.25 : 1} strokeLinejoin="round" />
-                {kind === "aux1" && [rect(14, 14, 22, 22), rect(46, 12, 14, 10), rect(46, 30, 14, 10), ...Array.from({ length: 8 }, (_, i) => rect(10 + i * 8, 66, 4, 4, "var(--ink-3)"))]}
-                {kind === "aux2" && [rect(12, 40, 16, 26), rect(40, 44, 26, 16), ...Array.from({ length: 8 }, (_, i) => rect(10 + i * 8, 10, 4, 4, "var(--ink-3)"))]}
-                {kind === "det" && grid(k).map(([x, y], i) => <rect key={i} x={x - 1.6} y={y - 1.1} width={3.2} height={2.2} fill="var(--ink-3)" />)}
-                {kind === "src" && grid(k).map(([x, y], i) => <circle key={i} cx={x} cy={y} r={1.5} fill="var(--ink-3)" />)}
+                {kind === "aux1" && [rect(14, 14, 22, 22), rect(46, 12, 14, 10), rect(46, 30, 14, 10), ...Array.from({ length: 8 }, (_, i) => rect(10 + i * 8, 66, 4, 4))]}
+                {kind === "aux2" && [rect(12, 40, 16, 26), rect(40, 44, 26, 16), ...Array.from({ length: 8 }, (_, i) => rect(10 + i * 8, 10, 4, 4))]}
+                {kind === "det" && grid(k).map(([x, y], i) => <rect key={i} x={x - 1.8} y={y - 1.2} width={3.6} height={2.4} fill="none" stroke="var(--ink-3)" strokeWidth={0.6} />)}
+                {kind === "src" && grid(k).map(([x, y], i) => <circle key={i} cx={x} cy={y} r={1.6} fill="none" stroke="var(--ink-3)" strokeWidth={0.6} />)}
                 {card && grid(k).map(([x, y], i) => <ellipse key={i} cx={x} cy={y} rx={2.6} ry={1.5} fill="none" stroke="var(--signal)" strokeWidth={0.6} />)}
-                <path d={P([[rx + 4, ry + 1.5], [262, ry + 1.5]])} fill="none" stroke={card ? "var(--signal)" : "var(--ink-3)"} strokeWidth={0.6} />
-                <circle cx={rx + 4} cy={ry + 1.5} r={1.4} fill={card ? "var(--signal)" : "var(--ink-2)"} />
+                <path d={P([[rx, ry + 1.5], [262, ry + 1.5]])} fill="none" stroke={card ? "var(--signal)" : "var(--ink-3)"} strokeWidth={0.6} />
+                <circle cx={rx} cy={ry + 1.5} r={1.4} fill={card ? "var(--signal)" : "var(--ink-2)"} />
                 <text x={268} y={ry + 4.5} fontSize={9} fill={card ? "var(--signal-ink)" : "var(--ink-2)"} style={mono}>
                   {name}
                 </text>
-                {off !== 0 && (
-                  <animateTransform
-                    attributeName="transform"
-                    type="translate"
-                    values={`0 0;0 ${off};0 0`}
-                    keyTimes="0;0.5;1"
-                    calcMode="spline"
-                    keySplines={`${EASE};${EASE}`}
-                    dur="9s"
-                    repeatCount="indefinite"
-                  />
-                )}
+                {card && <Pulse path={poly([I(0, 0), I(A, 0), I(A, A), I(0, A)])} dur={12} r={2} />}
               </g>
             </g>
           );
@@ -1141,22 +1113,8 @@ function Layout() {
         LED driver
       </T>
 
-      {/* cursor */}
-      <g className="dg-pulse">
-        <g>
-          <path d="M -7 0 H -2.5 M 2.5 0 H 7 M 0 -7 V -2.5 M 0 2.5 V 7" stroke="var(--ink)" strokeWidth={0.8} />
-          <rect x={-1.2} y={-1.2} width={2.4} height={2.4} fill="none" stroke="var(--ink)" strokeWidth={0.6} />
-          <animateMotion
-            dur="16s"
-            repeatCount="indefinite"
-            path="M 150 132 C 170 100, 236 96, 250 132 S 232 168, 200 166 S 136 162, 150 132"
-            calcMode="spline"
-            keyPoints="0;0.33;0.33;0.66;0.66;1"
-            keyTimes="0;0.25;0.35;0.6;0.7;1"
-            keySplines={`${EASE};0 0 1 1;${EASE};0 0 1 1;${EASE}`}
-          />
-        </g>
-      </g>
+      {/* ambient: a sample travelling the highlighted net, ADC to MCU */}
+      <Pulse path={net} dur={5} r={1.8} />
       <T x={50} y={270} at={1100}>
         KiCad 6.0
       </T>
@@ -1202,8 +1160,8 @@ function Assembled() {
             [96, 150, 206].map((x, j) => (
               <rect key={x} x={x} y={b.y - (j === 1 ? 7 : 4)} width={j === 1 ? 24 : 14} height={j === 1 ? 7 : 4} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.6} />
             ))}
-          {i === 1 && wells.map((x) => <rect key={x} x={x - 3} y={b.y + 5} width={6} height={3} fill="var(--ink-3)" />)}
-          {i === 2 && wells.map((x) => <path key={x} d={`M ${x - 3} ${b.y} A 3 3 0 0 1 ${x + 3} ${b.y} Z`} fill="var(--ink-3)" />)}
+          {i === 1 && wells.map((x) => <rect key={x} x={x - 3} y={b.y + 5} width={6} height={3} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.6} />)}
+          {i === 2 && wells.map((x) => <path key={x} d={`M ${x - 3} ${b.y} A 3 3 0 0 1 ${x + 3} ${b.y} Z`} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.6} />)}
         </g>
       ))}
 
@@ -1380,17 +1338,13 @@ function Yeast() {
       <g className="dg-pulse">
         <g>
           <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.93;1" dur="12s" repeatCount="indefinite" />
-          <line y1={TOP} y2={BOT} stroke="var(--ink-3)" strokeWidth={0.6} strokeDasharray="1 2">
+          <line y1={TOP} y2={BOT} stroke="var(--signal)" strokeWidth={0.6} strokeDasharray="1 2" opacity={0.7}>
             <animate attributeName="x1" values={vals(xs)} dur="12s" repeatCount="indefinite" />
             <animate attributeName="x2" values={vals(xs)} dur="12s" repeatCount="indefinite" />
           </line>
           <circle r={2.6} fill="var(--signal)">
             <animate attributeName="cx" values={vals(xs)} dur="12s" repeatCount="indefinite" />
             <animate attributeName="cy" values={vals(ya)} dur="12s" repeatCount="indefinite" />
-          </circle>
-          <circle r={2.6} fill="var(--ink-2)">
-            <animate attributeName="cx" values={vals(xs)} dur="12s" repeatCount="indefinite" />
-            <animate attributeName="cy" values={vals(yp)} dur="12s" repeatCount="indefinite" />
           </circle>
         </g>
       </g>

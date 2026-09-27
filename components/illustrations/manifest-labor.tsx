@@ -283,9 +283,9 @@ function CapturePipeline() {
 /* 04 Schema: an episode record with streams on a shared timestamp axis */
 function DataSchema() {
   const tx = 44;
-  const rows: { k: string; v?: string; depth: number; hot?: boolean }[] = [
+  const rows: { k: string; v?: string; depth: number }[] = [
     { k: "episode", depth: 0 },
-    { k: "trade", v: "welding", depth: 1, hot: true },
+    { k: "trade", v: "welding", depth: 1 },
     { k: "process", v: "TIG, MIG", depth: 1 },
     { k: "streams", depth: 1 },
     { k: "video", depth: 2 },
@@ -322,7 +322,7 @@ function DataSchema() {
             {r.k}
           </T>
           {r.v && (
-            <T x={120} y={ry[i]} fill={r.hot ? "var(--signal-ink)" : "var(--ink-3)"}>
+            <T x={120} y={ry[i]} fill="var(--ink-3)">
               {r.v}
             </T>
           )}
@@ -334,10 +334,8 @@ function DataSchema() {
           <line x1={150} y1={ry[row] - 3} x2={px - 6} y2={ry[row] - 3} stroke="var(--rule)" strokeWidth={0.7} strokeDasharray="1 2" />
           {Array.from({ length: n }, (_, i) => {
             const y = ry[row] - 3;
-            if (j === 0)
-              return <rect key={i} x={sx(i) + 0.5} y={y - 6.5} width={pw - 1} height={13} rx={1} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.7} />;
-            const h = j === 3 ? 2 + ((i * 7) % 9) : 3 + Math.abs(Math.sin(i * (0.7 + j * 0.4))) * 8;
-            return <rect key={i} x={sx(i) + 2} y={y - h / 2} width={pw - 4} height={h} rx={1} fill={j === 2 ? "var(--ink-2)" : "var(--ink-3)"} opacity={j === 2 ? 0.8 : 1} />;
+            const h = j === 0 ? 13 : 8;
+            return <rect key={i} x={sx(i) + 0.5} y={y - h / 2} width={pw - 1} height={h} rx={1} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.7} />;
           })}
         </g>
       ))}
@@ -426,7 +424,7 @@ function CaptureRig() {
       <g className="dg-n" style={dl(600)}>
         <ellipse cx={210} cy={246} rx={30} ry={10} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.9} />
         <circle cx={210} cy={244} r={8.5} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.9} />
-        <rect x={236} y={236} width={7} height={7} rx={1} fill="var(--ink)" />
+        <rect x={236} y={236} width={7} height={7} rx={1} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.9} />
       </g>
       {/* weld bead, drawn as the torch travels */}
       <g className="dg-pulse">
@@ -437,15 +435,12 @@ function CaptureRig() {
       </g>
       {/* arm, glove IMU and torch */}
       <g className="dg-n" style={dl(750)}>
-        <line x1={shoulder[0]} y1={shoulder[1]} x2={hand(sx0)[0]} y2={hand(sx0)[1]} stroke="var(--ink-2)" strokeWidth={5} strokeLinecap="round" opacity={0.18}>
-          <animate attributeName="x2" values={`${hand(sx0)[0]};${hand(sx1)[0]};${hand(sx1)[0]};${hand(sx0)[0]}`} keyTimes={kt} calcMode="spline" keySplines={ks} dur="10s" begin="2.4s" repeatCount="indefinite" />
-        </line>
         <line x1={shoulder[0]} y1={shoulder[1]} x2={hand(sx0)[0]} y2={hand(sx0)[1]} stroke="var(--ink-2)" strokeWidth={0.9} strokeLinecap="round">
           <animate attributeName="x2" values={`${hand(sx0)[0]};${hand(sx1)[0]};${hand(sx1)[0]};${hand(sx0)[0]}`} keyTimes={kt} calcMode="spline" keySplines={ks} dur="10s" begin="2.4s" repeatCount="indefinite" />
         </line>
         <g>
-          <line x1={hand(sx0)[0]} y1={hand(sx0)[1]} x2={sx0 + 1.5} y2={seamY + 3} stroke="var(--ink)" strokeWidth={1.4} strokeLinecap="round" />
-          <rect x={hand(sx0)[0] - 3.5} y={hand(sx0)[1] - 3.5} width={7} height={7} rx={1} fill="var(--ink)" />
+          <line x1={hand(sx0)[0]} y1={hand(sx0)[1]} x2={sx0 + 1.5} y2={seamY + 3} stroke="var(--ink-2)" strokeWidth={1.1} strokeLinecap="round" />
+          <rect x={hand(sx0)[0] - 3.5} y={hand(sx0)[1] - 3.5} width={7} height={7} rx={1} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.9} />
           <circle cx={sx0} cy={seamY} r={5} fill="var(--signal)" opacity={0.18} />
           <circle cx={sx0} cy={seamY} r={2.2} fill="var(--signal)" />
           <animateTransform attributeName="transform" type="translate" values={`0 0; ${travel} 0; ${travel} 0; 0 0`} keyTimes={kt} calcMode="spline" keySplines={ks} dur="10s" begin="2.4s" repeatCount="indefinite" />

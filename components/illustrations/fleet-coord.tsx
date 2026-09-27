@@ -163,9 +163,9 @@ function Scene() {
           <line
             key={x}
             x1={x}
-            y1={floor + 12}
+            y1={floor}
             x2={x}
-            y2={py - 22}
+            y2={py - 17.5}
             stroke="var(--rule-strong)"
             strokeDasharray="0.1 3"
             strokeLinecap="round"
@@ -177,7 +177,7 @@ function Scene() {
       <Fade d={350}>
         <G1Side x={ax} floor={floor} s={s} dir={1} />
         <G1Side x={bx} floor={floor} s={s} dir={-1} />
-        <rect x={hA + 0.5} y={hy - 12.5} width={hB - hA - 1} height={25} rx={1.5} fill="var(--plate)" stroke="var(--ink)" />
+        <rect x={hA + 0.5} y={hy - 12.5} width={hB - hA - 1} height={25} rx={1.5} fill="var(--plate)" stroke="var(--ink-2)" />
         <line x1={hA + 4} y1={hy - 8} x2={hB - 4} y2={hy - 8} stroke="var(--rule)" />
       </Fade>
 
@@ -185,7 +185,7 @@ function Scene() {
       <Fade d={600}>
         {pr(ax, 1)}
         {pr(bx, -1)}
-        <rect x={hA + 0.5} y={py - 17.5} width={hB - hA - 1} height={35} rx={1.5} fill="var(--plate)" stroke="var(--ink)" />
+        <rect x={hA + 0.5} y={py - 17.5} width={hB - hA - 1} height={35} rx={1.5} fill="var(--plate)" stroke="var(--ink-2)" />
         <path d={`M ${hA} ${py - 17.5} L ${hB} ${py + 17.5} M ${hB} ${py - 17.5} L ${hA} ${py + 17.5}`} stroke="var(--rule)" />
       </Fade>
 
@@ -208,7 +208,7 @@ function Scene() {
         <Txt x={360} y={206} size={9} anchor="end">
           plan
         </Txt>
-        <Txt x={44} y={206} size={9}>
+        <Txt x={44} y={66} size={9}>
           Unitree G1
         </Txt>
       </Fade>
@@ -222,7 +222,7 @@ function Scene() {
                 attributeName="opacity"
                 values="1;0.35;1"
                 keyTimes="0;0.5;1"
-                dur="4s"
+                dur="6s"
                 calcMode="spline"
                 keySplines={splines(2)}
                 repeatCount="indefinite"
@@ -318,23 +318,24 @@ function Rewards() {
           training steps
         </Txt>
       </Fade>
-      {/* a shared hover cursor, read across all four at once */}
+      {/* still training: the live edge of every trace breathes */}
       <g className="dg-pulse">
-        <g>
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            dur="12s"
-            repeatCount="indefinite"
-            values={`0 0;${PW * LIVE} 0;${PW * LIVE} 0;0 0`}
-            keyTimes="0;0.6;0.72;1"
-            calcMode="spline"
-            keySplines={splines(3)}
-          />
-          {panels.map((p) => (
-            <line key={p.name} x1={p.x} y1={p.y - 2} x2={p.x} y2={p.y + PH} stroke="var(--ink-2)" strokeWidth={0.8} strokeDasharray="2 2" />
-          ))}
-        </g>
+        {panels.map((p, i) => {
+          const end = trace(i + 1).slice(-1)[0];
+          return (
+            <circle key={p.name} cx={p.x + PW * LIVE} cy={p.y + PH - end.fit * PH} r={3} fill="var(--signal)" opacity={0.16}>
+              <animate
+                attributeName="r"
+                values="3;7;3"
+                keyTimes="0;0.5;1"
+                dur="7s"
+                calcMode="spline"
+                keySplines={splines(2)}
+                repeatCount="indefinite"
+              />
+            </circle>
+          );
+        })}
       </g>
     </Art>
   );
@@ -454,14 +455,14 @@ function Layers() {
       <Fade d={800}>
         <circle cx={rx} cy={top(layers[0].y)} r={2.2} fill="var(--signal)" />
       </Fade>
-      {/* a call travels down the stack to the physics and back */}
+      {/* training steps the physics and reads it back: the one orange bridge */}
       <g className="dg-pulse">
         <circle r={2.8} fill="var(--signal)" cx={rx}>
           <animate
             attributeName="cy"
             dur="9s"
             repeatCount="indefinite"
-            values={`${top(layers[3].y)};${top(layers[0].y)};${top(layers[0].y)};${top(layers[3].y)}`}
+            values={`${top(layers[1].y) + T};${top(layers[0].y)};${top(layers[0].y)};${top(layers[1].y) + T}`}
             keyTimes="0;0.45;0.55;1"
             calcMode="spline"
             keySplines={splines(3)}

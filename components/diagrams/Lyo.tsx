@@ -74,15 +74,15 @@ export function LyoDiagram() {
   const colC = { x: X0 + 680, w: 300, cx: X0 + 830 }; // config.yaml, ConfigLoader, driver
   const busY = 96;
 
-  // Phase schedule bar, qualitative proportions
+  // Phase schedule bar: four equal segments, order only (durations are recipe-specific)
   const barX = X0;
   const barW = 604;
   const barY = 330;
   const phases: [string, number][] = [
-    ["Freeze", 0.22],
-    ["Anneal", 0.14],
-    ["Primary", 0.4],
-    ["Secondary", 0.24],
+    ["Freeze", 0.25],
+    ["Anneal", 0.25],
+    ["Primary", 0.25],
+    ["Secondary", 0.25],
   ];
   let acc = 0;
   const segs = phases.map(([name, f]) => {

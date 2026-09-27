@@ -83,10 +83,10 @@ export function DaemonDiagram() {
       <Edge pts={[[CX, 44], [CX, webBusTop]]} head={false} d={120} dur={300} />
       <Junction x={CX} y={webBusTop} d={400} />
       <Label x={CX + 12} y={94} d={200}>
-        Questions, interventions, parameter limits
+        Research questions, interventions, parameter restrictions, monitoring
       </Label>
 
-      <Band y={112} h={176} name="Web layer" meta="FastAPI, Next.js, SSE" d={250} />
+      <Band y={112} h={176} name="Web layer" meta="FastAPI, Next.js, shadcn/ui, SSE" d={250} />
       <Bus x1={web[0].cx} x2={web[3].cx} y={webBusTop} d={380} />
       {web.map((c, i) => (
         <Edge key={i} pts={[[c.cx, webBusTop], [c.cx, webTop]]} d={480 + i * 40} dur={180} />
@@ -168,10 +168,10 @@ export function DaemonDiagram() {
       ))}
       {[
         ["Scout", "Breadth-first explorer"],
-        ["Refiner", "Depth-first optimiser"],
+        ["Refiner", "Depth-first optimizer"],
         ["Auditor", "Quality verification"],
         ["Conservative", "Risk validation"],
-        ["Monitor", "PI proxy, observer"],
+        ["Monitor", "PI proxy / observer"],
       ].map(([t, s], i) => (
         <Node key={t} x={agents[i].x} y={agentTop} w={agents[i].w} h={68} title={t} sub={s} d={1200 + i * 60} />
       ))}
@@ -252,7 +252,7 @@ export function DaemonDiagram() {
           9-state ODE, SciPy BDF
         </text>
       </g>
-      <Node x={svc[1].x} y={svcBody} w={svc[1].w} h={56} title="SimulationInterface" sub="abstract base, swappable models" d={1950} />
+      <Node x={svc[1].x} y={svcBody} w={svc[1].w} h={56} title="SimulationInterface" sub="abstract base class (ABC)" d={1950} />
       <Edge pts={[[svc[1].cx, svcBody + 56], [svc[1].cx, svcBody + 86]]} d={2050} dur={220} />
       <Node
         x={svc[1].x}
@@ -270,7 +270,7 @@ export function DaemonDiagram() {
           LLM providers
         </text>
         <text x={svc[2].x} y={svcHead + 18} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
-          model set per agent
+          per-agent model config
         </text>
       </g>
       <Node x={svc[2].x} y={svcBody} w={svc[2].w} h={56} title="Anthropic" sub="Claude API" d={2000} />
@@ -278,7 +278,7 @@ export function DaemonDiagram() {
       <g className="dg-n" style={{ "--d": 2150 } as CSS}>
         <circle cx={svc[2].x + 4} cy={svcBody + 150} r={3} fill="var(--ink-3)" />
         <text x={svc[2].x + 14} y={svcBody + 154} fontSize={12} fill="var(--ink-2)">
-          No silent fallbacks: failures surface immediately
+          Zero silent fallbacks: all failures surface immediately
         </text>
       </g>
     </Diagram>
