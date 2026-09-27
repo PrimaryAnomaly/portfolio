@@ -101,9 +101,13 @@ export function AmbicDiagram() {
 
       {/* Frontend to API */}
       <Edge pts={[[SPINE, 198], [SPINE, 298]]} tone="signal" d={700} dur={450} />
+      {/* shared bus: every view calls the API layer, no specific pairing implied */}
+      <Edge pts={[[api[1].cx, 252], [Math.max(api[2].cx, web[3].cx), 252]]} head={false} d={740} dur={300} />
       {[1, 2].map((i) => (
-        <Edge key={i} pts={[[api[i].cx, 246], [api[i].cx, 298]]} d={760 + i * 60} dur={300} />
+        <Edge key={i} pts={[[api[i].cx, 252], [api[i].cx, 298]]} d={800 + i * 60} dur={260} />
       ))}
+      <Edge pts={[[web[3].cx, 198], [web[3].cx, 252]]} head={false} d={700} dur={220} />
+      <Edge pts={[[web[2].cx, 198], [web[2].cx, 252]]} head={false} d={700} dur={220} />
 
       {/* API layer */}
       <Band y={270} h={160} name="API layer" meta="Supabase Edge Functions" note="Files processed automatically" d={780} />
@@ -135,7 +139,7 @@ export function AmbicDiagram() {
       <Chip x={svc[0].x} y={578} w={svc[0].w} label="processed csv" tone="signal" d={1620} />
 
       {/* PostgreSQL */}
-      <Node x={svc[1].x} y={460} w={svc[1].w} h={70} tone="ink" title="PostgreSQL" sub="Row-level security on all tables" d={1450} />
+      <Node x={svc[1].x} y={460} w={svc[1].w} h={70} title="PostgreSQL" sub="Row-level security on all tables" d={1450} />
       {["objects", "datasets", "permissions", "shared_datasets"].map((t, i) => (
         <Chip
           key={t}

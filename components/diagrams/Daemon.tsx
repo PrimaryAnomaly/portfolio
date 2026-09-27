@@ -2,58 +2,122 @@ import { Band, Chip, Diagram, Edge, Label, Node, Pulse, X0, cols, roundedPath } 
 
 /*
   DAEMON: Discovery Agents Exploring Mechanistic ODE Networks.
-  Reads top to bottom: the PI steers, the web layer shows, the
-  orchestrator runs the discovery cycle (the signal loop), agents act,
-  and three services underneath hold state, simulate, and think.
+  Reads top to bottom: the PI steers through the web layer, the
+  orchestrator runs the discovery cycle, agents act, and three services
+  underneath hold state, simulate, and reason.
+
+  Colour: grey outline = component. Orange = the discovery cycle (the
+  story) and the hypotheses it produces. Every edge starts and ends on
+  an element: nodes, a bus line, a junction dot, or a column rule.
 */
 
-const H = 960;
+const H = 948;
+
+type CSS = React.CSSProperties;
+
+function Bus({ x1, x2, y, d = 0 }: { x1: number; x2: number; y: number; d?: number }) {
+  return <Edge pts={[[x1, y], [x2, y]]} head={false} d={d} dur={320} />;
+}
+
+function Junction({ x, y, tone = "ink", d = 0 }: { x: number; y: number; tone?: "ink" | "signal"; d?: number }) {
+  return (
+    <circle
+      className="dg-n"
+      style={{ "--d": d } as CSS}
+      cx={x}
+      cy={y}
+      r={3}
+      fill={tone === "signal" ? "var(--signal)" : "var(--ink-3)"}
+    />
+  );
+}
 
 export function DaemonDiagram() {
   const web = cols(4);
   const agents = cols(5, 14);
   const svc = cols(3, 20);
+  const CX = X0 + 490; // diagram spine
 
-  // Discovery cycle stations
-  const cycleY = 372;
+  // Web layer
+  const webBusTop = 136;
+  const webTop = 156;
+  const webBottom = webTop + 68;
+  const webBusBottom = 244;
+  const sseY = 256;
+
+  // Discovery cycle
+  const cycleY = 396;
+  const loopTop = cycleY - 58;
   const stations = ["Question", "Propose", "Execute", "Observe", "Update", "Convene"];
   const sx = (i: number) => X0 + 36 + i * 142;
   const diamondX = sx(6) + 12;
   const loop: [number, number][] = [
     [diamondX, cycleY - 13],
-    [diamondX, cycleY - 58],
-    [sx(0), cycleY - 58],
+    [diamondX, loopTop],
+    [sx(0), loopTop],
     [sx(0), cycleY - 7],
   ];
   const cyclePath = `M ${sx(0)} ${cycleY} L ${diamondX - 13} ${cycleY} ` + roundedPath(loop).replace(/^M/, "L");
+  const dispatchX = (sx(2) + sx(3)) / 2;
+
+  // Agents
+  const agentBusTop = 494;
+  const agentTop = 514;
+  const agentBottom = agentTop + 68;
+  const agentBusBottom = 604;
+
+  // Services
+  const svcRule = 656;
+  const svcHead = svcRule + 24;
+  const svcBody = svcRule + 58;
+
+  const kbChips = ["sessions", "cycles", "agents", "experiments", "hypotheses", "board_posts", "notebook_entries", "monitor_flags", "agent_questions"];
+  const kbChipsEnd = svcBody + 4 * 32 + 24;
+  const barY = kbChipsEnd + 44;
+  const barW = svc[0].w;
 
   return (
     <Diagram h={H} title="DAEMON system architecture: principal investigator, web layer, orchestrator discovery cycle, five agents, and knowledge base, simulation and LLM services">
-      {/* PI */}
-      <Node x={X0 + 350} y={0} w={280} h={44} pill align="center" tone="signal" title="Principal investigator" d={0} />
-      <Label x={X0 + 506} y={78} d={200}>
+      {/* ── PI → web layer ── */}
+      <Node x={CX - 140} y={0} w={280} h={44} pill align="center" title="Principal investigator" d={0} />
+      <Edge pts={[[CX, 44], [CX, webBusTop]]} head={false} d={120} dur={300} />
+      <Junction x={CX} y={webBusTop} d={400} />
+      <Label x={CX + 12} y={94} d={200}>
         Questions, interventions, parameter limits
       </Label>
-      <Edge pts={[[X0 + 490, 44], [X0 + 490, 118]]} d={150} dur={400} />
 
-      {/* Web layer */}
-      <Band y={120} h={170} name="Web layer" meta="FastAPI, Next.js, SSE" d={250} />
+      <Band y={112} h={176} name="Web layer" meta="FastAPI, Next.js, SSE" d={250} />
+      <Bus x1={web[0].cx} x2={web[3].cx} y={webBusTop} d={380} />
+      {web.map((c, i) => (
+        <Edge key={i} pts={[[c.cx, webBusTop], [c.cx, webTop]]} d={480 + i * 40} dur={180} />
+      ))}
       {[
         ["Session dashboard", "Real-time agent activity"],
         ["Hypothesis panel", "Evidence chains and scores"],
         ["Experiment log", "Parameters and results"],
         ["Convergence metrics", "Cycle progress"],
       ].map(([t, s], i) => (
-        <Node key={t} x={web[i].x} y={150} w={web[i].w} h={68} title={t} sub={s} d={300 + i * 60} />
+        <Node key={t} x={web[i].x} y={webTop} w={web[i].w} h={68} title={t} sub={s} d={300 + i * 60} />
       ))}
-      <Chip x={X0 + 440} y={238} w={100} label="SSE stream" d={560} />
-      <Edge pts={[[X0 + 490, 262], [X0 + 490, 292]]} d={600} dur={300} head={false} tail />
 
-      {/* Orchestrator */}
-      <Band y={292} h={150} name="Orchestrator" meta="Python, asyncio" d={650} />
+      {/* views are fed by the SSE stream */}
+      {web.map((c, i) => (
+        <Edge key={i} pts={[[c.cx, webBusBottom], [c.cx, webBottom]]} d={700 + i * 40} dur={160} />
+      ))}
+      <Bus x1={web[0].cx} x2={web[3].cx} y={webBusBottom} d={640} />
+      <Edge pts={[[CX, sseY], [CX, webBusBottom]]} head={false} d={620} dur={120} />
+      <Junction x={CX} y={webBusBottom} d={640} />
+      <Chip x={CX - 50} y={sseY} w={100} label="SSE stream" d={600} />
+
+      {/* ── Orchestrator ── */}
+      <Band y={288} h={174} name="Orchestrator" meta="Python, asyncio" d={650} />
+      {/* cycle state streams up to the web layer */}
+      <Edge pts={[[CX, loopTop], [CX, sseY + 24]]} d={1500} dur={260} />
+      <Junction x={CX} y={loopTop} tone="signal" d={1500} />
+
       <path
         className="dg-e"
-        style={{ "--d": 900, "--dur": "1600ms" } as React.CSSProperties}
+        style={{ "--d": 900, "--dur": "1600ms" } as CSS}
         d={cyclePath}
         pathLength={1}
         fill="none"
@@ -63,7 +127,7 @@ export function DaemonDiagram() {
         strokeLinejoin="round"
       />
       {stations.map((s, i) => (
-        <g key={s} className="dg-n" style={{ "--d": 900 + i * 110 } as React.CSSProperties}>
+        <g key={s} className="dg-n" style={{ "--d": 900 + i * 110 } as CSS}>
           <circle cx={sx(i)} cy={cycleY} r={6} fill="var(--paper)" stroke="var(--signal)" strokeWidth={1.5} />
           <circle cx={sx(i)} cy={cycleY} r={2.2} fill="var(--signal)" />
           <text x={sx(i)} y={cycleY + 30} fontSize={12.5} textAnchor="middle" fill="var(--ink)">
@@ -71,7 +135,7 @@ export function DaemonDiagram() {
           </text>
         </g>
       ))}
-      <g className="dg-n" style={{ "--d": 1600 } as React.CSSProperties}>
+      <g className="dg-n" style={{ "--d": 1600 } as CSS}>
         <rect
           x={diamondX - 9}
           y={cycleY - 9}
@@ -84,14 +148,24 @@ export function DaemonDiagram() {
           Converged?
         </text>
       </g>
-      <Label x={sx(0) + 14} y={cycleY - 66} mono size={11} d={1500}>
+      <Label x={sx(0) + 14} y={loopTop - 8} mono size={11} tone="signal" d={1500}>
         discovery cycle, repeats until converged
       </Label>
       <Pulse path={cyclePath} dur={7} />
 
-      {/* Agents */}
-      <Edge pts={[[X0 + 490, 412], [X0 + 490, 470]]} d={1100} dur={300} />
-      <Band y={472} h={176} name="Agent system" meta="independent beliefs" d={1150} />
+      {/* ── Orchestrator dispatches agents ── */}
+      <Edge pts={[[dispatchX, cycleY], [dispatchX, agentBusTop]]} head={false} d={1300} dur={300} />
+      <Junction x={dispatchX} y={cycleY} tone="signal" d={1300} />
+      <Junction x={dispatchX} y={agentBusTop} d={1450} />
+      <Label x={dispatchX + 10} y={cycleY + 60} mono size={11} d={1350}>
+        dispatch
+      </Label>
+
+      <Band y={462} h={176} name="Agent system" meta="independent beliefs" d={1150} />
+      <Bus x1={agents[0].cx} x2={agents[4].cx} y={agentBusTop} d={1400} />
+      {agents.map((c, i) => (
+        <Edge key={i} pts={[[c.cx, agentBusTop], [c.cx, agentTop]]} d={1480 + i * 40} dur={160} />
+      ))}
       {[
         ["Scout", "Breadth-first explorer"],
         ["Refiner", "Depth-first optimiser"],
@@ -99,112 +173,111 @@ export function DaemonDiagram() {
         ["Conservative", "Risk validation"],
         ["Monitor", "PI proxy, observer"],
       ].map(([t, s], i) => (
-        <Node key={t} x={agents[i].x} y={502} w={agents[i].w} h={68} title={t} sub={s} d={1200 + i * 60} />
+        <Node key={t} x={agents[i].x} y={agentTop} w={agents[i].w} h={68} title={t} sub={s} d={1200 + i * 60} />
       ))}
-      <g className="dg-n" style={{ "--d": 1500 } as React.CSSProperties}>
-        <text x={X0} y={604} fontSize={12} fill="var(--ink-3)">
-          Bayesian hypothesis tracking
-        </text>
-        {/* posterior bar */}
-        <rect x={X0 + 440} y={596} width={540} height={4} rx={2} fill="var(--rule)" />
-        <rect x={X0 + 440} y={596} width={540 * 0.2} height={4} rx={2} fill="var(--ink-3)" opacity={0.5} />
-        <rect x={X0 + 440 + 540 * 0.9} y={596} width={540 * 0.1} height={4} rx={2} fill="var(--signal)" />
-        {[
-          [0, "0", "var(--ink-3)", "start"],
-          [0.2, "0.2", "var(--ink-3)", "middle"],
-          [0.9, "0.9", "var(--signal-ink)", "middle"],
-          [1, "1", "var(--ink-3)", "end"],
-        ].map(([v, t, c, anchor]) => (
-          <text
-            key={t as string}
-            x={X0 + 440 + 540 * (v as number)}
-            y={620}
-            fontSize={10.5}
-            fill={c as string}
-            textAnchor={anchor as "start" | "middle" | "end"}
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
-            {t}
-          </text>
-        ))}
-        <text x={X0 + 440 + 540 * 0.1} y={586} fontSize={11} fill="var(--ink-3)" textAnchor="middle">
-          retire
-        </text>
-        <text x={X0 + 440 + 540 * 0.95} y={586} fontSize={11} fill="var(--signal-ink)" textAnchor="middle">
-          accept
-        </text>
-      </g>
-      {/* a belief drifting along the posterior */}
-      <g className="dg-pulse">
-        <circle cy={598} r={5} fill="var(--paper)" stroke="var(--signal)" strokeWidth={1.5}>
-          <animate
-            attributeName="cx"
-            dur="9s"
-            repeatCount="indefinite"
-            values={`${X0 + 440 + 540 * 0.45};${X0 + 440 + 540 * 0.72};${X0 + 440 + 540 * 0.61};${X0 + 440 + 540 * 0.94};${X0 + 440 + 540 * 0.94};${X0 + 440 + 540 * 0.45}`}
-            keyTimes="0;0.3;0.45;0.75;0.92;1"
-            calcMode="spline"
-            keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"
-          />
-        </circle>
-      </g>
 
-      {/* Services */}
-      {svc.map((c, i) => (
-        <Edge key={i} pts={[[c.cx, 632], [c.cx, 676]]} d={1600 + i * 80} dur={300} />
+      {/* ── Agents use the services ── */}
+      {agents.map((c, i) => (
+        <Edge key={i} pts={[[c.cx, agentBottom], [c.cx, agentBusBottom]]} head={false} d={1600 + i * 30} dur={140} />
       ))}
-      <Band y={648} h={H - 648} name="Services" d={1650} />
+      <Bus x1={agents[0].cx} x2={agents[4].cx} y={agentBusBottom} d={1650} />
+      {svc.map((c, i) => (
+        <g key={i}>
+          <Edge pts={[[c.cx, agentBusBottom], [c.cx, svcRule]]} d={1750 + i * 60} dur={240} />
+          <Junction x={c.cx} y={agentBusBottom} d={1750 + i * 60} />
+          <line
+            className="dg-n"
+            style={{ "--d": 1800 + i * 60 } as CSS}
+            x1={c.x}
+            y1={svcRule}
+            x2={c.x + c.w}
+            y2={svcRule}
+            stroke="var(--ink-2)"
+            strokeWidth={1}
+          />
+        </g>
+      ))}
+
+      <Band y={638} h={H - 638} name="Services" d={1650} />
 
       {/* Knowledge base */}
-      <g className="dg-n" style={{ "--d": 1700 } as React.CSSProperties}>
-        <text x={svc[0].x} y={704} fontSize={14} fontWeight={600} fill="var(--ink)">
+      <g className="dg-n" style={{ "--d": 1850 } as CSS}>
+        <text x={svc[0].x} y={svcHead} fontSize={14} fontWeight={600} fill="var(--ink)">
           Knowledge base
         </text>
-        <text x={svc[0].x} y={722} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
+        <text x={svc[0].x} y={svcHead + 18} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
           SQLite, full provenance
         </text>
       </g>
-      {["sessions", "cycles", "agents", "experiments", "hypotheses", "board_posts", "notebook_entries", "monitor_flags", "agent_questions"].map(
-        (t, i) => (
-          <Chip
-            key={t}
-            x={svc[0].x + (i % 2) * ((svc[0].w + 8) / 2)}
-            y={740 + Math.floor(i / 2) * 32}
-            w={(svc[0].w - 8) / 2}
-            label={t}
-            tone={t === "hypotheses" ? "signal" : "default"}
-            d={1750 + i * 35}
-          />
-        ),
-      )}
+      {kbChips.map((t, i) => (
+        <Chip
+          key={t}
+          x={svc[0].x + (i % 2) * ((svc[0].w + 8) / 2)}
+          y={svcBody + Math.floor(i / 2) * 32}
+          w={(svc[0].w - 8) / 2}
+          label={t}
+          tone={t === "hypotheses" ? "signal" : "default"}
+          d={1900 + i * 35}
+        />
+      ))}
+      {/* Bayesian confidence carried by each hypothesis */}
+      <g className="dg-n" style={{ "--d": 2150 } as CSS}>
+        <text x={svc[0].x} y={barY - 12} fontSize={12} fill="var(--ink-2)">
+          Hypothesis confidence (Bayesian)
+        </text>
+        <rect x={svc[0].x} y={barY} width={barW} height={4} rx={2} fill="var(--rule)" />
+        <rect x={svc[0].x} y={barY} width={barW * 0.2} height={4} rx={2} fill="var(--ink-3)" opacity={0.55} />
+        <rect x={svc[0].x + barW * 0.9} y={barY} width={barW * 0.1} height={4} rx={2} fill="var(--signal)" />
+        <text x={svc[0].x} y={barY + 22} fontSize={10.5} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
+          {"retire < 0.2"}
+        </text>
+        <text
+          x={svc[0].x + barW}
+          y={barY + 22}
+          fontSize={10.5}
+          fill="var(--signal-ink)"
+          textAnchor="end"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
+          {"accept ≥ 0.9"}
+        </text>
+      </g>
 
       {/* Simulation */}
-      <g className="dg-n" style={{ "--d": 1750 } as React.CSSProperties}>
-        <text x={svc[1].x} y={704} fontSize={14} fontWeight={600} fill="var(--ink)">
+      <g className="dg-n" style={{ "--d": 1900 } as CSS}>
+        <text x={svc[1].x} y={svcHead} fontSize={14} fontWeight={600} fill="var(--ink)">
           Simulation
         </text>
-        <text x={svc[1].x} y={722} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
+        <text x={svc[1].x} y={svcHead + 18} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
           9-state ODE, SciPy BDF
         </text>
       </g>
-      <Node x={svc[1].x} y={740} w={svc[1].w} h={56} title="SimulationInterface" sub="abstract base, swappable models" d={1800} />
-      <Edge pts={[[svc[1].cx, 796], [svc[1].cx, 826]]} d={1900} dur={250} />
-      <Node x={svc[1].x} y={828} w={svc[1].w} h={68} tone="ink" title="lyo-mech-model" sub="20 parameters, trajectories, CQAs" d={1950} />
+      <Node x={svc[1].x} y={svcBody} w={svc[1].w} h={56} title="SimulationInterface" sub="abstract base, swappable models" d={1950} />
+      <Edge pts={[[svc[1].cx, svcBody + 56], [svc[1].cx, svcBody + 86]]} d={2050} dur={220} />
+      <Node
+        x={svc[1].x}
+        y={svcBody + 86}
+        w={svc[1].w}
+        h={68}
+        title="lyo-mech-model"
+        sub="20 parameters, trajectories, CQAs"
+        d={2100}
+      />
 
       {/* LLM providers */}
-      <g className="dg-n" style={{ "--d": 1800 } as React.CSSProperties}>
-        <text x={svc[2].x} y={704} fontSize={14} fontWeight={600} fill="var(--ink)">
+      <g className="dg-n" style={{ "--d": 1950 } as CSS}>
+        <text x={svc[2].x} y={svcHead} fontSize={14} fontWeight={600} fill="var(--ink)">
           LLM providers
         </text>
-        <text x={svc[2].x} y={722} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
+        <text x={svc[2].x} y={svcHead + 18} fontSize={11} fill="var(--ink-3)" style={{ fontFamily: "var(--font-mono)" }}>
           model set per agent
         </text>
       </g>
-      <Node x={svc[2].x} y={740} w={svc[2].w} h={56} title="Anthropic" sub="Claude API" d={1850} />
-      <Node x={svc[2].x} y={806} w={svc[2].w} h={56} title="OpenRouter" sub="Gemini Flash" d={1900} />
-      <g className="dg-n" style={{ "--d": 2000 } as React.CSSProperties}>
-        <circle cx={svc[2].x + 4} cy={886} r={3} fill="var(--signal)" />
-        <text x={svc[2].x + 14} y={890} fontSize={12} fill="var(--ink-2)">
+      <Node x={svc[2].x} y={svcBody} w={svc[2].w} h={56} title="Anthropic" sub="Claude API" d={2000} />
+      <Node x={svc[2].x} y={svcBody + 66} w={svc[2].w} h={56} title="OpenRouter" sub="Gemini Flash" d={2050} />
+      <g className="dg-n" style={{ "--d": 2150 } as CSS}>
+        <circle cx={svc[2].x + 4} cy={svcBody + 150} r={3} fill="var(--ink-3)" />
+        <text x={svc[2].x + 14} y={svcBody + 154} fontSize={12} fill="var(--ink-2)">
           No silent fallbacks: failures surface immediately
         </text>
       </g>

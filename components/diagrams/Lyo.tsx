@@ -182,7 +182,7 @@ export function LyoDiagram() {
         y={drv.y}
         w={drv.w}
         h={drv.h}
-        tone="ink"
+        tone="signal"
         title="LNPFreezeDriver"
         sub="ODE integration orchestrator"
         d={1250}
@@ -197,12 +197,18 @@ export function LyoDiagram() {
       <Label x={loopR + 10} y={424} mono size={11.5} tone="signal" d={1800}>
         dy/dt
       </Label>
+      <Label x={(loopL + loopR) / 2} y={404} anchor="middle" mono size={11} tone="signal" d={1850}>
+        integration
+      </Label>
+      <Label x={(loopL + loopR) / 2} y={418} anchor="middle" mono size={11} tone="signal" d={1850}>
+        loop
+      </Label>
       <Pulse path={loopPath} dur={6} r={3} />
 
       {/* Physics kernel */}
       <Band y={440} h={240} name="Physics kernel" meta="9 coupled ODEs" note="First-principles Arrhenius kinetics" d={1400} />
       <g className="dg-n" style={del(1450)}>
-        <rect x={X0 + 0.5} y={kTop + 0.5} width={979} height={179} rx={4} fill="none" stroke="var(--rule-strong)" />
+        <rect x={X0 + 0.5} y={kTop + 0.5} width={979} height={179} rx={4} fill="none" stroke="var(--signal)" strokeWidth={1} />
       </g>
       <Kernel
         x={thermal.x}
