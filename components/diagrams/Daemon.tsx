@@ -278,7 +278,10 @@ export function DaemonDiagram() {
       <g className="dg-n" style={{ "--d": 2150 } as CSS}>
         <circle cx={svc[2].x + 4} cy={svcBody + 150} r={3} fill="var(--ink-3)" />
         <text x={svc[2].x + 14} y={svcBody + 154} fontSize={12} fill="var(--ink-2)">
-          Zero silent fallbacks: all failures surface immediately
+          Zero silent fallbacks
+        </text>
+        <text x={svc[2].x + 14} y={svcBody + 170} fontSize={12} fill="var(--ink-3)">
+          All failures surface immediately
         </text>
       </g>
     </Diagram>
