@@ -249,7 +249,7 @@ function Architecture() {
   const stX = cx - 60; // storage centre
   const pgX = cx + 56; // Postgres centre
   const gy = tiers[2] - 2; // glyph centre in the data tier
-  const filePath = `M ${hot} ${tiers[0] + 16} L ${hot} ${tiers[2] - 34} Q ${hot} ${tiers[2] - 26} ${hot - 8} ${tiers[2] - 26} L ${stX + 8} ${tiers[2] - 26} Q ${stX} ${tiers[2] - 26} ${stX} ${tiers[2] - 18} L ${stX} ${gy - 11}`;
+  const filePath = `M ${hot} ${tiers[0] + 16} L ${hot} ${tiers[2] - 34} Q ${hot} ${tiers[2] - 26} ${hot - 8} ${tiers[2] - 26} L ${stX + 8} ${tiers[2] - 26} Q ${stX} ${tiers[2] - 26} ${stX} ${tiers[2] - 18} L ${stX} ${gy - 18}`;
   const dbX = pgX;
   return (
     <Art id="ambic-architecture" label="System architecture: React frontend, Deno Edge Functions for file operations, Supabase Postgres and object storage behind row-level security">
@@ -271,15 +271,6 @@ function Architecture() {
         <Bar x={cx - 88} y={tiers[0] + 4} w={38} tone="var(--ink-3)" />
         <path d={`M ${cx + 24} ${tiers[0] + 10} L ${cx + 38} ${tiers[0] + 2} L ${cx + 52} ${tiers[0] + 6} L ${cx + 66} ${tiers[0] - 2} L ${cx + 88} ${tiers[0] + 1}`} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} strokeLinejoin="round" />
       </g>
-      {/* edge functions: small stateless units */}
-      {fnX.map((x, i) => (
-        <g key={x} className="dg-n" style={dl(450 + i * 60)}>
-          <circle cx={x} cy={tiers[1]} r={10.5} fill="var(--plate)" stroke={x === hot ? "var(--signal)" : "var(--rule-strong)"} strokeWidth={x === hot ? 1.1 : 0.8} />
-          <text x={x} y={tiers[1] + 3.5} fontSize={10} textAnchor="middle" fill={x === hot ? "var(--signal-ink)" : "var(--ink-3)"} style={mono}>
-            ƒ
-          </text>
-        </g>
-      ))}
       {/* RLS boundary around the data tier */}
       <g className="dg-n" style={dl(700)}>
         <rect x={cx - 104} y={tiers[2] - 22} width={208} height={52} rx={4} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1.5 2.5" />
@@ -319,6 +310,15 @@ function Architecture() {
       />
       {/* file operations: browser, edge function, object storage */}
       <path className="dg-e" style={dl(1000, 800)} d={filePath} pathLength={1} fill="none" stroke="var(--signal)" strokeWidth={1.2} strokeLinecap="round" strokeLinejoin="round" />
+      {/* edge functions: small stateless units */}
+      {fnX.map((x, i) => (
+        <g key={x} className="dg-n" style={dl(450 + i * 60)}>
+          <circle cx={x} cy={tiers[1]} r={10.5} fill="var(--plate)" stroke={x === hot ? "var(--signal)" : "var(--rule-strong)"} strokeWidth={x === hot ? 1.1 : 0.8} />
+          <text x={x} y={tiers[1] + 3.5} fontSize={10} textAnchor="middle" fill={x === hot ? "var(--signal-ink)" : "var(--ink-3)"} style={mono}>
+            ƒ
+          </text>
+        </g>
+      ))}
       <Pulse path={filePath} dur={6} r={2} />
     </Art>
   );
@@ -477,7 +477,7 @@ function VirtualTable() {
         <line x1={x0} y1={56} x2={400} y2={56} />
       </g>
       <g className="dg-n" style={dl(900)}>
-        <rect x={x0 + 150} y={49} width={96} height={14} fill="var(--paper)" />
+        <rect x={x0 + 150} y={49} width={96} height={14} fill="var(--plate)" />
         <T x={x0 + 198} y={59.5} a="middle" fill="var(--ink-2)">
           3,000+ columns
         </T>

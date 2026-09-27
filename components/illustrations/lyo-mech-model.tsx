@@ -267,7 +267,6 @@ function Transitions() {
   const pc = STATES[2].f;
   const xs = P.map((p) => f1(x0 + (x1 - x0) * p));
   const marks: [number, number][] = [1, 2, 3].map((i) => [xs[i], f1(tpBase - tp(P[i]) * tpAmp)]);
-  const ring = holdMove(marks, 0.12);
   const stripY = 238;
   return (
     <Art id="lyo-transitions" label="Automatic detection of transitions between the four process phases">
@@ -307,10 +306,14 @@ function Transitions() {
         </g>
       ))}
       <g className="dg-pulse">
-        <circle r={7} fill="none" stroke="var(--signal)" strokeWidth={0.8} cx={marks[0][0]} cy={marks[0][1]}>
-          <animate attributeName="cx" values={ring.x} keyTimes={ring.keyTimes} keySplines={ring.keySplines} calcMode="spline" dur="9s" repeatCount="indefinite" />
-          <animate attributeName="cy" values={ring.y} keyTimes={ring.keyTimes} keySplines={ring.keySplines} calcMode="spline" dur="9s" repeatCount="indefinite" />
-        </circle>
+        {marks.map(([x, y], k) => {
+          const s = steps(k, marks.length, 1, 0, 0.06);
+          return (
+            <circle key={x} r={7} fill="none" stroke="var(--signal)" strokeWidth={0.8} cx={x} cy={y} opacity={k === 0 ? 1 : 0}>
+              <animate attributeName="opacity" values={s.values} keyTimes={s.keyTimes} dur="9s" repeatCount="indefinite" />
+            </circle>
+          );
+        })}
       </g>
     </Art>
   );

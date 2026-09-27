@@ -378,7 +378,6 @@ function SensorCard() {
       <g className="dg-pulse">
         <g>
           <line x1={wx(0)} y1={76} x2={wx(0)} y2={180} stroke="var(--ink-2)" strokeWidth={0.6} strokeDasharray="1 2" />
-          <path d={`M ${wx(0) - 3} 74 L ${wx(0)} 78 L ${wx(0) + 3} 74`} fill="none" stroke="var(--ink-2)" strokeWidth={0.8} />
           <animateTransform
             attributeName="transform"
             type="translate"
@@ -410,7 +409,10 @@ function SensorCard() {
       <T x={324} y={wy(0) + 14} at={1150}>
         per well
       </T>
-      <Lead pts={[[265, 216], [265, 256], [60, 256]]} label="Pogo-pin interface" a="start" at={1200} dy={-6} />
+      <Lead pts={[[265.5, 210], [320, 210]]} label="Pogo-pin" at={1200} />
+      <T x={324} y={225} at={1250}>
+        interface
+      </T>
     </Art>
   );
 }
@@ -433,9 +435,6 @@ function Fabrication() {
         <Hatch id="hx-bio-fab" gap={3.5} />
       </defs>
       <Ln d="M 38 64 H 372" stroke="var(--rule-strong)" w={0.6} at={0} dur={900} />
-      <T x={38} y={150} at={400}>
-        Plan
-      </T>
       {cx.map((x, s) => {
         const at = 150 + s * 260;
         const sig = s === 2;
@@ -501,9 +500,6 @@ function Fabrication() {
           </g>
         );
       })}
-      <T x={38} y={186} at={500}>
-        Section
-      </T>
       <g className="dg-n" style={dd(700)}>
         <line x1={38} y1={236} x2={372} y2={236} stroke="var(--rule-strong)" strokeWidth={0.6} />
       </g>
@@ -535,7 +531,7 @@ function VesselCad() {
   const top = poly([I(0, 0, h), I(a, 0, h), I(a, b, h), I(0, b, h)]);
   const right = poly([I(a, 0, h), I(a, b, h), I(a, b, 0), I(a, 0, 0)]);
   const front = poly([I(0, b, h), I(a, b, h), I(a, b, 0), I(0, b, 0)]);
-  const plane = poly([I(a / 2, -10, h + 10), I(a / 2, b + 10, h + 10), I(a / 2, b + 10, -10), I(a / 2, -10, -10)]);
+  const plane = poly([I(a / 2, 0, h), I(a / 2, b, h), I(a / 2, b, 0), I(a / 2, 0, 0)]);
   const bolts: Pt[] = [
     [8, 8],
     [a / 2, 8],
@@ -994,12 +990,6 @@ function Exploded() {
             </g>
           );
         })}
-      <T x={268} y={y0(2) + 54} at={900}>
-        Sandwiched
-      </T>
-      <T x={268} y={y0(2) + 66} at={900}>
-        between boards
-      </T>
     </Art>
   );
 }
@@ -1068,33 +1058,30 @@ function Layout() {
   const hdr = Array.from({ length: 12 }, (_, i) => [134 + i * 12, 232] as Pt);
   const m = mcu.p;
 
-  // traces: 45° routing, hand-laid
+  // 45° routing: horizontal, one diagonal centred between the pads, horizontal
+  const r45 = (p: Pt, q: Pt): string => {
+    const dy = q[1] - p[1];
+    const mid = (p[0] + q[0]) / 2;
+    const sx = Math.sign(q[0] - p[0]);
+    const h = Math.abs(dy) / 2;
+    return P([p, [mid - sx * h, p[1]], [mid + sx * h, q[1]], q]);
+  };
+  const edge = [...mux1.p.r, ...mux2.p.r].map(([, y]) => [338, y] as Pt);
   const tr: string[] = [
-    // adc2 -> mcu left pins (lower)
-    P([adc2.p.r[0], [134, 170], [150, 154], [m.l[5][0], m.l[5][1]]]),
-    P([adc2.p.r[1], [138, 174], [156, 156], [170, 156], m.l[6]]),
-    // mux -> mcu right pins
-    P([mux1.p.l[5], [260, 134], [252, 142], m.r[2]]),
-    P([mux1.p.l[6], [262, mux1.p.l[6][1]], [253, m.r[3][1]], m.r[3]]),
-    P([mux2.p.l[1], [262, 165.8], [250, 153.8], m.r[5]]),
-    P([mux2.p.l[2], [264, 169.4], [252, 157.4], m.r[6]]),
-    // driver -> mcu top
-    P([drv.p.r[3], [224, 90], [224, 110], [m.t[6][0], 118], m.t[6]]),
-    P([drv.p.l[3], [176, 90], [176, 110], [m.t[1][0], 118], m.t[1]]),
-    // mcu bottom -> header
-    ...[2, 3, 4, 5].map((i) => P([m.b[i], [m.b[i][0], 184], [hdr[i + 2][0], 216], hdr[i + 2]])),
-    // mux outputs to board edge (to the card)
-    ...[0, 1, 2, 3].map((i) => P([mux1.p.r[i], [330, mux1.p.r[i][1]], [340, mux1.p.r[i][1] - 10]])),
-    ...[4, 5, 6, 7].map((i) => P([mux2.p.r[i], [330, mux2.p.r[i][1]], [340, mux2.p.r[i][1] + 10]])),
+    ...[0, 1, 3].map((i) => r45(adc1.p.r[i], m.l[i])),
+    ...[0, 1, 2, 3].map((i) => r45(adc2.p.r[i], m.l[i + 4])),
+    ...[0, 1, 2, 3].map((i) => r45(mux1.p.l[i + 4], m.r[i])),
+    ...[0, 1, 2, 3].map((i) => r45(mux2.p.l[i], m.r[i + 4])),
+    ...[...mux1.p.r, ...mux2.p.r].map((p, i) => P([p, edge[i]])),
+    P([drv.p.r[3], [224, drv.p.r[3][1]], [224, 110], [m.t[6][0], 110 + (224 - m.t[6][0])], m.t[6]]),
+    P([drv.p.l[3], [176, drv.p.l[3][1]], [176, 110], [m.t[1][0], 110 + (m.t[1][0] - 176)], m.t[1]]),
+    ...[2, 3, 4, 5].map((i) => P([m.b[i], [m.b[i][0], 184], [hdr[i + 2][0], 184 + Math.abs(hdr[i + 2][0] - m.b[i][0])], hdr[i + 2]])),
   ];
   // the highlighted net: ADC 1 data to the MCU
-  const net = P([adc1.p.r[2], [132, adc1.p.r[2][1]], [150, m.l[2][1] + 0], m.l[2]]);
+  const net = r45(adc1.p.r[2], m.l[2]);
   const vias: Pt[] = [
-    [150, 136],
     [224, 110],
     [176, 110],
-    [252, 142],
-    [150, 154],
   ];
   return (
     <Art id="bio-layout" label="KiCad PCB layout: ATmega328P with ADCs, multiplexers and LED driver, routed traces and header">
@@ -1124,6 +1111,9 @@ function Layout() {
         {hdr.map(([x, y]) => (
           <rect key={x} x={x - 3} y={y - 3} width={6} height={6} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
         ))}
+        {edge.map(([x, y]) => (
+          <rect key={y} x={x} y={y - 1.2} width={6} height={2.4} fill="var(--ink-3)" />
+        ))}
       </g>
       {tr.map((d, i) => (
         <Ln key={i} d={d} at={450 + i * 40} dur={450} stroke="var(--ink-3)" w={0.8} />
@@ -1136,7 +1126,7 @@ function Layout() {
           </g>
         ))}
       </g>
-      <T x={200} y={188} a="middle" tone="ink" at={700}>
+      <T x={214} y={187} tone="ink" at={700}>
         ATmega328P
       </T>
       <T x={106} y={96} a="middle" at={750}>
@@ -1163,7 +1153,7 @@ function Layout() {
           <animateMotion
             dur="16s"
             repeatCount="indefinite"
-            path="M 150 136 C 170 100, 236 92, 252 142 S 196 212, 150 154 S 128 150, 150 136"
+            path="M 150 132 C 170 100, 236 96, 250 132 S 232 168, 200 166 S 136 162, 150 132"
             calcMode="spline"
             keyPoints="0;0.33;0.33;0.66;0.66;1"
             keyTimes="0;0.25;0.35;0.6;0.7;1"
@@ -1231,8 +1221,8 @@ function Assembled() {
           <line key={y} x1={X0 - 12} y1={y} x2={X0 - 30} y2={y} stroke="var(--ink-2)" strokeWidth={0.9} />
         ))}
       </g>
-      <Ln d={`M ${X0 - 30} 136 H ${X0 - 34} Q ${X0 - 40} 136 ${X0 - 40} 142 V 250`} at={750} dur={500} stroke="var(--ink-3)" w={0.8} />
-      <Ln d={`M ${X0 - 30} 144 H ${X0 - 30} Q ${X0 - 32} 144 ${X0 - 32} 146 V 250`} at={750} dur={500} stroke="var(--ink-3)" w={0.8} />
+      <Ln d={`M ${X0 - 30} 136 H ${X0 - 34} Q ${X0 - 40} 136 ${X0 - 40} 142 V 246`} at={750} dur={500} stroke="var(--ink-3)" w={0.8} />
+      <Ln d={`M ${X0 - 30} 144 H ${X0 - 30} Q ${X0 - 32} 144 ${X0 - 32} 146 V 246`} at={750} dur={500} stroke="var(--ink-3)" w={0.8} />
 
       {/* light path through one well */}
       <g className="dg-n" style={dd(900)}>
@@ -1249,6 +1239,9 @@ function Assembled() {
         <Lead key={b.name} pts={[[X1, b.y + 2.5], [300, b.y + 2.5]]} label={b.name} tone="ink" at={1000 + i * 60} />
       ))}
       <Lead pts={[[X1, 140], [300, 140]]} label="Fluidic card" tone="signal" at={1100} />
+      <g className="dg-n" style={dd(1150)}>
+        <rect x={X0 - 43} y={246} width={14} height={6} rx={1} fill="var(--plate)" stroke="var(--ink-2)" strokeWidth={0.8} />
+      </g>
       <T x={X0 - 40} y={266} at={1200}>
         Tubing
       </T>

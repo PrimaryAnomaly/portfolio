@@ -166,8 +166,8 @@ function TradeGap() {
       ))}
       {/* this project */}
       <g className="dg-n" style={dl(700)}>
-        <text x={40} y={mY + 3.5} fontSize={10} fontWeight={600} fill="var(--ink)">
-          Manifest Labor
+        <text x={40} y={mY + 3.5} fontSize={10} fontWeight={600} fill="var(--ink)" xmlSpace="preserve">
+          {"Manifest Labor"}
         </text>
         <line x1={colX[0] - 5} y1={mY} x2={colX[0] + 5} y2={mY} stroke="var(--ink-3)" strokeWidth={0.8} />
         <circle cx={colX[1]} cy={mY} r={r} fill="var(--signal)" />
@@ -322,7 +322,7 @@ function DataSchema() {
     { k: "audio", depth: 2 },
     { k: "t", depth: 1 },
   ];
-  const ry = [66, 88, 108, 128, 150, 172, 194, 216, 244];
+  const ry = [76, 98, 118, 138, 160, 182, 204, 226, 254];
   const kx = (d: number) => tx + d * 16;
   const px = 212,
     pw = 12,
@@ -482,7 +482,7 @@ function CaptureRig() {
       {/* callouts: leader from each element to its label */}
       <g className="dg-n" style={dl(1000)} fill="none" stroke="var(--ink-3)" strokeWidth={0.6}>
         <path d="M 226 50 L 240 42 L 250 42" />
-        <path d="M 251.1 184.1 L 350 184.1" />
+        <path d="M 251.1 184.1 L 320 184.1" />
         <path d="M 243 242 L 262 262 L 280 262" />
         <path d={`M 150 ${seamY + 25} L 110 222 L 94 222`} />
       </g>
@@ -490,7 +490,7 @@ function CaptureRig() {
         <T x={254} y={45}>
           Cameras, multi-angle
         </T>
-        <T x={354} y={187}>
+        <T x={324} y={187}>
           Force/torque
         </T>
         <T x={344} y={234} a="middle">
