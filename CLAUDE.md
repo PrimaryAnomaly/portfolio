@@ -47,7 +47,7 @@ Content sources:
 - `content/site.ts` — name, title, intro, email, social links
 - `content/resume.ts` — experience, education, publications, certifications, technicalSkills
 - `content/skills.ts` — skill domains with individual skills and context
-- `content/projects/*.mdx` — project write-ups with frontmatter (title, description, date, tags, hero)
+- `content/projects/*.mdx` — project write-ups with frontmatter (title, description, date, tags; optional github, publication, poster)
 - Section order on home page: Skills & Certifications (01) → Experience (02) → Projects (03) → Education (04) → Publications (05)
 
 ## MDX Gotchas
@@ -55,6 +55,14 @@ Content sources:
 - next-mdx-remote v6 strips JS expressions from MDX by default (`blockJS`). The project page passes `blockJS: false, blockDangerousJS: true` so `<Gallery images={[...]} />` props survive.
 - Gallery has a null check + string fallback for `images`. Missing or `placeholder` images render a designed "photo to come" plate, and placeholder project heroes render a per-project SVG motif (`components/site/ProjectCover.tsx`).
 - Place project images in `public/images/projects/`. Reference as `/images/projects/filename.ext`.
+
+## Diagrams, covers and illustrations (pure SVG)
+
+- All artwork is React SVG drawn with `components/diagrams/kit.tsx` in site tokens, so it follows light/dark mode. No raster diagrams.
+- Architecture diagrams: `components/diagrams/<Name>.tsx`, registered by slug in `components/diagrams/index.tsx`; they become the project-page hero.
+- Card covers: `components/covers/<slug>.tsx` (400×300 `<Art>` boards), registered in `components/covers/index.ts`.
+- Gallery stand-ins: `components/illustrations/<slug>.tsx`, referenced from MDX via `art: "<slug>/<name>"` on a Gallery image. A real file at `src` (not a placeholder) always wins; illustrations carry an "Illustration" tag.
+- Rules: every edge starts and ends on an element (node, bus, junction dot, rule); grey outline = component, orange = the one story path and where it lands, no decorative solid fills; never imply results or numbers not stated in the MDX; one calm SMIL ambient loop per piece inside `.dg-pulse` (paused off-screen by `DiagramFrame`).
 
 ## Resume PDF
 
