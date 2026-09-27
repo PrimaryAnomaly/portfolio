@@ -183,7 +183,7 @@ function Scene() {
           plan
         </Txt>
         <Txt x={44} y={206} size={9}>
-          Unitree G1, two
+          Unitree G1
         </Txt>
       </Fade>
 
@@ -225,47 +225,52 @@ function Scene() {
 /* 02 Stage 1 reward components, one panel each                       */
 /* ------------------------------------------------------------------ */
 
-/** Deterministic, qualitative training curve: shape(t) plus seeded jitter. */
-function series(shape: (t: number) => number, seed: number, n = 64) {
+/**
+ * A generic logged trace: a slow wander plus per-step jitter, with no trend.
+ * Stage 1 is still training, so the traces stop part-way along the axis.
+ */
+function trace(seed: number, n = 44) {
   return Array.from({ length: n }, (_, i) => {
     const t = i / (n - 1);
     const j = Math.sin(i * 12.9898 + seed * 78.233) * 43758.5453;
-    const noise = (j - Math.floor(j) - 0.5) * 0.16 * (1 - 0.5 * t);
-    return { t, raw: shape(t) + noise, fit: shape(t) };
+    const noise = (j - Math.floor(j) - 0.5) * 0.14;
+    const fit = 0.5 + 0.1 * Math.sin(t * 5.2 + seed * 1.7) + 0.05 * Math.sin(t * 11 + seed);
+    return { t, raw: fit + noise, fit };
   });
 }
 
 function Rewards() {
   const PW = 162;
   const PH = 78;
+  const LIVE = 0.72; // how far along the step axis the traces have got
   const panels = [
-    { name: "distance decrease", x: 30, y: 62, shape: (t: number) => 0.2 + 0.62 * (1 - Math.exp(-4.5 * t)), sig: false },
-    { name: "stable hand contact", x: 212, y: 62, shape: (t: number) => 0.1 + 0.7 / (1 + Math.exp(-9 * (t - 0.45))), sig: true },
-    { name: "grip duration", x: 30, y: 180, shape: (t: number) => 0.08 + 0.64 / (1 + Math.exp(-8 * (t - 0.62))), sig: false },
-    { name: "fall penalty", x: 212, y: 180, shape: (t: number) => 0.16 + 0.66 * (1 - Math.exp(-3.2 * t)), sig: false },
+    { name: "distance decrease", x: 30, y: 62 },
+    { name: "stable hand contact", x: 212, y: 62 },
+    { name: "grip duration", x: 30, y: 180 },
+    { name: "fall penalty", x: 212, y: 180 },
   ];
   return (
-    <Art id="fleet-rewards" label="Four Stage 1 reward components, each logged as its own training curve">
+    <Art id="fleet-rewards" label="Four Stage 1 reward components, each logged to its own TensorBoard panel as training runs">
       {panels.map((p, i) => {
-        const pts = series(p.shape, i + 1);
-        const X = (t: number) => p.x + t * PW;
+        const pts = trace(i + 1);
+        const X = (t: number) => p.x + t * PW * LIVE;
         const Y = (v: number) => p.y + PH - v * PH;
         const raw = pts.map((q, k) => `${k ? "L" : "M"} ${X(q.t).toFixed(1)} ${Y(q.raw).toFixed(1)}`).join(" ");
         const fit = pts.map((q, k) => `${k ? "L" : "M"} ${X(q.t).toFixed(1)} ${Y(q.fit).toFixed(1)}`).join(" ");
-        const penalty = p.name === "fall penalty";
+        const end = pts[pts.length - 1];
         return (
           <g key={p.name}>
             <Fade d={100 + i * 90}>
-              <Txt x={p.x} y={p.y - 12} size={9.5} tone={p.sig ? "signal" : "ink2"}>
+              <Txt x={p.x} y={p.y - 12} size={9.5} tone="ink2">
                 {p.name}
               </Txt>
               <path d={`M ${p.x} ${p.y - 2} L ${p.x} ${p.y + PH} L ${p.x + PW} ${p.y + PH}`} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
-              {penalty && (
-                <line x1={p.x} y1={p.y + 6} x2={p.x + PW} y2={p.y + 6} stroke="var(--ink-3)" strokeDasharray="0.1 3" strokeLinecap="round" />
-              )}
               <path d={raw} fill="none" stroke="var(--rule-strong)" strokeWidth={0.8} />
             </Fade>
-            <Draw d={fit} at={400 + i * 120} dur={1000} stroke={p.sig ? "var(--signal)" : "var(--ink-2)"} w={p.sig ? 1.5 : 1.1} />
+            <Draw d={fit} at={400 + i * 120} dur={1000} stroke="var(--ink-2)" w={1.1} />
+            <Fade d={1300 + i * 60}>
+              <circle cx={X(1)} cy={Y(end.fit)} r={2.6} fill="var(--signal)" />
+            </Fade>
           </g>
         );
       })}
@@ -282,7 +287,7 @@ function Rewards() {
             type="translate"
             dur="12s"
             repeatCount="indefinite"
-            values={`0 0;${PW} 0;${PW} 0;0 0`}
+            values={`0 0;${PW * LIVE} 0;${PW * LIVE} 0;0 0`}
             keyTimes="0;0.6;0.72;1"
             calcMode="spline"
             keySplines={splines(3)}
@@ -301,9 +306,9 @@ function Rewards() {
 /* ------------------------------------------------------------------ */
 
 function Layers() {
-  const X0 = 52;
-  const W = 170;
-  const DX = 58;
+  const X0 = 46;
+  const W = 156;
+  const DX = 52;
   const DY = 30;
   const T = 5;
   const P = (y: number, u: number, v: number) => [X0 + u * W + v * DX, y - v * DY] as const;
@@ -315,8 +320,8 @@ function Layers() {
     return `M ${a[0]} ${a[1]} L ${b[0]} ${b[1]} L ${c[0]} ${c[1]} L ${d[0]} ${d[1]} Z`;
   };
   const layers = [
-    { name: "Environment", sub: "MuJoCo 1000 Hz, Gymnasium", y: 246, mods: [[0.06, 0.3], [0.38, 0.62], [0.7, 0.94]] },
-    { name: "Training", sub: "RSL-RL, multi-agent PPO", y: 190, mods: [[0.06, 0.46], [0.54, 0.94]] },
+    { name: "Environment", sub: "MuJoCo, 1000 Hz", y: 246, mods: [[0.06, 0.3], [0.38, 0.62], [0.7, 0.94]] },
+    { name: "Training", sub: "RSL-RL, PPO", y: 190, mods: [[0.06, 0.46], [0.54, 0.94]] },
     { name: "Utilities", sub: "", y: 134, mods: [[0.06, 0.26], [0.32, 0.52], [0.58, 0.78]] },
     { name: "Scripts", sub: "", y: 78, mods: [[0.06, 0.36], [0.44, 0.74]] },
   ];
@@ -359,13 +364,13 @@ function Layers() {
                 />
               ))}
               {/* leader to the name */}
-              <line x1={sx} y1={sy} x2={300} y2={sy} stroke="var(--ink-3)" strokeWidth={0.8} />
+              <line x1={sx} y1={sy} x2={284} y2={sy} stroke="var(--ink-3)" strokeWidth={0.8} />
               <circle cx={sx} cy={sy} r={1.6} fill="var(--ink-3)" />
-              <Txt x={306} y={sy + (l.sub ? -1 : 3.5)} size={10.5} tone="ink" mono={false}>
+              <Txt x={290} y={sy + (l.sub ? -1 : 3.5)} size={10.5} tone="ink" mono={false}>
                 {l.name}
               </Txt>
               {l.sub && (
-                <Txt x={306} y={sy + 11} size={8.5}>
+                <Txt x={290} y={sy + 11} size={9}>
                   {l.sub}
                 </Txt>
               )}
@@ -407,12 +412,12 @@ function Speech() {
   const CH = 18;
   const cy = (i: number) => 64 + i * 26;
   const S0 = 166;
-  const SW = 10.5;
-  const N = 19;
+  const SW = 10;
+  const N = 21;
   const sx = (k: number) => S0 + k * SW;
   const AY = 118;
   const BY = 202;
-  const emit = 3;
+  const emit = 7;
   const hold = 10;
   const cell = (k: number, y: number) => ({ x: sx(k) + 1, y: y - 4.5, w: SW - 2, h: 9 });
   const aCell = cell(emit, AY);

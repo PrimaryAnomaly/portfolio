@@ -42,159 +42,132 @@ function T({
 const ellipsePath = (cx: number, cy: number, rx: number, ry: number) =>
   `M ${cx - rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx + rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx - rx} ${cy}`;
 
-/* 01 Landscape: existing datasets cluster around lab demos; skilled trades sit apart */
+/* 01 Landscape: the benchmarked datasets sit in lab demos and simulation;
+   skilled trade work sits outside them. Structure only, no sizes or rankings. */
 function DatasetLandscape() {
-  const oxe = { cx: 122, cy: 158, rx: 74, ry: 54 };
-  const tr = { cx: 304, cy: 150, rx: 54, ry: 46 };
-  const gy = 156;
-  const gx0 = oxe.cx + oxe.rx * Math.sqrt(1 - ((gy - oxe.cy) / oxe.ry) ** 2);
-  const gx1 = tr.cx - tr.rx * Math.sqrt(1 - ((gy - tr.cy) / tr.ry) ** 2);
+  const lab = { cx: 118, cy: 160, rx: 80, ry: 60 };
+  const tr = { cx: 304, cy: 160, rx: 62, ry: 60 };
+  const sets = ["RT-X", "Open X-Embodiment", "DROID"];
+  const trades = ["Welding", "Pipefitting", "Fabrication"];
+  const rowY = (i: number) => 142 + i * 20;
+  const gy = 160;
+  const gx0 = lab.cx + lab.rx;
+  const gx1 = tr.cx - tr.rx;
   return (
-    <Art id="manifest-landscape" label="Existing robotics datasets cluster around lab demonstrations; skilled trade work sits outside their coverage">
-      {/* axis: lab to real trade work */}
-      <g className="dg-n" style={dl(0)} stroke="var(--ink-3)" strokeWidth={0.8}>
-        <line x1={40} y1={250} x2={362} y2={250} />
-        <line x1={40} y1={246} x2={40} y2={254} />
-        <line x1={362} y1={246} x2={362} y2={254} />
-      </g>
-      <g className="dg-n" style={dl(100)}>
-        <T x={40} y={268}>
+    <Art id="manifest-landscape" label="Existing robotics datasets sit in lab demonstrations and simulation; skilled trade work sits outside their coverage">
+      <g className="dg-n" style={dl(0)}>
+        <ellipse cx={lab.cx} cy={lab.cy} rx={lab.rx} ry={lab.ry} fill="var(--plate)" stroke="var(--rule-strong)" strokeWidth={0.8} />
+        <T x={lab.cx} y={lab.cy - lab.ry - 10} a="middle" fill="var(--ink-2)">
           Lab demos, simulation
         </T>
-        <T x={362} y={268} a="end">
-          Real trade work
-        </T>
       </g>
-      {/* existing datasets */}
-      <g className="dg-n" style={dl(200)}>
-        <ellipse cx={oxe.cx} cy={oxe.cy} rx={oxe.rx} ry={oxe.ry} fill="var(--plate)" stroke="var(--rule-strong)" strokeWidth={0.8} />
-      </g>
-      <g className="dg-n" style={dl(350)} fill="none" stroke="var(--ink-3)" strokeWidth={0.8}>
-        <ellipse cx={100} cy={178} rx={38} ry={24} />
-        <ellipse cx={158} cy={136} rx={36} ry={23} />
-      </g>
-      <g className="dg-n" style={dl(500)}>
-        <T x={100} y={181.5} a="middle" fill="var(--ink-2)">
-          RT-X
-        </T>
-        <T x={158} y={139.5} a="middle" fill="var(--ink-2)">
-          DROID
-        </T>
-        <T x={oxe.cx} y={oxe.cy - oxe.ry - 8} a="middle">
-          Open X-Embodiment
-        </T>
-      </g>
-      {/* gap */}
+      {sets.map((s, i) => (
+        <g key={s} className="dg-n" style={dl(200 + i * 90)}>
+          <circle cx={62} cy={rowY(i) - 3} r={3} fill="var(--ink-2)" />
+          <T x={72} y={rowY(i)} fill="var(--ink-2)">
+            {s}
+          </T>
+        </g>
+      ))}
+      {/* the gap between the two domains */}
       <g className="dg-n" style={dl(800)} stroke="var(--ink-3)" strokeWidth={0.8}>
         <line x1={gx0} y1={gy} x2={gx1} y2={gy} strokeDasharray="1.5 2" />
-        <circle cx={gx0} cy={gy} r={1.6} fill="var(--ink-3)" stroke="none" />
-        <circle cx={gx1} cy={gy} r={1.6} fill="var(--signal)" stroke="none" />
+        <circle cx={gx0} cy={gy} r={1.8} fill="var(--ink-3)" stroke="none" />
+        <circle cx={gx1} cy={gy} r={1.8} fill="var(--signal)" stroke="none" />
       </g>
       <g className="dg-n" style={dl(850)}>
-        <T x={(gx0 + gx1) / 2} y={gy - 6} a="middle">
+        <T x={(gx0 + gx1) / 2} y={gy - 7} a="middle">
           gap
         </T>
       </g>
-      {/* skilled trades */}
-      <path
-        className="dg-e"
-        style={dl(600, 1000)}
-        d={ellipsePath(tr.cx, tr.cy, tr.rx, tr.ry)}
-        pathLength={1}
-        fill="none"
-        stroke="var(--signal)"
-        strokeWidth={1}
-      />
-      <g className="dg-n" style={dl(900)}>
-        <T x={tr.cx} y={tr.cy - tr.ry - 8} a="middle" fill="var(--ink-2)">
+      <path className="dg-e" style={dl(500, 1000)} d={ellipsePath(tr.cx, tr.cy, tr.rx, tr.ry)} pathLength={1} fill="none" stroke="var(--signal)" strokeWidth={1} />
+      <g className="dg-n" style={dl(700)}>
+        <T x={tr.cx} y={tr.cy - tr.ry - 10} a="middle" fill="var(--ink-2)">
           Skilled trades
         </T>
-        <T x={tr.cx} y={tr.cy - 10} a="middle" fill="var(--signal-ink)">
-          Welding
-        </T>
-        <T x={tr.cx} y={tr.cy + 6} a="middle">
-          Pipefitting
-        </T>
-        <T x={tr.cx} y={tr.cy + 22} a="middle">
-          Fabrication
-        </T>
       </g>
+      {trades.map((t, i) => (
+        <g key={t} className="dg-n" style={dl(900 + i * 90)}>
+          <circle cx={268} cy={rowY(i) - 3} r={3} fill={i === 0 ? "var(--signal)" : "none"} stroke={i === 0 ? "none" : "var(--ink-3)"} strokeWidth={0.8} />
+          <T x={278} y={rowY(i)} fill={i === 0 ? "var(--signal-ink)" : "var(--ink-3)"}>
+            {t}
+          </T>
+        </g>
+      ))}
       <Pulse path={ellipsePath(tr.cx, tr.cy, tr.rx, tr.ry)} dur={12} r={2} />
     </Art>
   );
 }
 
-/* 02 Gap matrix: benchmarked datasets against lab demos and three trades */
+/* 02 Gap: the trades are largely absent from the benchmarked datasets
+   (one region, not per-cell scores); this project starts with welding. */
 function TradeGap() {
-  const colX = [176, 236, 296, 356];
-  const cols = ["Lab demos", "Welding", "Pipefitting", "Fabrication"];
+  const colX = [226, 290, 354];
+  const cols = ["Welding", "Pipefitting", "Fabrication"];
   const rows = ["RT-X", "Open X-Embodiment", "DROID"];
-  const rowY = [112, 142, 172];
-  const mY = 222;
-  const r = 6.5;
+  const rowY = [118, 146, 174];
+  const mY = 228;
+  const reg = { x: 194, y: 102, w: 192, h: 88 };
   return (
-    <Art id="manifest-trade-gap" label="Skilled trade coverage gaps: benchmarked datasets cover lab demonstrations, not welding, pipefitting or fabrication">
-      {/* trades bracket */}
+    <Art id="manifest-trade-gap" label="Skilled trade coverage gaps: welding, pipefitting and fabrication are largely absent from the benchmarked datasets; this project starts with welding">
+      <defs>
+        <pattern id="manifest-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="var(--rule)" strokeWidth="1" />
+        </pattern>
+      </defs>
+      {/* trades bracket and column heads */}
       <g className="dg-n" style={dl(0)}>
-        <path d={`M ${colX[1] - 22} 68 L ${colX[1] - 22} 64 L ${colX[3] + 22} 64 L ${colX[3] + 22} 68`} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
-        <T x={colX[2]} y={57} a="middle">
+        <path d={`M ${reg.x} 64 L ${reg.x} 60 L ${reg.x + reg.w} 60 L ${reg.x + reg.w} 64`} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
+        <T x={reg.x + reg.w / 2} y={53} a="middle">
           Skilled trades
         </T>
       </g>
       {cols.map((c, i) => (
-        <g key={c} className="dg-n" style={dl(100 + i * 50)}>
-          <text x={colX[i]} y={86} fontSize={10} textAnchor="middle" fill={i === 1 ? "var(--signal-ink)" : "var(--ink-2)"}>
-            {c}
-          </text>
-        </g>
+        <text key={c} className="dg-n" style={dl(100 + i * 50)} x={colX[i]} y={84} fontSize={10} textAnchor="middle" fill={i === 0 ? "var(--signal-ink)" : "var(--ink-2)"}>
+          {c}
+        </text>
       ))}
       <g className="dg-n" style={dl(150)}>
-        <line x1={40} y1={95} x2={386} y2={95} stroke="var(--rule-strong)" strokeWidth={0.8} />
-        <line x1={40} y1={194} x2={386} y2={194} stroke="var(--rule-strong)" strokeWidth={0.8} />
-        <line x1={colX[1] - 30} y1={95} x2={colX[1] - 30} y2={240} stroke="var(--rule)" strokeWidth={0.8} />
+        <line x1={40} y1={94} x2={386} y2={94} stroke="var(--rule-strong)" strokeWidth={0.8} />
+        <line x1={40} y1={202} x2={386} y2={202} stroke="var(--rule-strong)" strokeWidth={0.8} />
       </g>
       {rows.map((name, j) => (
-        <g key={name} className="dg-n" style={dl(300 + j * 90)}>
+        <g key={name} className="dg-n" style={dl(250 + j * 80)}>
           <text x={40} y={rowY[j] + 3.5} fontSize={10} fill="var(--ink-2)">
             {name}
           </text>
-          <circle cx={colX[0]} cy={rowY[j]} r={r} fill="var(--ink-2)" />
-          {[1, 2, 3].map((i) => (
-            <circle key={i} cx={colX[i]} cy={rowY[j]} r={r} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1.2 2" />
-          ))}
+          <line x1={150} y1={rowY[j]} x2={reg.x - 6} y2={rowY[j]} stroke="var(--rule)" strokeWidth={0.7} strokeDasharray="1 2" />
         </g>
       ))}
-      {/* this project */}
-      <g className="dg-n" style={dl(700)}>
+      {/* one empty region: largely absent */}
+      <g className="dg-n" style={dl(550)}>
+        <rect x={reg.x + 0.5} y={reg.y + 0.5} width={reg.w - 1} height={reg.h - 1} rx={3} fill="url(#manifest-hatch)" stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1.5 2.5" />
+        <rect x={reg.x + reg.w / 2 - 44} y={reg.y + reg.h / 2 - 9} width={88} height={16} fill="var(--plate)" />
+        <T x={reg.x + reg.w / 2} y={reg.y + reg.h / 2 + 2.5} a="middle">
+          largely absent
+        </T>
+      </g>
+      {/* this project: welding first, the pipeline stays trade-agnostic */}
+      <g className="dg-n" style={dl(800)}>
         <text x={40} y={mY + 3.5} fontSize={10} fontWeight={600} fill="var(--ink)" xmlSpace="preserve">
           {"Manifest Labor"}
         </text>
-        <line x1={colX[0] - 5} y1={mY} x2={colX[0] + 5} y2={mY} stroke="var(--ink-3)" strokeWidth={0.8} />
-        <circle cx={colX[1]} cy={mY} r={r} fill="var(--signal)" />
-        {[2, 3].map((i) => (
-          <circle key={i} cx={colX[i]} cy={mY} r={r} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1.2 2" />
-        ))}
-      </g>
-      <g className="dg-pulse">
-        <circle cx={colX[1]} cy={mY} r={r} fill="none" stroke="var(--signal)" strokeWidth={0.8}>
-          <animate attributeName="r" values={`${r};${r + 7}`} dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.2 1" keyTimes="0;1" />
-          <animate attributeName="opacity" values="0.7;0" dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.2 1" keyTimes="0;1" />
-        </circle>
-      </g>
-      {/* legend */}
-      <g className="dg-n" style={dl(900)}>
-        <circle cx={44} cy={265} r={4} fill="var(--ink-2)" />
-        <T x={53} y={268}>
-          covered
-        </T>
-        <circle cx={120} cy={265} r={4} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1.2 2" />
-        <T x={129} y={268}>
-          largely absent
-        </T>
-        <circle cx={230} cy={265} r={4} fill="var(--signal)" />
-        <T x={239} y={268}>
+        <line x1={colX[0] + 8} y1={mY} x2={colX[2] - 5} y2={mY} stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="1.5 2.5" />
+        <circle cx={colX[1]} cy={mY} r={4.5} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.8} />
+        <circle cx={colX[2]} cy={mY} r={4.5} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.8} />
+        <circle cx={colX[0]} cy={mY} r={6.5} fill="var(--signal)" />
+        <T x={colX[0]} y={mY + 26} a="middle" fill="var(--signal-ink)">
           current focus
         </T>
+        <T x={(colX[1] + colX[2]) / 2} y={mY + 26} a="middle">
+          trade-agnostic
+        </T>
+      </g>
+      <g className="dg-pulse">
+        <circle cx={colX[0]} cy={mY} r={6.5} fill="none" stroke="var(--signal)" strokeWidth={0.8}>
+          <animate attributeName="r" values="6.5;13.5" dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.2 1" keyTimes="0;1" />
+          <animate attributeName="opacity" values="0.7;0" dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.2 0 0.2 1" keyTimes="0;1" />
+        </circle>
       </g>
     </Art>
   );

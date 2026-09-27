@@ -13,15 +13,15 @@ const ease = "0.4 0 0.2 1";
 
 export default function Cover() {
   const j = {
-    head: [94, 80],
-    neck: [100, 103],
-    sh: [104, 110],
-    el: [124, 150],
-    hip: [98, 172],
-    kf: [122, 208],
-    af: [118, 250],
-    kb: [92, 212],
-    ab: [82, 250],
+    head: [106, 84],
+    neck: [106, 106],
+    sh: [110, 113],
+    el: [126, 152],
+    hip: [96, 172],
+    kf: [120, 210],
+    af: [114, 250],
+    kb: [90, 212],
+    ab: [80, 250],
   } as const;
   const benchY = 176;
   const seam0 = 170,
@@ -70,9 +70,8 @@ export default function Cover() {
         {bones.map(([a, b]) => (
           <line key={a + b} x1={j[a][0]} y1={j[a][1]} x2={j[b][0]} y2={j[b][1]} />
         ))}
-        <circle cx={j.head[0]} cy={j.head[1]} r={12} fill="var(--plate)" />
-        {/* welding helmet visor */}
-        <path d={`M ${j.head[0] + 6} ${j.head[1] - 10} L ${j.head[0] + 15} ${j.head[1] - 2} L ${j.head[0] + 13} ${j.head[1] + 11}`} fill="none" />
+        <line x1={j.neck[0]} y1={j.neck[1]} x2={j.sh[0]} y2={j.sh[1]} />
+        <circle cx={j.head[0]} cy={j.head[1]} r={11.5} fill="var(--plate)" />
       </g>
       {/* forearm follows the wrist */}
       <g className="dg-n" style={dl(250)}>

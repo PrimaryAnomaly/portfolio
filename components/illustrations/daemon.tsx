@@ -799,54 +799,13 @@ function SessionResults() {
     [0.9, 0.93],
   ]);
   const others: { pts: [number, number][]; retired: boolean }[] = [
-    {
-      pts: P([
-        [0, 0.5],
-        [0.12, 0.43],
-        [0.24, 0.37],
-        [0.37, 0.26],
-        [0.47, 0.18],
-      ]),
-      retired: true,
-    },
-    {
-      pts: P([
-        [0, 0.5],
-        [0.12, 0.58],
-        [0.24, 0.63],
-        [0.37, 0.55],
-        [0.5, 0.6],
-        [0.63, 0.51],
-        [0.76, 0.56],
-        [0.9, 0.54],
-      ]),
-      retired: false,
-    },
-    {
-      pts: P([
-        [0.12, 0.5],
-        [0.24, 0.6],
-        [0.37, 0.67],
-        [0.5, 0.52],
-        [0.63, 0.34],
-        [0.72, 0.18],
-      ]),
-      retired: true,
-    },
-    {
-      pts: P([
-        [0.5, 0.5],
-        [0.63, 0.57],
-        [0.76, 0.63],
-        [0.9, 0.69],
-      ]),
-      retired: false,
-    },
+    { pts: P([[0, 0.5], [0.14, 0.43], [0.28, 0.36], [0.42, 0.27], [0.54, 0.18]]), retired: true },
+    { pts: P([[0.14, 0.5], [0.28, 0.58], [0.42, 0.62], [0.56, 0.55], [0.7, 0.6], [0.84, 0.54], [0.95, 0.57]]), retired: false },
   ];
   const wPath = smooth(winner);
   const last = winner[winner.length - 1];
   return (
-    <Art id="daemon-session" label="Hypothesis confidence over a discovery session: one accepted, two retired">
+    <Art id="daemon-session" label="How hypothesis confidence is tracked over a session: accepted above 0.9, retired below 0.2">
       <Fade d={100}>
         <path d={`M ${X0} ${y(1)} L ${X0} ${y(0)} L ${X1 + 14} ${y(0)}`} fill="none" stroke="var(--ink-3)" />
         {[0.12, 0.24, 0.37, 0.5, 0.63, 0.76, 0.9].map((u) => (
@@ -906,46 +865,50 @@ function SessionResults() {
 /* ------------------------------------------------------------------ */
 
 function Convergence() {
-  const vals = [0.92, 0.84, 0.88, 0.7, 0.74, 0.57, 0.5, 0.53, 0.39, 0.33, 0.27, 0.21, 0.13];
-  const B = 250;
-  const H = 170;
-  const BW = 11;
-  const bx = (i: number) => 66 + i * 20;
-  const thr = 0.17;
-  const hit = vals.findIndex((v) => v < thr);
-  const mid = (i: number) => bx(i) + BW / 2;
-  const trend = smooth(vals.map((v, i) => [mid(i), B - v * H] as [number, number]));
-  const sweep = mid(hit) - mid(0);
-  const dy = B - vals[hit] * H - 22;
+  const n = 12;
+  const B = 222;
+  const H = 150;
+  const X0 = 58;
+  const cx = (i: number) => X0 + 16 + i * 24;
+  const v = (i: number) => 0.14 + 0.78 * Math.exp(-i / 3.6);
+  const pts = Array.from({ length: n }, (_, i) => [cx(i), B - v(i) * H] as [number, number]);
+  const curve = smooth(pts);
+  const QY = B + 22;
+  const last = n - 1;
+  const sweep = cx(last) - cx(0);
+  const diamond = (x: number, r: number) => `M ${x} ${QY - r} L ${x + r} ${QY} L ${x} ${QY + r} L ${x - r} ${QY} Z`;
   return (
-    <Art id="daemon-convergence" label="A convergence metric shrinking across discovery cycles until it falls under threshold">
+    <Art id="daemon-convergence" label="Convergence metrics per discovery cycle, with the converged check run at the end of every cycle">
       <Fade d={100}>
-        <path d={`M 56 ${B - H - 8} L 56 ${B} L 366 ${B}`} fill="none" stroke="var(--ink-3)" />
-        <Txt x={366} y={B + 18} size={9.5} anchor="end">
-          cycles
+        <path d={`M ${X0} ${B - H - 10} L ${X0} ${B} L ${cx(last) + 22} ${B}`} fill="none" stroke="var(--ink-3)" />
+        {pts.map(([x], i) => (
+          <line key={i} x1={x} y1={B} x2={x} y2={B + 4} stroke="var(--ink-3)" />
+        ))}
+        <Txt x={X0} y={B - H - 20} size={9.5}>
+          convergence metrics
         </Txt>
       </Fade>
-      {vals.map((v, i) => (
-        <rect
-          key={i}
-          className="dg-n"
-          style={dl(200 + i * 60)}
-          x={bx(i)}
-          y={B - v * H}
-          width={BW}
-          height={v * H}
-          fill={i === hit ? "var(--signal)" : "var(--rule-strong)"}
-        />
+      <Draw d={curve} at={300} dur={1100} stroke="var(--ink-2)" w={1.2} />
+      {pts.map(([x, y], i) => (
+        <Fade key={i} d={350 + i * 70}>
+          <circle cx={x} cy={y} r={2.3} fill="var(--plate)" stroke="var(--ink-2)" />
+        </Fade>
       ))}
-      <Draw d={trend} at={700} dur={900} stroke="var(--ink-2)" />
-      <Fade d={1100}>
-        <line x1={56} y1={B - thr * H} x2={366} y2={B - thr * H} stroke="var(--ink-3)" strokeDasharray="0.1 3" strokeLinecap="round" />
-        <Txt x={366} y={B - thr * H + 13} size={9} anchor="end">
-          threshold
+      {/* the converged? check closes every cycle; the loop ends on the first yes */}
+      {pts.map(([x], i) => (
+        <Fade key={"q" + i} d={500 + i * 70}>
+          <path d={diamond(x, i === last ? 5.5 : 3.6)} fill={i === last ? "var(--signal)" : "var(--plate)"} stroke={i === last ? "var(--signal)" : "var(--ink-3)"} />
+        </Fade>
+      ))}
+      <Fade d={1400}>
+        <Txt x={cx(0) - 12} y={QY + 22} size={9}>
+          converged? checked every cycle
         </Txt>
-        <rect x={mid(hit) - 5.5} y={dy - 5.5} width={11} height={11} transform={`rotate(45 ${mid(hit)} ${dy})`} fill="var(--signal)" />
-        <Txt x={mid(hit) + 13} y={dy + 4} size={10} tone="signal" mono={false}>
-          Converged
+        <Txt x={cx(last) + 12} y={QY + 4} size={10} tone="signal" mono={false}>
+          Yes
+        </Txt>
+        <Txt x={cx(last) + 22} y={B - 8} size={9.5} anchor="end">
+          cycles
         </Txt>
       </Fade>
       {/* a cursor reading across the cycles, resting at convergence */}
@@ -961,7 +924,7 @@ function Convergence() {
             calcMode="spline"
             keySplines={splines(3)}
           />
-          <line x1={mid(0)} y1={B - H - 8} x2={mid(0)} y2={B} stroke="var(--ink-2)" strokeWidth={0.8} strokeDasharray="2 2" />
+          <line x1={cx(0)} y1={B - H - 10} x2={cx(0)} y2={QY - 6} stroke="var(--ink-2)" strokeWidth={0.8} strokeDasharray="2 2" />
         </g>
       </g>
     </Art>

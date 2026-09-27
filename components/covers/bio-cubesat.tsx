@@ -146,7 +146,7 @@ export default function Cover() {
       <text className="dg-n" style={{ ...dd(1000), ...mono }} x={256} y={98} fontSize={10} fill="var(--ink-3)">
         27 wells
       </text>
-      <text className="dg-n" style={{ ...dd(1050), ...mono }} x={256} y={210} fontSize={10} fill="var(--ink-3)">
+      <text className="dg-n" style={{ ...dd(1050), ...mono }} x={376} y={210} fontSize={10} fill="var(--ink-3)" textAnchor="end">
         81 electrodes
       </text>
     </Art>

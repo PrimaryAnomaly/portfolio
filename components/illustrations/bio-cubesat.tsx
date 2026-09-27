@@ -1259,7 +1259,6 @@ function Ait() {
     { t: "pNa", unit: "mV", x: "pNa", k: -1, v: "75.2 mV/pNa", s: "R² > 0.99" },
     { t: "Absorbance", unit: "Abs", x: "g/L", k: 1, v: "R² = 0.994", s: "0.1 to 5 g/L" },
   ];
-  const jit = [1.8, -1.4, 2.2, -2, 0.8, -1.2];
   const top = 76,
     bot = 190;
   return (
@@ -1283,21 +1282,13 @@ function Ait() {
             </g>
             <Ln d={P([[x0, top], [x0, bot], [x0 + 100, bot]])} at={at + 80} dur={500} stroke="var(--ink-3)" w={0.8} />
             <Ln d={P([lo, hi])} at={at + 350} dur={600} stroke={sig ? "var(--signal)" : "var(--ink-2)"} w={sig ? 1.3 : 1} />
-            <g className="dg-n" style={dd(at + 500)}>
-              {jit.map((j, n) => {
-                const t = n / 5;
-                return (
-                  <circle
-                    key={n}
-                    cx={lo[0] + (hi[0] - lo[0]) * t}
-                    cy={lo[1] + (hi[1] - lo[1]) * t + j}
-                    r={2.2}
-                    fill="var(--plate)"
-                    stroke="var(--ink-2)"
-                    strokeWidth={0.8}
-                  />
-                );
-              })}
+            <g className="dg-n" style={dd(at + 200)}>
+              {[1, 2, 3, 4].map((n) => (
+                <g key={n}>
+                  <line x1={x0 + n * 20} y1={bot} x2={x0 + n * 20} y2={bot + 3} stroke="var(--ink-3)" strokeWidth={0.6} />
+                  <line x1={x0 - 3} y1={bot - n * 22.8} x2={x0} y2={bot - n * 22.8} stroke="var(--ink-3)" strokeWidth={0.6} />
+                </g>
+              ))}
             </g>
             <T x={x0 + 100} y={204} a="end" at={at + 150}>
               {p.x}
@@ -1345,13 +1336,12 @@ function Yeast() {
   const N = 48;
   const ts = Array.from({ length: N + 1 }, (_, i) => i / N);
   const xs = ts.map((t) => L + (R - L) * t);
-  const ya = ts.map((t) => BOT - (BOT - TOP) * sig(t, 0.5, 9));
-  const yp = ts.map((t) => TOP + (BOT - TOP) * sig(t, 0.42, 7));
+  const ya = ts.map((t) => BOT - (BOT - TOP) * sig(t, 0.5, 6));
+  const yp = ts.map((t) => TOP + (BOT - TOP) * sig(t, 0.5, 6));
   const line = (ys: number[]) => P(xs.map((x, i) => [+x.toFixed(1), +ys[i].toFixed(1)] as Pt));
-  const refT = [4, 12, 20, 28, 36, 44];
   const vals = (a: number[]) => a.map((v) => v.toFixed(1)).join(";");
   return (
-    <Art id="bio-yeast" label="36-hour yeast cultivation: absorbance rises from 0.3 to 0.8 while pH falls from 7.5 to 4.0, tracking commercial reference readings">
+    <Art id="bio-yeast" label="36-hour yeast cultivation: absorbance rises from 0.3 to 0.8 while pH falls from 7.5 to 4.0, measured together">
       <g className="dg-n" style={dd(0)}>
         <rect x={L} y={TOP} width={R - L} height={BOT - TOP} fill="var(--plate)" />
         {[0.25, 0.5, 0.75].map((f) => (
@@ -1361,14 +1351,6 @@ function Yeast() {
       <Ln d={P([[L, TOP], [L, BOT], [R, BOT], [R, TOP]])} at={100} dur={700} stroke="var(--ink-3)" w={0.8} />
       <Ln d={line(yp)} at={500} dur={1000} stroke="var(--ink-2)" w={1.1} />
       <Ln d={line(ya)} at={600} dur={1000} stroke="var(--signal)" w={1.4} />
-      <g className="dg-n" style={dd(1100)}>
-        {refT.map((i, n) => (
-          <g key={i}>
-            <circle cx={xs[i]} cy={ya[i] + (n % 2 ? 2 : -2)} r={2.4} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.8} />
-            <circle cx={xs[i]} cy={yp[i] + (n % 2 ? -2 : 2)} r={2.4} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.8} />
-          </g>
-        ))}
-      </g>
 
       <T x={L} y={58} tone="signal" at={300}>
         Absorbance
@@ -1396,12 +1378,6 @@ function Yeast() {
       </T>
       <T x={R} y={230} a="middle" at={450}>
         36 h
-      </T>
-      <g className="dg-n" style={dd(1200)}>
-        <circle cx={L + 3} cy={260} r={2.4} fill="var(--plate)" stroke="var(--ink-3)" strokeWidth={0.8} />
-      </g>
-      <T x={L + 12} y={263} at={1200}>
-        Commercial reference
       </T>
 
       {/* recording cursor */}
