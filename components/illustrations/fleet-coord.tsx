@@ -74,7 +74,13 @@ function Txt({
  * forward to a hand at (x + 24·s·dir, floor - 62·s).
  */
 export function G1Side({ x, floor, s = 1, dir = 1 }: { x: number; floor: number; s?: number; dir?: 1 | -1 }) {
-  const ln = { fill: "none", stroke: "var(--ink-2)", strokeWidth: 1, vectorEffect: "non-scaling-stroke" as const, strokeLinecap: "round" as const };
+  const ln = {
+    fill: "none",
+    stroke: "var(--ink-2)",
+    strokeWidth: 1,
+    vectorEffect: "non-scaling-stroke" as const,
+    strokeLinecap: "round" as const,
+  };
   const part = { fill: "var(--plate)", stroke: "var(--ink-2)", strokeWidth: 1, vectorEffect: "non-scaling-stroke" as const };
   const joint = (cx: number, cy: number, r = 2) => <circle cx={cx} cy={cy} r={r} {...part} />;
   // a limb: an outlined capsule along a polyline (outer stroke, then plate core)
@@ -131,7 +137,7 @@ function Scene() {
       {[-1, 1].map((k) => (
         <path
           key={k}
-          d={`M ${x + 2 * dir} ${py + 13 * k} L ${x + 12 * dir} ${py + 15 * k} L ${(dir > 0 ? hA : hB)} ${py + 12 * k}`}
+          d={`M ${x + 2 * dir} ${py + 13 * k} L ${x + 12 * dir} ${py + 15 * k} L ${dir > 0 ? hA : hB} ${py + 12 * k}`}
           fill="none"
           stroke="var(--ink-2)"
           strokeLinecap="round"
@@ -154,7 +160,16 @@ function Scene() {
       <Fade d={250}>
         <line x1={200} y1={48} x2={200} y2={262} stroke="var(--ink-3)" strokeWidth={0.8} strokeDasharray="10 3 2 3" />
         {[ax, hA, hB, bx].map((x) => (
-          <line key={x} x1={x} y1={floor + 12} x2={x} y2={py - 22} stroke="var(--rule-strong)" strokeDasharray="0.1 3" strokeLinecap="round" />
+          <line
+            key={x}
+            x1={x}
+            y1={floor + 12}
+            x2={x}
+            y2={py - 22}
+            stroke="var(--rule-strong)"
+            strokeDasharray="0.1 3"
+            strokeLinecap="round"
+          />
         ))}
       </Fade>
 
@@ -176,7 +191,11 @@ function Scene() {
 
       {/* equal distances either side of the centre line */}
       <Fade d={900}>
-        <path d={`M ${ax} 270 L ${bx} 270 M ${ax} 266 L ${ax} 274 M 200 266 L 200 274 M ${bx} 266 L ${bx} 274`} stroke="var(--ink-3)" strokeWidth={0.8} />
+        <path
+          d={`M ${ax} 270 L ${bx} 270 M ${ax} 266 L ${ax} 274 M 200 266 L 200 274 M ${bx} 266 L ${bx} 274`}
+          stroke="var(--ink-3)"
+          strokeWidth={0.8}
+        />
         <Txt x={(ax + 200) / 2} y={284} size={9.5} anchor="middle">
           d
         </Txt>
@@ -199,7 +218,15 @@ function Scene() {
         <g>
           <g className="dg-pulse">
             <g>
-              <animate attributeName="opacity" values="1;0.35;1" keyTimes="0;0.5;1" dur="4s" calcMode="spline" keySplines={splines(2)} repeatCount="indefinite" />
+              <animate
+                attributeName="opacity"
+                values="1;0.35;1"
+                keyTimes="0;0.5;1"
+                dur="4s"
+                calcMode="spline"
+                keySplines={splines(2)}
+                repeatCount="indefinite"
+              />
               {[
                 [hA, hy],
                 [hB, hy],
@@ -271,7 +298,12 @@ function Rewards() {
               <Txt x={p.x} y={p.y - 12} size={9.5} tone="ink2">
                 {p.name}
               </Txt>
-              <path d={`M ${p.x} ${p.y - 2} L ${p.x} ${p.y + PH} L ${p.x + PW} ${p.y + PH}`} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
+              <path
+                d={`M ${p.x} ${p.y - 2} L ${p.x} ${p.y + PH} L ${p.x + PW} ${p.y + PH}`}
+                fill="none"
+                stroke="var(--ink-3)"
+                strokeWidth={0.8}
+              />
               <path d={raw} fill="none" stroke="var(--rule-strong)" strokeWidth={0.8} />
             </Fade>
             <Draw d={fit} at={400 + i * 120} dur={1000} stroke="var(--ink-2)" w={1.1} />
@@ -327,10 +359,44 @@ function Layers() {
     return `M ${a[0]} ${a[1]} L ${b[0]} ${b[1]} L ${c[0]} ${c[1]} L ${d[0]} ${d[1]} Z`;
   };
   const layers = [
-    { name: "Environment", sub: "MuJoCo, 1000 Hz", y: 246, mods: [[0.06, 0.3], [0.38, 0.62], [0.7, 0.94]] },
-    { name: "Training", sub: "RSL-RL, PPO", y: 190, mods: [[0.06, 0.46], [0.54, 0.94]] },
-    { name: "Utilities", sub: "", y: 134, mods: [[0.06, 0.26], [0.32, 0.52], [0.58, 0.78]] },
-    { name: "Scripts", sub: "", y: 78, mods: [[0.06, 0.36], [0.44, 0.74]] },
+    {
+      name: "Environment",
+      sub: "MuJoCo, 1000 Hz",
+      y: 246,
+      mods: [
+        [0.06, 0.3],
+        [0.38, 0.62],
+        [0.7, 0.94],
+      ],
+    },
+    {
+      name: "Training",
+      sub: "RSL-RL, PPO",
+      y: 190,
+      mods: [
+        [0.06, 0.46],
+        [0.54, 0.94],
+      ],
+    },
+    {
+      name: "Utilities",
+      sub: "",
+      y: 134,
+      mods: [
+        [0.06, 0.26],
+        [0.32, 0.52],
+        [0.58, 0.78],
+      ],
+    },
+    {
+      name: "Scripts",
+      sub: "",
+      y: 78,
+      mods: [
+        [0.06, 0.36],
+        [0.44, 0.74],
+      ],
+    },
   ];
   // the riser: one vertical bus through the stack at the centre of each face
   const [rx] = P(0, 0.5, 0.5);
@@ -433,7 +499,10 @@ function Speech() {
     `M ${CX + CW} ${liftY} L ${S0 - 14} ${liftY} L ${S0 - 14} ${AY + 12} L ${sx(emit) + SW / 2} ${AY + 12} L ${sx(emit) + SW / 2} ${AY + 4.5}` +
     ` L ${sx(emit) + SW / 2} ${AY + 4.5} L ${sx(emit + 1) + SW / 2} ${BY - 4.5} L ${sx(emit + hold) + SW / 2} ${BY - 4.5}`;
   return (
-    <Art id="fleet-speech" label="Speech channel: robot A emits one of eight tokens; robot B hears it one step later and it persists for ten steps">
+    <Art
+      id="fleet-speech"
+      label="Speech channel: robot A emits one of eight tokens; robot B hears it one step later and it persists for ten steps"
+    >
       {/* vocabulary */}
       <Fade d={100}>
         <Txt x={CX} y={52} size={9}>
@@ -468,7 +537,9 @@ function Speech() {
           </Txt>
           {Array.from({ length: N }, (_, k) => {
             const c = cell(k, row.y);
-            return <rect key={k} x={c.x + 0.5} y={c.y + 0.5} width={c.w - 1} height={c.h - 1} rx={1} fill="none" stroke="var(--rule-strong)" />;
+            return (
+              <rect key={k} x={c.x + 0.5} y={c.y + 0.5} width={c.w - 1} height={c.h - 1} rx={1} fill="none" stroke="var(--rule-strong)" />
+            );
           })}
         </Fade>
       ))}
@@ -489,7 +560,16 @@ function Speech() {
         {Array.from({ length: hold }, (_, j) => {
           const c = cell(emit + 1 + j, BY);
           return (
-            <rect key={j} x={c.x} y={c.y} width={c.w} height={c.h} rx={1} fill="var(--signal)" opacity={j === 0 ? 1 : 0.28 + 0.5 * (1 - j / hold)} />
+            <rect
+              key={j}
+              x={c.x}
+              y={c.y}
+              width={c.w}
+              height={c.h}
+              rx={1}
+              fill="var(--signal)"
+              opacity={j === 0 ? 1 : 0.28 + 0.5 * (1 - j / hold)}
+            />
           );
         })}
         <Txt x={sx(emit + 1) + SW + 8} y={(AY + BY) / 2 + 3} size={9}>
@@ -516,7 +596,15 @@ function Speech() {
       <g className="dg-pulse">
         <g>
           <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.06;0.88;1" dur="9s" repeatCount="indefinite" />
-          <animateMotion dur="9s" repeatCount="indefinite" path={path} calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.45 0 0.35 1" />
+          <animateMotion
+            dur="9s"
+            repeatCount="indefinite"
+            path={path}
+            calcMode="spline"
+            keyPoints="0;1"
+            keyTimes="0;1"
+            keySplines="0.45 0 0.35 1"
+          />
           <circle r={7} fill="var(--signal)" opacity={0.16} />
           <circle r={2.8} fill="var(--signal)" />
         </g>

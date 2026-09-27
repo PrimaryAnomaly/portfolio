@@ -27,7 +27,10 @@ const stations = [
 
 export default function Cover() {
   return (
-    <Art id="cover-daemon" label="The DAEMON discovery cycle: five agents inside a propose, execute, observe, update loop that exits when converged">
+    <Art
+      id="cover-daemon"
+      label="The DAEMON discovery cycle: five agents inside a propose, execute, observe, update loop that exits when converged"
+    >
       <path
         className="dg-e"
         style={{ ...d(150), "--dur": "1300ms" } as React.CSSProperties}
@@ -67,7 +70,15 @@ export default function Cover() {
           </g>
         );
       })}
-      <text className="dg-n" style={{ ...d(1000), fontFamily: "var(--font-mono)" }} x={200} y={CY + 26} fontSize={9.5} textAnchor="middle" fill="var(--ink-3)">
+      <text
+        className="dg-n"
+        style={{ ...d(1000), fontFamily: "var(--font-mono)" }}
+        x={200}
+        y={CY + 26}
+        fontSize={9.5}
+        textAnchor="middle"
+        fill="var(--ink-3)"
+      >
         five agents
       </text>
 

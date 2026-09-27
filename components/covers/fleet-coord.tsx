@@ -81,10 +81,26 @@ export default function Cover() {
       {/* a wavefront crossing from speaker to listener */}
       <g className="dg-pulse">
         <g>
-          <animateMotion dur="6s" repeatCount="indefinite" path={cue} rotate="auto" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.45 0 0.35 1" />
+          <animateMotion
+            dur="6s"
+            repeatCount="indefinite"
+            path={cue}
+            rotate="auto"
+            calcMode="spline"
+            keyPoints="0;1"
+            keyTimes="0;1"
+            keySplines="0.45 0 0.35 1"
+          />
           <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1" dur="6s" repeatCount="indefinite" />
           {[0, 5].map((o) => (
-            <path key={o} d={`M ${o - 2} -6 Q ${o + 3} 0 ${o - 2} 6`} fill="none" stroke="var(--signal)" strokeWidth={1.5} strokeLinecap="round" />
+            <path
+              key={o}
+              d={`M ${o - 2} -6 Q ${o + 3} 0 ${o - 2} 6`}
+              fill="none"
+              stroke="var(--signal)"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+            />
           ))}
         </g>
       </g>

@@ -566,12 +566,17 @@ function Dashboard() {
         </Window>
         {/* live agent activity */}
         <Fade d={300}>
-          {bar(106, 84, 44, "var(--ink-3)")}
-          {lanes.map((ticks, r) => (
-            <g key={r}>
-              <line x1={106} y1={102 + r * 11} x2={358} y2={102 + r * 11} stroke="var(--rule)" />
-              {ticks.map((t) => (
-                <rect key={t} x={106 + t} y={99 + r * 11} width={10} height={6} rx={1} fill="var(--ink-3)" opacity={0.55} />
+          <Txt x={106} y={86} size={9.5} tone="ink2" mono={false}>
+            Agent activity
+          </Txt>
+          {["Scout", "Refiner", "Auditor", "Conservative", "Monitor"].map((n, r) => (
+            <g key={n}>
+              <Txt x={106} y={105 + r * 12} size={9}>
+                {n}
+              </Txt>
+              <line x1={176} y1={102 + r * 12} x2={358} y2={102 + r * 12} stroke="var(--rule)" />
+              {lanes[r].map((t) => (
+                <rect key={t} x={176 + t * 0.74} y={99 + r * 12} width={9} height={6} rx={1} fill="var(--ink-3)" opacity={0.55} />
               ))}
             </g>
           ))}
@@ -579,7 +584,9 @@ function Dashboard() {
         {/* hypotheses */}
         <Fade d={500}>
           <rect x={106.5} y={168.5} width={116} height={86} rx={2} fill="none" stroke="var(--rule)" />
-          {bar(116, 182, 40, "var(--ink-3)")}
+          <Txt x={116} y={185} size={9.5} tone="ink2" mono={false}>
+            Hypotheses
+          </Txt>
           {[0, 1, 2, 3].map((i) => (
             <g key={i}>
               {bar(116, 200 + i * 15, [50, 38, 46, 30][i])}
@@ -591,7 +598,9 @@ function Dashboard() {
         {/* convergence */}
         <Fade d={650}>
           <rect x={234.5} y={168.5} width={124} height={86} rx={2} fill="none" stroke="var(--rule)" />
-          {bar(244, 182, 40, "var(--ink-3)")}
+          <Txt x={244} y={185} size={9.5} tone="ink2" mono={false}>
+            Convergence
+          </Txt>
           <path d="M 246 244 L 348 244 M 246 196 L 246 244" fill="none" stroke="var(--rule-strong)" />
         </Fade>
         <Draw
@@ -610,6 +619,9 @@ function Dashboard() {
         {/* the stream is live */}
         <Fade d={900}>
           <circle cx={355} cy={55.5} r={6.5} fill="none" stroke="var(--rule)" />
+          <Txt x={343} y={58.5} size={9} anchor="end">
+            live
+          </Txt>
         </Fade>
         <g className="dg-pulse">
           <circle cx={355} cy={55.5} r={3} fill="var(--signal)">
@@ -799,8 +811,28 @@ function SessionResults() {
     [0.9, 0.93],
   ]);
   const others: { pts: [number, number][]; retired: boolean }[] = [
-    { pts: P([[0, 0.5], [0.14, 0.43], [0.28, 0.36], [0.42, 0.27], [0.54, 0.18]]), retired: true },
-    { pts: P([[0.14, 0.5], [0.28, 0.58], [0.42, 0.62], [0.56, 0.55], [0.7, 0.6], [0.84, 0.54], [0.95, 0.57]]), retired: false },
+    {
+      pts: P([
+        [0, 0.5],
+        [0.14, 0.43],
+        [0.28, 0.36],
+        [0.42, 0.27],
+        [0.54, 0.18],
+      ]),
+      retired: true,
+    },
+    {
+      pts: P([
+        [0.14, 0.5],
+        [0.28, 0.58],
+        [0.42, 0.62],
+        [0.56, 0.55],
+        [0.7, 0.6],
+        [0.84, 0.54],
+        [0.95, 0.57],
+      ]),
+      retired: false,
+    },
   ];
   const wPath = smooth(winner);
   const last = winner[winner.length - 1];
@@ -897,7 +929,11 @@ function Convergence() {
       {/* the converged? check closes every cycle; the loop ends on the first yes */}
       {pts.map(([x], i) => (
         <Fade key={"q" + i} d={500 + i * 70}>
-          <path d={diamond(x, i === last ? 5.5 : 3.6)} fill={i === last ? "var(--signal)" : "var(--plate)"} stroke={i === last ? "var(--signal)" : "var(--ink-3)"} />
+          <path
+            d={diamond(x, i === last ? 5.5 : 3.6)}
+            fill={i === last ? "var(--signal)" : "var(--plate)"}
+            stroke={i === last ? "var(--signal)" : "var(--ink-3)"}
+          />
         </Fade>
       ))}
       <Fade d={1400}>
