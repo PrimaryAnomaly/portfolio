@@ -41,14 +41,17 @@ export function Gallery(props: {
   const gridClass =
     columns === 1
       ? "grid-cols-1"
-      : columns === 3
-        ? "grid-cols-1 sm:grid-cols-3"
-        : "grid-cols-1 sm:grid-cols-2";
+      : "grid-cols-1 sm:grid-cols-2";
 
   return (
     <div className={`my-10 grid ${gridClass} gap-x-5 gap-y-8`}>
       {images.map((img, i) => (
-        <figure key={`${img.src}-${i}`} className="m-0" data-reveal style={{ "--i": i } as React.CSSProperties}>
+        <figure
+          key={`${img.src}-${i}`}
+          className={`m-0 ${columns === 3 && i === 0 ? "sm:col-span-2" : ""}`}
+          data-reveal
+          style={{ "--i": i } as React.CSSProperties}
+        >
           <div className="relative aspect-[4/3] overflow-hidden border border-rule bg-plate">
             {isAvailable(img.src) ? (
               <Image
@@ -59,8 +62,8 @@ export function Gallery(props: {
                 sizes={
                   columns === 1
                     ? "100vw"
-                    : columns === 3
-                      ? "(max-width: 640px) 100vw, 33vw"
+                    : columns === 3 && i === 0
+                      ? "100vw"
                       : "(max-width: 640px) 100vw, 50vw"
                 }
               />

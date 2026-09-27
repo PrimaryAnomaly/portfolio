@@ -76,27 +76,34 @@ function Txt({
 export function G1Side({ x, floor, s = 1, dir = 1 }: { x: number; floor: number; s?: number; dir?: 1 | -1 }) {
   const ln = { fill: "none", stroke: "var(--ink-2)", strokeWidth: 1, vectorEffect: "non-scaling-stroke" as const, strokeLinecap: "round" as const };
   const part = { fill: "var(--plate)", stroke: "var(--ink-2)", strokeWidth: 1, vectorEffect: "non-scaling-stroke" as const };
-  const joint = (cx: number, cy: number, r = 2.2) => <circle cx={cx} cy={cy} r={r} {...part} />;
+  const joint = (cx: number, cy: number, r = 2) => <circle cx={cx} cy={cy} r={r} {...part} />;
+  // a limb: an outlined capsule along a polyline (outer stroke, then plate core)
+  const limb = (d: string, w: number, edge = "var(--ink-2)") => (
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d={d} stroke={edge} strokeWidth={w} />
+      <path d={d} stroke="var(--plate)" strokeWidth={w - 1.5 / s} />
+    </g>
+  );
   return (
     <g transform={`translate(${x} ${floor}) scale(${dir * s} ${s})`}>
       {/* far leg, set back */}
-      <path d="M -3 -48 L -1 -26 L -4 -4 M -9 0 L 7 0" {...ln} stroke="var(--ink-3)" />
+      {limb("M -3 -49 L -1 -27 L -3 -5", 5.5, "var(--ink-3)")}
       {/* near leg */}
-      <path d="M 0 -48 L 5 -26 L 0 -4" {...ln} />
-      <path d="M -6 0 L 12 0" {...ln} strokeWidth={2} />
-      {joint(5, -26)}
-      {joint(0, -4, 1.8)}
+      {limb("M 0 -49 L 5 -27 L 0 -5", 6)}
+      <rect x={-6} y={-3.5} width={18} height={3.5} rx={1.5} {...part} />
+      {joint(5, -27)}
+      {joint(0, -5, 1.6)}
       {/* pelvis, torso, head */}
-      <rect x={-9} y={-55} width={18} height={10} rx={3} {...part} />
-      {joint(0, -48)}
-      <rect x={-11} y={-86} width={22} height={31} rx={5} {...part} />
-      <line x1={0} y1={-86} x2={0} y2={-89} {...ln} />
-      <rect x={-7} y={-102} width={14} height={13} rx={5} {...part} />
-      <path d="M 4 -99 Q 8 -95.5 4 -92" {...ln} />
-      {/* arm */}
-      <path d="M 2 -80 L 11 -65 L 24 -62" {...ln} />
+      <rect x={-9} y={-56} width={18} height={10} rx={3} {...part} />
+      {joint(0, -49)}
+      <rect x={-11} y={-87} width={22} height={32} rx={5} {...part} />
+      <line x1={0} y1={-87} x2={0} y2={-90} {...ln} />
+      <rect x={-7} y={-103} width={14} height={13} rx={5} {...part} />
+      <path d="M 4 -100 Q 8 -96.5 4 -93" {...ln} />
+      {/* arm, reaching forward to the load */}
+      {limb("M 2 -80 L 11 -66 L 23 -62", 4.5)}
       {joint(2, -80)}
-      {joint(11, -65, 1.8)}
+      {joint(11, -66, 1.6)}
     </g>
   );
 }

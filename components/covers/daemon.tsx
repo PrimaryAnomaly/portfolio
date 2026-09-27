@@ -14,7 +14,7 @@ const T = 94;
 const B = 206;
 const r = (B - T) / 2;
 const CY = (T + B) / 2;
-const loop = `M ${L} ${T} L ${R} ${T} A ${r} ${r} 0 0 1 ${R} ${B} L ${L} ${B} A ${r} ${r} 0 0 1 ${L} ${T} Z`;
+const loop = `M 152 ${T} L ${R} ${T} A ${r} ${r} 0 0 1 ${R} ${B} L ${L} ${B} A ${r} ${r} 0 0 1 ${L} ${T} L 152 ${T}`;
 const apex = R + r;
 const exitX = apex + 30;
 

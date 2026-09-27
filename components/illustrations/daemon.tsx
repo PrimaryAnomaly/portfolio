@@ -403,7 +403,7 @@ function Collaboration() {
             strokeDasharray="2 3"
           />
         ))}
-        <Txt x={296} y={CT + 104} size={9}>
+        <Txt x={304} y={CT + 104} size={9}>
           earlier versions
         </Txt>
       </Fade>
@@ -880,7 +880,7 @@ function Convergence() {
   return (
     <Art id="daemon-convergence" label="Convergence metrics per discovery cycle, with the converged check run at the end of every cycle">
       <Fade d={100}>
-        <path d={`M ${X0} ${B - H - 10} L ${X0} ${B} L ${cx(last) + 22} ${B}`} fill="none" stroke="var(--ink-3)" />
+        <path d={`M ${X0} ${B - H - 10} L ${X0} ${B} L ${cx(last) + 14} ${B}`} fill="none" stroke="var(--ink-3)" />
         {pts.map(([x], i) => (
           <line key={i} x1={x} y1={B} x2={x} y2={B + 4} stroke="var(--ink-3)" />
         ))}
@@ -907,7 +907,7 @@ function Convergence() {
         <Txt x={cx(last) + 12} y={QY + 4} size={10} tone="signal" mono={false}>
           Yes
         </Txt>
-        <Txt x={cx(last) + 22} y={B - 8} size={9.5} anchor="end">
+        <Txt x={cx(last) + 20} y={B + 3.5} size={9.5}>
           cycles
         </Txt>
       </Fade>
