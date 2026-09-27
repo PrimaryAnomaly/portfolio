@@ -2,7 +2,26 @@
 
 ## Project
 
-Next.js 16 portfolio site. TypeScript, Tailwind CSS 4, MDX via `next-mdx-remote`. Swiss/brutalist design system.
+Next.js 16 portfolio site. TypeScript, Tailwind CSS 4, MDX via `next-mdx-remote`. Swiss editorial design system with one signal colour (International Orange).
+
+## Design system
+
+- Tokens live as CSS variables in `app/globals.css` (`--paper`, `--ink`, `--ink-2/3`, `--rule`, `--signal`, `--signal-ink`) with a dark-mode set under `prefers-color-scheme`. Use the Tailwind names (`bg-paper`, `text-ink-2`, `border-rule`, `bg-signal`…), never raw hex.
+- `--signal` is for marks (dots, rules, arcs). Orange text uses `text-signal-ink` for contrast.
+- Type: Instrument Sans (variable `wdth` axis; `.narrow` = 75% width for display type) + IBM Plex Mono for numeric data only.
+- Base element rules are in `@layer base` and motion classes in `@layer components`, so Tailwind utilities always win. Don't add unlayered element selectors — they override utilities.
+- Design/motion skills are vendored in `.claude/skills/` (Emil Kowalski, ui-skills, frontend-design). Follow them for any UI or animation change.
+
+## Motion (60fps rules)
+
+- Animate only `transform`, `opacity`, `clip-path`. Easing tokens: `--ease-out`, `--ease-in-out`, `--ease-drawer`, `--ease-expo`.
+- Hero load choreography: `.line-mask` + `.intro-rise` (masked rise) and `.intro-fade`, staggered with a `--i` style var.
+- Scroll reveals: add `data-reveal` (fade-up), `data-reveal="mask"` (wrap text in `.line-mask > span`) or `data-reveal="clip"` (with a `.clip-inner` child). `RevealObserver` (one IntersectionObserver) sets `data-in` once. Clip reveals are observed via their parent, because Chrome treats a fully clipped target as non-intersecting.
+- Reveal styles are scoped under `html.js` so content stays visible without JS.
+- Lenis (`SmoothScroll`) provides inertial wheel scrolling; disabled for reduced motion; touch stays native. Same-page `#hash` links must be plain `<a>` so Lenis can glide to them.
+- Scroll-linked effects (reading progress, experience rail) use CSS `animation-timeline`, never scroll listeners.
+- Continuous loops (orbit diagram) pause off-screen via IntersectionObserver. Every animation has a `prefers-reduced-motion` fallback.
+- `app/template.tsx` fades pages in with `fill-mode: backwards` ending at `transform: none` — a lingering transform would break the fixed header.
 
 ## Build
 
@@ -33,7 +52,8 @@ Content sources:
 
 ## MDX Gotchas
 
-- Gallery component receives `images` prop from MDX inline JSX. In Turbopack dev mode, complex inline array props may arrive as `undefined`. Gallery has a null check + string fallback to handle this. Production builds work fine.
+- next-mdx-remote v6 strips JS expressions from MDX by default (`blockJS`). The project page passes `blockJS: false, blockDangerousJS: true` so `<Gallery images={[...]} />` props survive.
+- Gallery has a null check + string fallback for `images`. Missing or `placeholder` images render a designed "photo to come" plate, and placeholder project heroes render a per-project SVG motif (`components/site/ProjectCover.tsx`).
 - Place project images in `public/images/projects/`. Reference as `/images/projects/filename.ext`.
 
 ## Resume PDF
