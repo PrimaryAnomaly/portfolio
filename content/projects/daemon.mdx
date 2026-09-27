@@ -15,8 +15,8 @@ Lyophilization (freeze-drying) of LNP/mRNA formulations is a process with a larg
 DAEMON stands for Discovery Agents Exploring Mechanistic ODE Networks. It was developed at the [University of Massachusetts Lowell](https://www.uml.edu/engineering/chemical/) Department of Chemical Engineering.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-1.svg", alt: "DAEMON architecture", caption: "System architecture: agents, simulation backend, knowledge base" },
-  { src: "/images/projects/placeholder-2.svg", alt: "Discovery cycle", caption: "Propose-execute-observe-update discovery loop" },
+  { src: "/images/projects/placeholder-1.svg", art: "daemon/architecture", alt: "DAEMON architecture", caption: "System architecture: agents, simulation backend, knowledge base" },
+  { src: "/images/projects/placeholder-2.svg", art: "daemon/cycle", alt: "Discovery cycle", caption: "Propose-execute-observe-update discovery loop" },
 ]} />
 
 ## Architecture
@@ -26,8 +26,8 @@ Five specialized agents (Scout, Refiner, Auditor, Conservative, Monitor) each ma
 The simulation backend is a 9-state ODE model of the lyophilization process, tracking product temperature, ice thickness, chamber pressure, moisture, potency, cake resistance, encapsulation efficiency, RNA integrity, and particle size. Agents design and run experiments on this digital twin, then interpret the results against their current hypothesis set.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-3.svg", alt: "Agent collaboration", caption: "Agent hypothesis refinement through cooperative debate" },
-  { src: "/images/projects/placeholder-4.svg", alt: "Knowledge base", caption: "SQLite-backed hypothesis store with Bayesian confidence tracking" },
+  { src: "/images/projects/placeholder-3.svg", art: "daemon/collaboration", alt: "Agent collaboration", caption: "Agent hypothesis refinement through cooperative debate" },
+  { src: "/images/projects/placeholder-4.svg", art: "daemon/knowledge-base", alt: "Knowledge base", caption: "SQLite-backed hypothesis store with Bayesian confidence tracking" },
 ]} />
 
 ## Monitoring Interface
@@ -35,9 +35,9 @@ The simulation backend is a 9-state ODE model of the lyophilization process, tra
 The web layer is FastAPI (backend) + Next.js with [shadcn/ui](https://ui.shadcn.com/) (frontend). Sessions stream in real time over SSE so a human PI can observe the discovery process and intervene when needed. The dashboard shows live agent activity, hypothesis evolution, experiment logs, and convergence metrics.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-5.svg", alt: "Web dashboard", caption: "Real-time session monitoring dashboard" },
-  { src: "/images/projects/placeholder-6.svg", alt: "Hypothesis panel", caption: "Hypothesis panel with evidence chains and confidence scores" },
-  { src: "/images/projects/placeholder-7.svg", alt: "Experiment log", caption: "Experiment log with parameter sets and simulation results" },
+  { src: "/images/projects/placeholder-5.svg", art: "daemon/dashboard", alt: "Web dashboard", caption: "Real-time session monitoring dashboard" },
+  { src: "/images/projects/placeholder-6.svg", art: "daemon/hypotheses", alt: "Hypothesis panel", caption: "Hypothesis panel with evidence chains and confidence scores" },
+  { src: "/images/projects/placeholder-7.svg", art: "daemon/experiment-log", alt: "Experiment log", caption: "Experiment log with parameter sets and simulation results" },
 ]} columns={3} />
 
 ## Stack
@@ -59,6 +59,6 @@ This system is intended for pharmaceutical manufacturing contexts, so reliabilit
 The discovery loop follows a structured cycle: propose, execute, observe, update, converge. Each cycle produces traceable artifacts. A researcher can read any hypothesis, follow its evidence chain back to specific simulation runs, and evaluate whether the reasoning holds.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-8.svg", alt: "Session results", caption: "Discovery session output: hypotheses, evidence, confidence over time" },
-  { src: "/images/projects/placeholder-9.svg", alt: "Convergence plot", caption: "Convergence metrics across discovery cycles" },
+  { src: "/images/projects/placeholder-8.svg", art: "daemon/session", alt: "Session results", caption: "Discovery session output: hypotheses, evidence, confidence over time" },
+  { src: "/images/projects/placeholder-9.svg", art: "daemon/convergence", alt: "Convergence plot", caption: "Convergence metrics across discovery cycles" },
 ]} />

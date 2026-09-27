@@ -14,8 +14,8 @@ Existing multi-robot coordination systems assume either a central controller or 
 The core constraint is that a human must be able to swap in for either robot mid-task without changing the protocol. No binary handshakes, no wireless pings. Just observable behavior.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-1.svg", alt: "Two G1 robots in MuJoCo scene", caption: "Symmetric robot placement with shared manipulation object" },
-  { src: "/images/projects/placeholder-2.svg", alt: "Training reward curves", caption: "Stage 1 reward components tracked via TensorBoard" },
+  { src: "/images/projects/placeholder-1.svg", art: "fleet-coord/scene", alt: "Two G1 robots in MuJoCo scene", caption: "Symmetric robot placement with shared manipulation object" },
+  { src: "/images/projects/placeholder-2.svg", art: "fleet-coord/rewards", alt: "Training reward curves", caption: "Stage 1 reward components tracked via TensorBoard" },
 ]} />
 
 ## Architecture
@@ -27,8 +27,8 @@ The training layer bridges the environment to ETH Zurich's RSL-RL framework for 
 Training uses a teacher-student setup. The teacher policy (MLP, layers [256, 256, 128]) sees privileged partner state during training. After convergence, this distills to a student policy using only observable inputs, which is what would run on real hardware.
 
 <Gallery images={[
-  { src: "/images/projects/placeholder-3.svg", alt: "System architecture diagram", caption: "Four-layer architecture: environment, training, utilities, scripts" },
-  { src: "/images/projects/placeholder-4.svg", alt: "Speech channel token flow", caption: "8-token vocabulary with delay and persistence modeling" },
+  { src: "/images/projects/placeholder-3.svg", art: "fleet-coord/architecture", alt: "System architecture diagram", caption: "Four-layer architecture: environment, training, utilities, scripts" },
+  { src: "/images/projects/placeholder-4.svg", art: "fleet-coord/speech", alt: "Speech channel token flow", caption: "8-token vocabulary with delay and persistence modeling" },
 ]} />
 
 ## Speech Channel
