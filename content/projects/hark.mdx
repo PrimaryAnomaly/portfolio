@@ -1,0 +1,27 @@
+---
+title: "Hark"
+description: "Hark is an iOS meeting-notes app with one button. Record, and a Cloudflare Worker turns the audio into a transcript and structured notes with a single Gemini call."
+date: "2026-09"
+tags: ["iOS", "Swift", "Cloudflare Workers", "AI"]
+github: "https://github.com/PrimaryAnomaly/Hark"
+---
+
+## Context
+
+Meeting notes apps usually ask for accounts, imports and configuration before they record anything. Hark has one button. Record, and the audio goes to a Cloudflare Worker, which makes a single Gemini call with native audio input and returns a transcript and structured notes as JSON. The Worker validates the shape of the response before the app displays it.
+
+The Gemini API key lives only in the Worker, as a secret. It is never in the app or the repository.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "Hark app", caption: "One-button recording in the iOS app" },
+  { src: "/images/projects/placeholder-2.svg", alt: "Structured notes", caption: "Transcript and structured notes from a single call" },
+]} />
+
+## Stack
+
+| Layer | Detail |
+|---|---|
+| App | Swift, native iOS |
+| Backend | Cloudflare Worker, one endpoint |
+| Model call | Single Gemini call, native audio input |
+| Output | Transcript and structured notes as validated JSON |

@@ -1,0 +1,31 @@
+---
+title: "Skolia"
+description: "Skolia is PDF review without the friction. Upload a paper, send a link, and the reviewer annotates it in the browser with no account and no install. Live at skolia.ink."
+date: "2026-09"
+tags: ["Web Product", "React", "FastAPI", "PDF"]
+github: "https://github.com/PrimaryAnomaly/Skolia"
+---
+
+## Context
+
+Paper review usually means emailing a PDF, waiting, and then merging comments from marked-up copies. Skolia removes the setup from that loop. The author uploads a PDF and sends a private link. The reviewer opens it in the browser and annotates the paper directly, with no account and no install. Annotations land in one list for the author.
+
+It is built for STEM authors and their PIs, and it is live at [skolia.ink](https://skolia.ink) at $9.99 per paper.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "Reviewer view", caption: "Reviewer view: markup tools, page navigation, search" },
+  { src: "/images/projects/placeholder-2.svg", alt: "Author desk", caption: "Author desk with the collected annotation list" },
+]} />
+
+## How It Works
+
+The reviewer link carries a private token, so reviewing needs nothing but the link. The viewer supports markup tools, page navigation, zoom, fit-to-width and in-document search. A separate lifecycle worker handles time-based state changes outside the API process.
+
+## Stack
+
+| Layer | Detail |
+|---|---|
+| Backend | Python 3.12, FastAPI, SQLite |
+| Frontend | Vite, React, TypeScript, Tailwind CSS, PDF.js |
+| Review flow | Private token link, no reviewer account |
+| Workers | Lifecycle worker on a 60-second tick, separate process |

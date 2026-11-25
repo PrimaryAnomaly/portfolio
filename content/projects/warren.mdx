@@ -1,0 +1,34 @@
+---
+title: "WARREN"
+description: "WARREN runs teams of AI agents that search the design space of mechanistic models and record what they find as explicit, checkable knowledge. The first model is an in vitro transcription model with a Gaussian process residual layer. A manuscript for Nature Chemical Engineering is in preparation."
+date: "2026-11"
+tags: ["AI Agents", "Mechanistic Models", "Python", "IVT"]
+github: "https://github.com/PrimaryAnomaly/paper-warren"
+---
+
+## Context
+
+DAEMON coupled AI agents to one mechanistic model. WARREN (Web of Agents for Recorded Reasoning and Exploration of Numerical models) generalises that into a reusable meta-harness: it runs teams of AI agents that search the design space of a mechanistic model, and records what they find as explicit, checkable knowledge rather than chat transcripts.
+
+WARREN is model-agnostic by design. Its first model is the bead-immobilised T7 RNA polymerase in vitro transcription (IVT) model of Choi et al. (Chemical Engineering Journal): a mechanistic ODE with a Gaussian process residual layer, fitted to 33 endpoint conditions and 8 time courses.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "WARREN model layer", caption: "IVT model port with Gaussian process residual layer" },
+  { src: "/images/projects/placeholder-2.svg", alt: "Parity checks", caption: "Parity checks against the original MATLAB implementation" },
+]} />
+
+## Status
+
+The model layer is built and verified. The Python port of the IVT model passed an independent audit with no translation error found, and matches the original MATLAB code on 58 of 59 parity checks. The quality gate (pytest, mypy in strict mode, ruff) passes with 148 tests.
+
+The agent harness itself is still in design. The search loop, the knowledge record and the provider budget per study are open design questions, recorded as such in the repository. A manuscript for Nature Chemical Engineering is in preparation.
+
+## Stack
+
+| Layer | Detail |
+|---|---|
+| Language | Python 3.12+ |
+| First model | IVT mechanistic ODE with Gaussian process residual layer |
+| Verification | MATLAB parity checks (58 of 59), independent port audit |
+| Quality gate | pytest (148 tests), mypy strict, ruff |
+| Manuscript | Nature Chemical Engineering, in preparation |

@@ -1,9 +1,9 @@
 ---
 title: "AMBIC Data Platform"
 description: "Full-stack web platform for biomanufacturing data: ingestion, normalization, visualization, and sharing across research teams. Handles life-critical data with provenance tracking and granular access control."
-date: "2025-02"
+date: "2025-03"
 tags: ["Data Platform", "React", "Supabase", "Biomanufacturing"]
-github: "https://github.com/PrimaryAnomaly/ambic-data-nexus"
+github: "https://github.com/YoonLabUML/ambic-data-lake"
 ---
 
 ## Context
@@ -41,7 +41,7 @@ Frontend is React + TypeScript with [shadcn/ui](https://ui.shadcn.com/) and [Rec
 ## Key Technical Challenges
 
 - **Wide datasets.** Some biomanufacturing datasets have 3,000+ columns. The table component uses 2D virtualization (both row and column) so only the visible viewport renders. Without this, initial load would freeze the browser.
-- **Schema normalization with provenance.** Researchers map source columns to a standardized target schema. Every normalized dataset maintains a link back to its source, preserving the full transformation history.
+- **Schema normalization with provenance.** Researchers map source columns to a standardized target schema. Every normalized dataset maintains a link back to its source. The full transformation history is preserved.
 - **Hierarchical file management.** Folder nesting, dataset linking, and three-tier access control (owner, editor, viewer). The Supabase RLS policies for nested storage paths required careful attention, particularly around the `%/content/%` path pattern matching.
 
 <Gallery images={[

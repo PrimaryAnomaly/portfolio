@@ -32,7 +32,7 @@ Training uses a teacher-student setup. The teacher policy (MLP, layers [256, 256
 
 ## Speech Channel
 
-Robots emit discrete tokens from an 8-word vocabulary: silence, "three", "two", "one", "lift", "down", "stop", "regrip". These are sampled from the policy's action distribution alongside motor commands. The channel adds a 1-step transmission delay and 10-step persistence window, giving the partner roughly 200 ms to register each cue.
+Robots emit discrete tokens from an 8-word vocabulary: silence, "three", "two", "one", "lift", "down", "stop", "regrip". These are sampled from the policy's action distribution alongside motor commands. The channel adds a 1-step transmission delay and 10-step persistence window. The partner gets roughly 200 ms to register each cue.
 
 This makes the system debuggable (replay logs show exactly which token was emitted at which step), and it maps directly to real voice commands for human-robot teaming.
 
@@ -40,7 +40,7 @@ This makes the system debuggable (replay logs show exactly which token was emitt
 
 Reward shaping is config-driven through YAML files. Stage 1 rewards include dense signals for distance decrease, stable hand contact, grip duration, and penalties for falling. Each component logs independently to TensorBoard for debugging.
 
-Early GPU runs reported 100% success, but visual inspection showed collapsed robots with spurious contacts. The fix: require box-specific geom contact checks and verify both robots remain upright (base tilt < 0.7 rad). Success metrics now enforce structural invariants, not just contact flags.
+Early GPU runs reported 100% success, but visual inspection showed collapsed robots with spurious contacts. The fix: require box-specific geom contact checks and verify both robots remain upright (base tilt < 0.7 rad). Success metrics now enforce structural invariants as well as contact flags.
 
 | Layer | Technology |
 |---|---|
@@ -55,4 +55,4 @@ Early GPU runs reported 100% success, but visual inspection showed collapsed rob
 
 ## Current Status
 
-Stage 1 (approach and grip) is under active training with the hardened evaluation metrics. Next steps are warm-starting from pretrained G1 locomotion checkpoints and running a controlled comparison against training from scratch.
+Stage 1 (approach and grip) training ran with the hardened evaluation metrics. Development paused in February 2026 at that stage. Warm-starting from pretrained G1 locomotion checkpoints and a controlled comparison against training from scratch remain as next steps.

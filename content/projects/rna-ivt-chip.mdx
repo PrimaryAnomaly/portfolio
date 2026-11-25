@@ -1,0 +1,33 @@
+---
+title: "RNA-IVT-Chip"
+description: "A microfluidic chip for mRNA synthesis with inline sensors for impedance, optical scattering and temperature, so quality is measured during the run instead of after it. I designed and built the chip, the sensor PCB, the firmware and the monitoring pipeline."
+date: "2026-03"
+tags: ["Hardware", "Microfluidics", "Sensors", "PCB Design", "Firmware"]
+github: "https://github.com/PrimaryAnomaly/RNA-IVT-Chip"
+---
+
+## Context
+
+mRNA synthesis by in vitro transcription (IVT) is normally checked after the run, by offline assays. This platform moves the measurement into the run: a microfluidic IVT chip with embedded process analytical technology (PAT) sensors for real-time inline quality monitoring.
+
+The hardware, firmware, instrumentation and software were designed and built from scratch as one end-to-end platform, and the chip is the core of the desktop RNA printer work.
+
+<Gallery images={[
+  { src: "/images/projects/placeholder-1.svg", alt: "IVT chip platform", caption: "Microfluidic IVT chip with inline sensor board" },
+  { src: "/images/projects/placeholder-2.svg", alt: "Monitoring dashboard", caption: "Real-time monitoring dashboard" },
+]} />
+
+## System
+
+| Subsystem | Implementation |
+|---|---|
+| Microfluidic chip | PDMS soft lithography / 3D-printed, herringbone micromixer geometry |
+| Sensor PCB | Custom multi-layer mixed-signal board (KiCad), hand-soldered to IPC J-STD-001 |
+| Electrochemical sensing | AD5940 impedance frontend for inline particle and product characterisation |
+| Optical sensing | LED and photodiode with transimpedance amplifier for turbidity and scattering |
+| Thermal sensing | K-type thermocouple via MAX31855 SPI interface |
+| Microcontroller | STM32 running real-time multi-channel acquisition in C |
+| Flow control | PID-controlled syringe pump interface |
+| DAQ and monitoring | LabVIEW real-time dashboard via NI DAQ hardware |
+| Data pipeline | Python ingestion, MSPC analysis, digital twin integration |
+| Mechanical | SolidWorks CAD with GD&T drawings, 3D-printed and CNC fixtures |

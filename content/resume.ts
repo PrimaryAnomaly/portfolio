@@ -66,7 +66,10 @@ export const experience: Experience[] = [
     location: "Lowell, MA",
     dates: "Jul 2025 — Present",
     bullets: [
-      "Developed system-level digital twin framework integrating physics-based modeling with statistical process control",
+      "Building system-level digital twins for pharmaceutical manufacturing: a mechanistic lyophilization model and a CHO cell culture digital twin, integrated with statistical process control",
+      "Developing lyophilization digital twins under the FDA BAA LyoDT project",
+      "Built the AMBIC data lake (AMBICdata.org), a data platform for biomanufacturing research teams, and the Unifying AMBIC Knowledge project on top of it",
+      "Prototyping a desktop RNA printer: a microfluidic IVT chip with inline process sensors, a custom sensor PCB, STM32 firmware and a Python monitoring pipeline",
       "Designed and executed test plans for pharmaceutical manufacturing systems, validating 100+ production batches",
       "Built Python-based test automation tools replacing commercial platforms for reproducible process development",
       "Led root cause analysis on process failures; developed corrective action protocols and revalidation procedures",
@@ -91,8 +94,8 @@ export const experience: Experience[] = [
 
 export const publications: Publication[] = [
   {
-    authors: "Saeyoung Kim, Jaewon Lee, Kimia Babaei, Seonkgyu Yoon",
-    title: "Digital Twins in Lyophilization: Advances in Pharmaceutical Process Development and Optimization",
+    authors: "Saeyoung Kim, Jeongjoon Lee, Donghyuk Choi, Jaeweon Lee, Yoonyoung Choi, Seongkyu Yoon",
+    title: "From Digital Models to Self-Driving Lyophilization: Classifying and Building Freeze-Dryer Digital Twins",
     journal: "Biotechnology Advances",
     year: 2026,
     isFirstAuthor: true,
